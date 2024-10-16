@@ -1,0 +1,56 @@
+<!--=================================
+ preloader -->
+<div id="pre-loader" *ngIf="commondata.loader.value">
+    <img src="assets/images/pre-loader/loader-01.svg" alt="">
+</div>
+<div class="container">
+    <div class="row">
+        <div class="col-12 mt-4 table-responsive-ipad">
+            <label *ngIf="showId == '3'"><b>Your Answer</b></label>
+            <div *ngFor="let list of questionDetails; let i = index" class="col-12 card p-3">
+                <h3 [innerHTML]="list.question | sanitizeHtml"></h3>
+                <table class="table table-bordered text-center" [ngClass]="{'div-disable' : (showId == '4') || (showId == '3')}">
+                    <thead>
+                    <tr>
+                        <th>Questions</th>
+                        <th *ngFor="let item of list.correct_answer; let j=index" [innerHTML]="item | sanitizeHtml"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr  *ngFor="let item of list.student_answer; let j=index">
+                        <td [innerHTML]="item.options | sanitizeHtml"></td>
+                        <td *ngFor="let chk of list.correct_answer; let k=index">
+                            <input (click)="cfsGetChooseTable(list, i, j, k)" *ngIf="typeId == '5'" [checked]="list.student_answer[j].isSelected === '' ? false : list.student_answer[j].isSelected == k" class="radio_animated" id="{{j}}chooseSingle{{i}}" name="{{i}}choosesingle{{j}}corect" type="radio">
+                            <input (click)="cfsGetChooseTable(list, i, j, k)" *ngIf="typeId == '7'" [checked]="splitMultiChoose(list.student_answer[j].isSelected, k)" id="{{j}}chooseMulti{{i}}" type="checkbox">
+<!--                            <input id="checkMulti{{i}}{{j}}{{k}}" type="checkbox">-->
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="col-12 mt-4 table-responsive-ipad" *ngIf="showId == '3'">
+            <label><b>Correct Answer{{showId}}</b></label>
+            <div *ngFor="let list of questionDetails; let i = index" class="col-12 card p-3">
+                <h3 [innerHTML]="list.question | sanitizeHtml"></h3>
+                <table class="table table-bordered text-center div-disable">
+                    <thead>
+                    <tr>
+                        <th>Questions</th>
+                        <th *ngFor="let item of list.correct_answer; let j=index" [innerHTML]="item | sanitizeHtml"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr  *ngFor="let item of list.student_answer; let j=index">
+                        <td [innerHTML]="item.options | sanitizeHtml"></td>
+                        <td *ngFor="let chk of list.correct_answer; let k=index">
+                            <input *ngIf="typeId == '5'" [checked]="list.heading_option[j].correctActive == k.toString()" class="radio_animated" name="{{i}}choosesingle{{j}}corect" type="radio">
+                            <input *ngIf="typeId == '7'" id="chooseMultipass{{i}}{{j}}{{k}}" type="checkbox">
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

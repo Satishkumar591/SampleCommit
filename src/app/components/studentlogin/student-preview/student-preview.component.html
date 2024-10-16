@@ -1,0 +1,70 @@
+<div *ngIf="functionCalled == true" class="container-fluid">
+    <div class="row">
+        <div class="col-md-6">
+            <h3><b class="contenttext">{{questionData.name}}</b></h3>
+        </div>
+        <div class="col-md-6">
+            <button class="btn btn-outline-primary pull-right" (click)="backAction()">Back</button>
+            <button *ngIf="linkdata?.length != '0'" class="btn btn-primary pull-right mr-2"
+                (click)="otherlink()">Resources</button>
+            <!-- <a *ngIf="questionData?.download != '0'" [href]="pdfTemplate" [download]="downloadTemplateName" class="btn btn-outline-primary pull-right mr-2">Download Pdf</a> -->
+            <a class="pull-right" *ngIf="questionData?.download != '0'" [download]="downloadTemplateName" [href]="pdfTemplate">
+                <i class="fa fa-download color-primary icon" title="Download PDF" aria-hidden="true"></i>
+            </a>
+        </div>
+    </div>
+    <div class="row mt-4" *ngIf="questionData?.content_format == '1'">
+        <div class="col-md-12" *ngIf="!isPdfAvailable">
+            <a [title]="pdfPath[0].link" [href]="pdfPath[0].link" target="_blank">
+                <div class="col-md-12 flex-center flex-wrap link-card" style="height: 70vh">
+                    <div class="col-md-12 d-flex justify-content-center">
+                        <img *ngIf="pdfPath[0].type == 'document'" class="size-120px"
+                            src="assets/images/icons/doc-icon.png" alt="doc">
+                        <img *ngIf="pdfPath[0].type == 'audio'" class="size-120px"
+                            src="assets/images/icons/audio-icon.png" alt="mp3">
+                        <img *ngIf="pdfPath[0].type == 'video'" class="size-120px"
+                            src="assets/images/icons/video-icon.png" alt="mp4">
+                        <img *ngIf="pdfPath[0].type == 'ppt'" class="size-120px" src="assets/images/icons/ppt-icon.png"
+                            alt="ppt">
+                        <img *ngIf="pdfPath[0].type == 'Others'" class="size-120px"
+                            src="assets/images/icons/others-icon.png" alt="others">
+                    </div>
+                    <a [title]="pdfPath[0].link" [href]="pdfPath[0].link" target="_blank">{{pdfPath[0].name}}</a>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-12" *ngIf="isPdfAvailable">
+            <app-annotation [getAnnotate]="areaInfo" [userType]="userType" (annotate)="getAreaInfo($event)"
+                (deleteAnnotation)="getDeleteAction($event)" [pdfPath]="pdfTemplate" [toolAlignCenter]="true"
+                [toolHide]="false">
+            </app-annotation>
+        </div>
+    </div>
+    <div class="row" *ngIf="questionData?.content_format == '3' && questionData?.content_type == '1'">
+        <div class="col-12 card mt-4 p-3" innerHtml="{{showcontent}}">
+        </div>
+    </div>
+</div>
+
+<ng-template #content let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h4 class="modal-title font-weight-bold" id="modal-basic-title">Resources</h4>
+    </div>
+    <div class="modal-body">
+        <!-- Container-fluid starts-->
+        <div class="container-fluid">
+            <div class="row" *ngFor="let item of linkdata; let last = last">
+                <div class="col-md-12">
+                    <a class="cursor" href="{{item.link}}" target="_blank">
+                        <span style="overflow: scroll; overflow-y: hidden" title="{{item.name}}">{{item.name != '' ?
+                            item.name : item.link}}</span>
+                    </a>
+                    <hr *ngIf="!last">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn cancel" (click)="onSave()">Cancel</button>
+    </div>
+</ng-template>

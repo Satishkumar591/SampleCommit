@@ -1,0 +1,180 @@
+<!-- Container-fluid starts-->
+<div *ngIf="schoolStatus?.length != 0" class="container-fluid">
+    <div id="custom-pdf-loader-editor" *ngIf="showLoader">
+        <img src="assets/images/pre-loader/loader-01.svg" alt="">
+    </div>
+    <div class="row">
+        <div class="group-btn col-md-9 classDisable">
+            <button (click)="setSearch_Filter(2, sortType);assessmentList(2, sortType)" [disabled]="!buttonSelect" [ngClass]="{'active1': filterType == 2}" class="btn btn-outline-primary" type="button">In Progress</button>
+            <button (click)="setSearch_Filter(1, sortType);assessmentList(1, sortType)" [disabled]="!buttonSelect" [ngClass]="{'active1': filterType == 1}" class="btn btn-outline-primary" type="button">Upcoming</button>
+            <button (click)="setSearch_Filter(3, sortType);assessmentList(3, sortType)" [disabled]="!buttonSelect" [ngClass]="{'active1': filterType == 3}" class="btn btn-outline-primary" type="button">Completed</button>
+            <button (click)="setSearch_Filter(0, sortType);assessmentList(0, sortType)" [disabled]="!buttonSelect" [ngClass]="{'active1': filterType == 0}" class="btn btn-outline-primary" type="button">All</button>
+            <button aria-expanded="false" aria-haspopup="true" class="btn btn-outline-primary dropdown-toggle" [disabled]="!buttonSelect" data-toggle="dropdown" type="button">{{sortButton}}</button>
+            <div aria-labelledby="dropdownMenuButton" class="dropdown-menu">
+                <a (click)="setSearch_Filter(filterType, 1);classSort(1)" class="dropdown-item dropdown-link">Recent</a>
+                <a (click)="setSearch_Filter(filterType, 4);classSort(4)" class="dropdown-item dropdown-link">Oldest</a>
+                <a (click)="setSearch_Filter(filterType, 2);classSort(2)" class="dropdown-item dropdown-link">Name A-Z</a>
+                <a (click)="setSearch_Filter(filterType, 3);classSort(3)" class="dropdown-item dropdown-link">Name Z-A</a>
+            </div>
+        </div>
+        <div class="col-md-3 btn-popup pull-right mb-0">
+            <div class="input-group">
+                <input (input)="updateFilter(searchStudent)" [(ngModel)]="searchStudent" class="form-control" placeholder="Search by Student name" size="50" style="height:40px" type="text" >
+                <div class="input-group-append">
+                    <button class="btn btn-primary" type="submit"><i aria-hidden="true" class="fa fa-search"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mt-3">
+        <div class="col-3">
+            <ng-select [items]="batchData"
+                       bindLabel="batch_name"
+                       bindValue="batch_id"
+                       [(ngModel)]="selectClassRoom"
+                       placeholder="Select Content Folder"
+                       typeToSearchText=""
+                       (change)="setSearch_Filter(filterType, sortType);assessmentList(filterType, sortType)">
+            </ng-select>
+        </div>
+        <div class="col-3" *ngIf="auth.getRoleId() != '4'">
+            <ng-select [items]="teacherListData"
+                       bindLabel="teacher_name"
+                       bindValue="teacher_id"
+                       [(ngModel)]="selectTeacher"
+                       placeholder="Select Teacher"
+                       typeToSearchText=""
+                       (change)="setSearch_Filter(filterType, sortType);assessmentList(filterType, sortType); classList()"
+            >
+            </ng-select>
+        </div>
+
+        <div class="col-3 btn-popup pull-right mb-0">
+            <div class="input-group">
+                <input type="text" class="form-control" style="height:40px" size="50" placeholder="Search by Class name" [(ngModel)]="searchClass" (input)="updateFilter(searchClass)" >
+                <div class="input-group-append">
+                    <button class="btn btn-primary" type="submit"><i class="fa fa-search" aria-hidden="true"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-3 btn-popup pull-right mb-0">
+            <div class="input-group">
+                <input type="text" class="form-control" style="height:40px" size="50" placeholder="Search by Assessment name" [(ngModel)]="searchAssessment" (input)="updateFilter(searchAssessment)" >
+                <div class="input-group-append">
+                    <button class="btn btn-primary" type="submit"><i class="fa fa-search" aria-hidden="true"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row d-flex justify-content-center list-card mt-5" *ngIf="listData==''">
+            <div class="col-4">
+                <button class="nodataList">No Data Available!</button>
+            </div>
+        </div>
+    <section *ngIf="listData != ''" class="row list-card mt-3">
+            <div class="col-12">
+                <div *ngFor="let list of listData" class="card class-hover class-card" (click)="previewPage(list)">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-1 d-flex justify-content-center align-items-center">
+                                <figure (click)="listDetails(list)" title="Preview" class="cursor">
+                                    <img *ngIf="list.profile_url == ''" alt="" class="img-50 rounded-circle" src="assets/images/ristaschool/assessment.png">
+                                    <img *ngIf="list.profile_url != ''" class="img-50 rounded-circle" [src]="sanitizer.bypassSecurityTrustResourceUrl(webhost + '/' + list.profile_url)" alt="">
+                                </figure>
+                            </div>
+                            <div class="col-8">
+                                <h4 class="t-period"><small *ngIf="list.status == 1" class="card-flag" style="background-color: #9ddfd3">Not started</small>
+                                    <small *ngIf="list.status == 2" class="card-flag" style="background-color: #ffc478">In progress</small>
+                                    <small *ngIf="list.status == 3" class="card-flag" style="background-color: #184d47">Completed</small> &nbsp;
+                                    <span class="font-weight-bold">{{list.content_name}}</span> &nbsp;<small> with <span class="t-name font-weight-bold">&nbsp; {{list.teacher_name}}</span></small> </h4>
+                                <div class="d-flex">
+                                    <p><span>Subject: </span> <span class="t-name font-weight-bold">{{list.subject_name}}</span> &nbsp; &nbsp;
+                                        <span>Class: </span> <span class="t-name font-weight-bold">{{list.class_name}}</span>
+                                        </p>
+                                </div>
+<!--                                <h5 *ngIf="list.status == 1" class="card-flag" style="background-color: #9ddfd3">Not started</h5>-->
+<!--                                <h5 *ngIf="list.status == 2" class="card-flag" style="background-color: #ffc478">In progress</h5>-->
+<!--                                <h5 *ngIf="list.status == 3" class="card-flag" style="background-color: #184d47">Completed</h5>-->
+                            </div>
+                            <div class="col-3">
+                                <div class="row">
+                                    <div class="col-12 d-flex justify-content-end">
+                                        <small class="pull-right">End Date:  <span *ngIf="list.end_date != '0000-00-00'" class="t-name font-weight-bold">{{list.end_date| customDateFormat}}</span></small>
+                                        <small *ngIf="list.over_due_days != '0'" class="pull-right over-due1">Overdue For:
+                                            <span *ngIf="list.over_due_days != '1'" class="over-due1">{{list.over_due_days}} (days)</span>
+                                            <span *ngIf="list.over_due_days == '1'" class="over-due1">{{list.over_due_days}} (day)</span>
+                                        </small>
+<!--                                        <small *ngIf="list.over_due_days == '0'" class="pull-right" style="visibility: hidden">OverDue:</small>-->
+                                    </div>
+                                </div>
+                                <div class="row align-self-end">
+                                    <div class="col-12 mt-2 d-flex justify-content-end">
+                                        <div class="dropdown">
+                                            <button class="btn-sm-i btn-outline-primary">Action <i class="fa fa-sort-desc float-right ml-2" aria-hidden="true"></i></button>
+                                            <div class="dropdown-content cursor" style="right: 1px">
+                                                <a (click)="reportDetails('Assessment', list)"><i class="fa fa-file-text-o" aria-hidden="true"></i> Reports</a>
+                                                <a (click)="itemsReportDetails(list)"><i class="fa fa-file-archive-o" aria-hidden="true"></i> Itemized Reports</a>
+                                                <a (click)="showInformation(list)"><i class="fa fa-info" aria-hidden="true"></i> Information</a>
+                                            </div>
+                                        </div>
+<!--                                        <button (click)="previewPage(list)" [disabled]="list.status == 1" class="btn-sm-i btn-outline-primary pull-right" type="button">Enter</button>-->
+<!--                                        <button (click)="reportDetails('Assessment', list)" class="btn-outline-primary btn-sm-view mr-1 mt-1 pull-right" title="Reports"><i class="fa fa-file-text-o" aria-hidden="true"></i></button>-->
+<!--                                        <button (click)="itemsReportDetails(list)" class="btn-outline-primary btn-sm-view mr-1 mt-1 pull-right" title="Itemized Reports"><i class="fa fa-file-archive-o" aria-hidden="true"></i></button>-->
+<!--                                        <button (click)="showInformation(list)" class="btn-outline-primary btn-sm-view mr-1 mt-1 pull-right" title="Information"><i class="fa fa-info pl-1 pr-1" aria-hidden="true"></i></button>-->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+</div>
+<div *ngIf="schoolStatus.length == 0">
+    <app-emptyschool>
+    </app-emptyschool>
+</div>
+<!-- Container-fluid Ends-->
+<ng-template #reports>
+    <div class="modal-header">
+        <h4 class="modal-title">Report</h4>
+        <i class="fa fa-close cursor" (click)="onSave()" ></i>
+    </div>
+    <div class="modal-body">
+        <app-missed-work-report
+                [classShow] = "true"
+                [showContent]= "selectContent"
+                [studentView]= "false"
+                [timeView]= "false"
+                [contentNameValue]= "contentNameValue">
+        </app-missed-work-report>
+    </div>
+
+</ng-template>
+<ng-template #itemsReports>
+    <div class="modal-header">
+        <h4 class="modal-title">{{reportData.content_name | titlecase}} - Report</h4>
+        <i class="fa fa-close cursor" (click)="onSave()" ></i>
+    </div>
+    <div class="modal-body">
+        <app-items-report
+                [showContent]= "'other'"
+                [studentView]= "false"
+                [timeView]= "true">
+        </app-items-report>
+    </div>
+
+</ng-template>
+<ng-template #showInform>
+    <div class="modal-header">
+        <h4 class="modal-title">Info</h4>
+        <i class="fa fa-close cursor" (click)="onSave()" ></i>
+    </div>
+    <div class="modal-body">
+        <p class="p-0"><span>Total No. of Students: <span class="letter">{{classInfo.total_students}}</span></span></p>
+        <p class="p-0"><span>No. of Students Completed: <span class="letter">{{classInfo.completed_students}}</span></span></p>
+    </div>
+
+</ng-template>

@@ -1,0 +1,340 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xl-4">
+            <div class="card">
+                <div class="card-body">
+                    <div class="profile-details text-center">
+                        <div class="avatar-upload">
+                            <div>
+                                <img *ngIf="(details?.profile_url == '' || details?.profile_url == null) && details?.gender.toLowerCase() == 'male'" alt="" id="imagePreview" src="assets/images/ristaschool/female1.png" width="100%">
+                                <img *ngIf="(details?.profile_url == '' || details?.profile_url == null) && details?.gender.toLowerCase() == 'female'" alt="" id="imagePreview1" src="assets/images/ristaschool/female1.png" width="100%">
+                                <img *ngIf="(details?.profile_url == '' || details?.profile_url == null) && (details?.gender.toLowerCase() == 'n/a' || details.gender == '')" alt="" id="imagePreview2" src="assets/images/ristaschool/Do not want to disclose.png" width="100%">
+                                <img class="blur-up lazyloaded" *ngIf="details?.profile_url != ''"  width="100%" id="imagePreview11" [src]="sanitizer.bypassSecurityTrustResourceUrl(webhost + '/' + details?.profile_url)"  alt="">
+                            </div>
+                        </div>
+                        <h5 class="f-w-600 mb-0">Total No of Class: <span class="color-primary">{{classData?.length}}</span></h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-8">
+            <div class="card tab2-card">
+                <div class="card-body">
+                    <h4 class="position-relative border-bottom pb-2 letter">
+                        <app-feather-icons [icon]="'user'"></app-feather-icons>Parent 1 Details
+                    </h4>
+                    <div class="tab-pane fade show active" id="top-profile" role="tabpanel"
+                         aria-labelledby="top-profile-tab">
+                        <div class="table-responsive profile-table">
+                            <table class="table table-responsive">
+                                <tbody>
+                                <tr>
+                                    <td>Parent 1 First Name:</td>
+                                    <td>{{details.parent1_firstname | titlecase}}</td>
+                                </tr>
+                                <tr>
+                                    <td>Parent 1 Last Name:</td>
+                                    <td>{{details.parent1_lastname | titlecase}}</td>
+                                </tr>
+                                <tr>
+                                    <td>Parent 1 Email:</td>
+                                    <td>{{details.parent1_email_ids[0]}}</td>
+                                </tr>
+<!--                                <tr>-->
+<!--                                    <td>Parent1 Gender:</td>-->
+<!--                                    <td class="capital">{{studentdata.gender | titlecase}}</td>-->
+<!--                                </tr>-->
+                                </tbody>
+                            </table>
+<!--                            <div *ngIf="details.parent2_firstname != ''">-->
+<!--                                <h4 class="position-relative border-bottom pb-2 letter" style="cursor: pointer" aria-controls="#overallParent2" data-target="#overallParent2" data-toggle="collapse">-->
+<!--                                    <app-feather-icons [icon]="'user'"></app-feather-icons>Parent 2 Details-->
+<!--                                </h4>-->
+<!--                                <table class="table table-responsive collapse" id="overallParent2">-->
+<!--                                    <tbody>-->
+<!--                                    <tr>-->
+<!--                                        <td>Parent2 First Name:</td>-->
+<!--                                        <td>{{details.parent2_firstname | titlecase}}</td>-->
+<!--                                    </tr>-->
+<!--                                    <tr>-->
+<!--                                        <td>Parent2 Last Name:</td>-->
+<!--                                        <td>{{details.parent2_lastname | titlecase}}</td>-->
+<!--                                    </tr>-->
+<!--                                    <tr>-->
+<!--                                        <td>Parent2 Email:</td>-->
+<!--                                        <td>{{details.parent2_email_ids[0]}}</td>-->
+<!--                                    </tr>-->
+<!--                                    <tr>-->
+<!--                                        <td>Parent2 Gender:</td>-->
+<!--                                        <td class="capital">{{studentdata.gender | titlecase}}</td>-->
+<!--                                    </tr>-->
+<!--                                    </tbody>-->
+<!--                                </table>-->
+<!--                            </div>-->
+
+                        </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <div class="row list-card">
+        <div class="col-md-12">
+            <div class="card" *ngFor="let list of classData; let i = index">
+                <div class="card-body">
+                    <div class="row">
+<!--                        <div class="col-md-2">-->
+<!--                            <figure *ngIf="this.list.profile_url == ''">-->
+<!--                                <img src="assets/images/ristaschool/Mask Group 35.png" class="w-100" style="height: 160px" alt="">-->
+<!--                            </figure>-->
+<!--                            <figure *ngIf="this.list.profile_url != ''">-->
+<!--                                <img [src]="sanitizer.bypassSecurityTrustResourceUrl(webhost + '/' + list.profile_url)" class="w-100" style="height: 170px" alt="">-->
+<!--                            </figure>-->
+<!--                        </div>-->
+                        <div class="col-md-4">
+                            <h4 class="t-period"><span class="badge badge-success mr-2" *ngIf="list.status == '1'"><i class="fa fa-check" aria-hidden="true"></i></span>
+                                <span class="badge  badge-danger mr-2" *ngIf="list.status == '2'"><i class="fa fa-times" aria-hidden="true"></i></span><span class="font-weight-bold">{{list.class_name}}</span>
+                            </h4>
+                            <p><small class="font-weight-bold">Subject: </small> <span class="t-name font-weight-bold">{{list.subject}}</span>  &nbsp; &nbsp;
+                                <small class="font-weight-bold">Grade: </small> <span class="t-name capital font-weight-bold">{{list.grade}}</span><br/>
+                                <small class="font-weight-bold">Teacher Assigned: </small> <span class="t-name font-weight-bold">{{list.teacher_name}}</span>
+                            </p>
+                        </div>
+                        <div class="col-md-4">
+<!--                            <p *ngIf="list.transfer_class"><small class="font-weight-bold">Transferred from: </small> <span class="t-name font-weight-bold"> <small class="font-weight-bold">in </small> </span>  &nbsp; &nbsp;</p>-->
+                            <p *ngIf="list.transfer_class" class="mb-0"><small class="font-weight-bold">Transferred from: </small> <span class="t-name font-weight-bold">{{list.transfer_class}}</span></p>
+                            <p *ngIf="list.transferred_date" class="mb-0"><small class="font-weight-bold">Transferred Date: </small> <span class="t-name font-weight-bold">{{list.transferred_date | customDateFormat}}</span></p>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="row mb-3">
+                                <div class="col-md-12 text-right">
+                                    <p *ngIf="list.start_date == '0000-00-00'&& list.end_date == '0000-00-00'"><small class="font-weight-bold">Start: </small>  &nbsp; &nbsp;
+                                        <small class="font-weight-bold">End: </small>
+                                    </p>
+                                    <p *ngIf="list.start_date != '0000-00-00'&& list.end_date != '0000-00-00'"><small class="font-weight-bold">Start: </small> <span class="t-name font-weight-bold">{{list.start_date | customDateFormat}}</span> &nbsp; &nbsp;
+                                        <small class="font-weight-bold">End: </small> <span class="t-name font-weight-bold">{{list.end_date| customDateFormat}}</span>
+                                    </p>
+                                </div>
+                                <div class="col-md-12 text-right">
+                                    <button class="btn-sm-i btn-outline-primary pull-right mt-1" [attr.aria-controls]="'#studentreport' + i + 'true'"  [attr.data-target]="'#studentreport' + i + true" aria-expanded="false" data-toggle="collapse" (click)="selectStudentDetails(i, '2')" >Reports</button>
+                                    <i class="fa fa-info-circle float-right letter cursor mt-2 mr-2" style="font-size: 21px;" aria-hidden="true" title="Information" (click)="showInformation(list)"></i>
+                                    <i (click)="openClassNotes(list)" aria-hidden="true" class="fa fa-newspaper-o float-right letter cursor mt-2 mr-2" style="font-size: 21px;" title="Class Notes"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row collapse mt-3" *ngIf="list.selectedstatus == 'true'" id="studentreport{{i}}{{list?.selectedstatus}}">
+                        <div class="form-group col-3 col-md-3">
+                            <label class="col-xl-12 col-md-12">Content Type</label>
+                            <select class="custom-select col-md-12" (change)="studentContentDetails($event)">
+                                <option value="2">Assignment</option>
+                                <option value="3" >Assessment</option>
+                            </select>
+                        </div>
+                        <div class="col-md-12 p-3">
+                            <div class="row">
+                                <div class="col-4">
+                                    <h3 class="letter mt-3 mb-3" *ngIf="this.contentType == '2'">Assignment Details</h3>
+                                    <h3 class="letter mt-3 mb-3" *ngIf="this.contentType == '3'">Assessment Details</h3>
+                                </div>
+                                <div class="col-8 d-flex justify-content-end">
+                                    <p class="p-3">
+                                        <small class="ml-3"><i class="fa fa-square yet-to-start-color-bg p-1"></i> - UpComing</small>
+                                        <small class="ml-3"><i class="fa fa-square in-progress-color-bg p-1"></i> - In Progress</small>
+                                        <small class="ml-3"><i class="fa fa-square completed-color-bg p-1"></i> - Completed</small>
+                                        <small class="ml-3"><i class="fa fa-square pending-color-bg p-1"></i> - Pending</small>
+                                        <small class="ml-3"><i class="fa fa-square over-due-bg p-1"></i> - Overdue</small>
+                                        <small class="ml-3"><i class="fa fa-square never-bg p-1"></i> - Not Started</small>
+<!--                                        <small class="ml-3"><i class="fa fa-square not-applicable-bg p-1"></i> - N/A</small>-->
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="row" *ngIf="newrows != ''">
+                                <div class="col-12 table-responsive">
+                                    <table class="table table-striped table-bordered">
+                                        <thead>
+                                        <th class="text-center align-middle">Content Name</th>
+                                        <th class="text-center align-middle">Content Status</th>
+                                        </thead>
+                                        <tr *ngFor="let table of contentDetailsData; let i=index;" class="text-center align-bottom">
+                                            <th>{{table.content_name}} <span *ngIf="table.end_date != '0000-00-00'"> ({{table.end_date | customDateFormat}})</span></th>
+                                            <td class="d-flex justify-content-center">
+                                                <div class="d-flex align-items-end">
+                                                    <button (click)="openNotes(list, table)" class="btn-outline-primary btn-sm-view mr-2" title="Add Notes"><i aria-hidden="true" class="fa fa-newspaper-o"></i></button>
+                                                </div>
+                                                <div class="align-self-center">
+                                                    <div *ngIf="table.status == '2' || table.status == '3' || table.status == '6' || table.status == '7'" class="col-12 mb-1 px-0">
+                                                        <span style="border: none; padding: 2px 8px">{{table.attend_questions}}</span>/<span style="border: none; padding: 2px 8px">{{table.total_questions}}</span>
+                                                    </div>
+                                                    <a (click)="notifyParent(table)" *ngIf="table.status == '4' || table.status == '6'" class="d-block cursor notify-parent mb-1"> Notify Parent <span *ngIf="table.status == '6'">({{table.parents_notify_count}})</span></a>
+                                                    <span *ngIf="table.status == '0' || table.status == ''" class="cursor">-</span>
+                                                    <span (click)="studentCorrectionDetail(table)" *ngIf="table.status == '1'" class="yet-to-start-color cursor">{{table.student_average_score}}</span>
+                                                    <!--                        </p>-->
+                                                    <span (click)="studentCorrectionDetail(table)" *ngIf="table.status == '2' || table.status == '6'" class="in-progress-color cursor">{{table.student_average_score}}</span>
+                                                    <span (click)="studentCorrectionDetail(table)" *ngIf="table.status == '3'" class="completed-color cursor">{{table.student_average_score}}</span>
+                                                    <span (click)="notifyParent(table)"  *ngIf="table.status == '4'" class="over-due cursor">{{table.parents_notify_count}}</span>
+                                                    <span (click)="studentNotAnswer(table)" *ngIf="table.status == '5'" class="never cursor">{{table.student_average_score}}</span>
+                                                    <span (click)="studentCorrectionDetail(table)" *ngIf="table.status == '7'" class="pending-color cursor">{{table.student_average_score}}</span>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="row mt-4 d-flex justify-content-center" *ngIf="newrows ==  ''">
+                                <div class="col-4">
+                                    <button class="nodataList" style="background-color: #FFFFFF">No Records found</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<!--    <div class="row">-->
+<!--        <div class="col-12 card p-3">-->
+<!--            &lt;!&ndash;        <ng2-smart-table [settings]="missedWorkReport"  [source]="rows"></ng2-smart-table>&ndash;&gt;-->
+<!--        </div>-->
+<!--    </div>-->
+</div>
+
+<ng-template #contentnow let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h4 class="modal-title col-12 text-center"><b>Notify Parent</b></h4>
+    </div>
+    <div class="modal-body">
+        <!-- Container-fluid starts-->
+        <div class="container-fluid">
+            <h5 class="text-center">Are You Sure want to notify {{studentname[0].student_name}} parents?</h5>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn cancel" (click)="close()">Cancel</button>
+        <button type="button" class="btn btn-primary" (click)="confirmNotifiy()">Confirm</button>
+    </div>
+</ng-template>
+
+<ng-template #viewStudentDetails let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h4 class="modal-title">Student Answer Report</h4>
+        <i class="fa fa-close cursor" (click)="onSave()" ></i>
+    </div>
+    <div class="modal-body">
+        <!-- Container-fluid Ends-->
+        <app-answer-sheet [answerShow]="true" [contentId]="contentId" [contentFormat]="contentFormat" [studentContentId]="studentContentId"
+                          [classId]="classId" [studentReportId]="studentId" [backStatus]="false" ></app-answer-sheet>
+    </div>
+</ng-template>
+<ng-template #showInform>
+    <div class="modal-header">
+        <h4 class="modal-title">Info</h4>
+        <i class="fa fa-close cursor" (click)="onSave1()" ></i>
+    </div>
+    <div class="modal-body">
+        <p class="p-0" ><span class="letter">class code: </span> <span class="t-name font-weight-bold">{{classInfo.class_code}}</span></p>
+        <p class="p-0"><span class="letter">Resources: </span> <span class="t-name">{{classInfo.resources}} </span></p>
+        <p class="p-0"><span class="letter">Assignment: </span> <span class="t-name">{{classInfo.assignment}} </span></p>
+        <p class="p-0"><span class="letter">Assessment: </span> <span class="t-name">{{classInfo.assessment}}</span></p>
+    </div>
+</ng-template>
+<ng-template #notStarted let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h4 class="modal-title col-12 text-center"><b>Not Started</b></h4>
+    </div>
+    <div class="modal-body">
+        <!-- Container-fluid starts-->
+        <div class="container-fluid">
+            <h5 class="text-center"> Not submitted the
+                <span *ngIf="this.contentType == '2'">Assignment</span>
+                <span *ngIf="this.contentType == '3'">Assessment</span> yet.</h5>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-primary" (click)="closeNotstarted()">Ok</button>
+    </div>
+</ng-template>
+
+<ng-template #writeNoteOpen let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h4 class="modal-title text-center">Add Notes</h4>
+        <i (click)="close()" class="fa fa-close cursor" ></i>
+    </div>
+    <div class="modal-body">
+        <div class="row px-3 d-flex justify-content-center">
+            <div *ngFor="let list of showNotes; let i = index" class="col-12 mt-2">
+                <div class="row border border-secondary rounded">
+                    <div class="col-8 d-flex" style="word-wrap: break-word;">
+                        <i *ngIf="list.notes_type == '2'" class="fa fa-envelope-square align-self-center mr-2 color-primary"></i>
+                        <i *ngIf="list.notes_type == '1'" class="fa fa-bookmark align-self-center mr-2 color-secondary"></i>
+                        <span [innerHTML]="list.notes" class="mb-0 mt-3"></span>
+                    </div>
+                    <div class="col-3 px-0 d-flex justify-content-end align-self-center">
+                        <small class="mb-0">{{list.created_date | customDateFormat}}</small>
+                    </div>
+                    <div class="col-1 d-flex justify-content-end align-self-center">
+                        <i (click)="deleteNotes(list)" aria-hidden="true" class="fa fa-close fa-1x text-danger" style="cursor:pointer"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 px-0 mt-2">
+                <!-- <textarea class="form-control" id="addNotes" placeholder="Enter Notes" style="width: 100%; height: 100px; padding: 4px"></textarea> -->
+            <app-tiny-mice  (emitEditorValue)="getEditorValue($event)"
+                [editorPatchValue]="false"
+                [height]="300"
+                [id]="'addNotes'"
+                [showDropBtn]="false"
+                [showInputBtn]="false">
+            </app-tiny-mice>
+            </div>
+            <div class="col-12 px-0 text-right mt-2">
+                <button (click)="addNotes('2')" class="btn btn-outline-primary mr-2" type="button">Send as Email</button>
+                <button (click)="addNotes('1')" class="btn btn-primary" type="button">Add</button>
+            </div>
+        </div>
+    </div>
+</ng-template>
+<ng-template #classNote let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h4 class="modal-title text-center">All Notes</h4>
+        <i (click)="close()" class="fa fa-close cursor" ></i>
+    </div>
+    <div class="modal-body">
+        <div class="col-md-12 d-flex justify-content-center">
+            <div *ngIf="classId != 0" class="col-md-6">
+                <ng-select (change)="changeNotes($event)"
+                           [items]="listContent"
+                           bindLabel="content_name"
+                           bindValue="content_id"
+                           id="contentDrop"
+                           placeholder="Select Content"
+                           typeToSearchText=""
+                >
+                </ng-select>
+            </div>
+        </div>
+        <div class="row d-flex justify-content-center">
+            <div *ngFor="let list of classNotes; let i = index" class="col-10 mt-2">
+                <div class="row border-secondary rounded grey-border">
+                    <div class="col-8 d-flex" style="word-wrap: break-word">
+                        <i *ngIf="list.notes_type == '2'" class="fa fa-envelope-square align-self-center mr-2 color-primary"></i>
+                        <i *ngIf="list.notes_type == '1'" class="fa fa-bookmark align-self-center mr-2 color-secondary"></i>
+                        <span [innerHTML]="list.notes" class="mb-0 mt-3"></span>
+                    </div>
+                    <div class="col-4 px-0 align-self-center d-flex justify-content-center">
+                        <small class="mb-0">{{list.created_date | customDateFormat}}</small>
+                    </div>
+                </div>
+            </div>
+            <div *ngIf="classNotes.length == 0" class="col-md-12 align-self-center my-2">
+                <p class="mb-0">No Records Found</p>
+            </div>
+<!--            <div class="col-11 mt-2">-->
+<!--                <textarea [(ngModel)]="notes" class="form-control" placeholder="Enter Notes" style="width: 100%; height: 100px; padding: 4px"></textarea>-->
+<!--            </div>-->
+<!--            <div class="col-11 text-right mt-2">-->
+<!--                <button (click)="close()" class="btn btn-outline-primary mr-2" type="button">Close</button>-->
+<!--            </div>-->
+        </div>
+    </div>
+</ng-template>

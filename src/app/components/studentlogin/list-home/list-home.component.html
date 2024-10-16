@@ -1,0 +1,334 @@
+<!-- Container-fluid starts-->
+<div class="container-fluid">
+    <section class="row list-card">
+        <div class="col-12 col-md-4 {{env.deviceType() ? 'px-1' : ''}}">
+            <div class="row">
+                <div class="col-12 {{env.deviceType() ? '' : 'mb-2'}}">
+                    <div class="card {{env.deviceType() ? 'mb-1' : ''}}">
+                        <div class="card-body small-screen-group-btn {{env.deviceType() ? 'px-3 py-2' : 'p-3'}}">
+                            <div class="row d-flex justify-content-between list-title {{env.deviceType() ? 'align-items-end pb-2 mb-2' : ''}}">
+                                <div class="col-6 col-md-5 col-xl-5 design1 {{!env.deviceType() ? 'pt-2' : ''}}">
+                                    <h4>Classes</h4>
+                                </div>
+                                <div class="col-6 col-md-7 col-xl-7 d-flex justify-content-end">
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" [ngStyle]="{'height' : env.deviceType() ? '34px' : '41px'}" [placeholder]="env.deviceType() ? 'Search' : 'Search Class'" [(ngModel)]="searchClass" (input)="updateFilter(searchClass, 'class')">
+                                            <div class="input-group-append">
+                                                <button class="btn btn-primary {{env.deviceType() ? 'py-0 border-radius-2' : ''}}" type="submit"><i class="fa fa-search" aria-hidden="true"></i></button>
+                                            </div>
+                                        </div>
+                                </div>
+                            </div>
+
+                            <div class="row" *ngIf="env.deviceType()">
+                                <div class="col-6 pl-1 pr-0 text-center">
+                                    <div ngbDropdown container="body">
+                                        <button class="btn btn-primary" id="gfg"
+                                                ngbDropdownToggle><i class="fa fa-check-circle-o mr-1" aria-hidden="true"></i>{{classbutton}}</button>
+                                        <div ngbDropdownMenu="gfg">
+                                            <button ngbDropdownItem (click)="classFilter('2')">Upcoming</button>
+                                            <button ngbDropdownItem (click)="classFilter('3')">In Progress</button>
+                                            <button ngbDropdownItem (click)="classFilter('4')">Completed</button>
+                                            <button ngbDropdownItem (click)="classFilter('1')">All</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-6 pl-1 pr-0 text-center">
+                                    <div ngbDropdown container="body">
+                                        <button class="btn btn-outline-primary" id="gfg1"
+                                                ngbDropdownToggle><i class="mr-1 fa fa-sort-amount-desc" aria-hidden="true"></i>{{sortButton}}</button>
+                                        <div ngbDropdownMenu="gfg1">
+                                            <button ngbDropdownItem (click)="classSort('1')">End Date</button>
+                                            <button ngbDropdownItem (click)="classSort('2')">Assignee</button>
+                                            <button ngbDropdownItem (click)="classSort('3')">Alphabetical</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row group-btn" *ngIf="!env.deviceType()">
+                                <div class="btn-group dropup">
+                                    <button class="col-12 btn btn-primary dropdown-toggle" data-toggle="dropdown"><i class="fa fa-check-circle-o" aria-hidden="true"></i> {{classbutton}} </button>
+                                    <div class="dropdown-menu">
+                                        <a class="dropdown-item dropdown-link" (click)="classFilter('2')">Upcoming Classes</a>
+                                        <a class="dropdown-item dropdown-link" (click)="classFilter('3')">In Progress Classes</a>
+                                        <a class="dropdown-item dropdown-link" (click)="classFilter('4')">Completed Classes</a>
+                                        <a class="dropdown-item dropdown-link" (click)="classFilter('1')">All Classes</a>
+                                    </div>
+                                </div>
+                                <div class="btn-group dropup">
+                                    <button type="button" class="col-12 btn btn-outline-primary dropdown-toggle" id="dropdownMenuButton" aria-haspopup="true" aria-expanded="false" data-toggle="dropdown">{{sortButton}}</button>
+                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                        <a class="dropdown-item dropdown-link" (click)="classSort('1')">End Date</a>
+                                        <a class="dropdown-item dropdown-link" (click)="classSort('2')">Assignee</a>
+                                        <a class="dropdown-item dropdown-link" (click)="classSort('3')">Alphabetical</a>
+                                    </div>
+                                </div>
+                                <!--</div>-->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="{{env.deviceType() ? 'pl-3 home-ipad-sec-scroll' : 'col-12 home-sec-scroll'}}" [ngStyle]="{'width': env.deviceType() ? '95%' : ''}" >
+                    <div class="row d-flex justify-content-center list-card mt-5" *ngIf="classesDetails==''">
+                        <div class="col-8">
+                            <button class="nodataList">No Data Available!</button>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12 mt-1" *ngFor="let class of classesDetails ; let i = index">
+                            <div class="card">
+                                <div class="card-body {{env.deviceType() ? 'p-2' : 'p-3'}}">
+                                    <div class="row">
+                                        <div class="col-12 mb-3 school-img school-card-img" title="Enter Class" (click)="enterList(i , class)" >
+                                            <figure *ngIf="class.profile_url == ''">
+                                                <img src="assets/images/ristaschool/Mask Group 35.png" class="w-100" alt="">
+                                            </figure>
+                                            <figure *ngIf="class.profile_url != ''">
+                                                <img [src]="sanitizer.bypassSecurityTrustResourceUrl(webhost + '/' + class.profile_url)" class="w-100" alt="">
+                                            </figure>
+                                        </div>
+                                        <div class="col-12">
+                                            <h4 class="t-period"><span class="font-weight-bold">{{class.class_name}} </span>
+<!--                                                <br><small>With <span class="t-name font-weight-bold">{{class.teacher_first_name + ' ' + class.teacher_last_name}}</span></small> -->
+                                            </h4>
+                                            <p><span>Subject: </span> <span class="t-name font-weight-bold">{{class.subject_name}}</span></p>
+                                            <p><span>Start: </span> <span *ngIf="class.start_date != '0000-00-00'" class="t-name font-weight-bold">{{class.start_date|date:'MM-dd-yyyy'}}</span> &nbsp; &nbsp;
+                                                <span>End: </span> <span *ngIf="class.end_date != '0000-00-00'" class="t-name font-weight-bold">{{class.end_date|date:'MM-dd-yyyy'}}</span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-4 {{env.deviceType() ? 'px-1' : ''}}">
+            <div class="row">
+                <div class="col-12 {{env.deviceType() ? '' : 'mb-2'}}">
+                    <div class="card {{env.deviceType() ? 'mb-1' : ''}}">
+                        <div class="card-body small-screen-group-btn {{env.deviceType() ? 'px-3 py-2' : 'p-3'}}">
+                            <div class="row d-flex justify-content-between list-title {{env.deviceType() ? 'align-items-end mb-2 pb-2' : ''}}">
+                                <div class="col-5 col-md-5 col-xl-5 design {{!env.deviceType() ? 'pt-2' : ''}}">
+                                    <h4>Assignments</h4>
+                                </div>
+                                <div class="col-7 col-md-7 col-xl-7 d-flex justify-content-end">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" [ngStyle]="{'height' : env.deviceType() ? '34px' : '41px'}" placeholder="Search {{env.deviceType() ? '' : 'Assignment'}}" [(ngModel)]="searchAssign" (input)="updateFilter(searchAssign, 'assign')">
+                                        <div class="input-group-append">
+                                            <button class="btn btn-primary {{env.deviceType() ? 'py-0 border-radius-2' : ''}}" type="submit"><i class="fa fa-search" aria-hidden="true"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row" *ngIf="env.deviceType()">
+                                <div class="col-6 pl-1 pr-0 text-center">
+                                    <div ngbDropdown container="body">
+                                        <button class="btn btn-primary" id="gfg2"
+                                                ngbDropdownToggle><i class="fa fa-check-circle-o mr-1" aria-hidden="true"></i>{{assignButton}}</button>
+                                        <div ngbDropdownMenu="gfg2">
+                                            <button ngbDropdownItem (click)="assignmentFilter('3')">In Progress</button>
+                                            <button ngbDropdownItem (click)="assignmentFilter('4')">Completed</button>
+                                            <button ngbDropdownItem (click)="assignmentFilter('1')">All</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-6 pl-1 pr-0 text-center">
+                                    <div ngbDropdown container="body">
+                                        <button class="btn btn-outline-primary" id="gfg3"
+                                                ngbDropdownToggle><i class="mr-1 fa fa-sort-amount-desc" aria-hidden="true"></i>{{sortButton}}</button>
+                                        <div ngbDropdownMenu="gfg3">
+                                            <button ngbDropdownItem (click)="assignmentSort('1')">End Date</button>
+                                            <button ngbDropdownItem (click)="assignmentSort('2')">Assignee</button>
+                                            <button ngbDropdownItem (click)="assignmentSort('3')">Alphabetical</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row group-btn" *ngIf="!env.deviceType()">
+
+                                <div class="btn-group dropup">
+                                    <button class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><i class="fa fa-check-circle-o" aria-hidden="true"></i> {{assignButton}} </button>
+                                    <div class="dropdown-menu">
+                                        <a class="dropdown-item dropdown-link" (click)="assignmentFilter('3')">In Progress Assignments</a>
+                                        <a class="dropdown-item dropdown-link" (click)="assignmentFilter('4')">Completed Assignments</a>
+                                        <a class="dropdown-item dropdown-link" (click)="assignmentFilter('1')">All Assignments</a>
+                                    </div>
+                                </div>
+                                <div class="btn-group dropdown">
+                                    <button type="button" class="btn btn-outline-primary dropdown-toggle" id="dropdownMenuButton1" aria-haspopup="true" aria-expanded="false" data-toggle="dropdown">{{assignSortButton}}</button>
+                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                        <a class="dropdown-item dropdown-link" (click)="assignmentSort('1')">End Date</a>
+                                        <a class="dropdown-item dropdown-link" (click)="assignmentSort('2')">Assignee</a>
+                                        <a class="dropdown-item dropdown-link" (click)="assignmentSort('3')">Alphabetical</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="{{env.deviceType() ? 'pl-3 home-ipad-sec-scroll' : 'col-12 home-sec-scroll'}}" [ngStyle]="{'width': env.deviceType() ? '95%' : ''}">
+                    <div class="row d-flex justify-content-center list-card mt-5" *ngIf="assignmentsDetails==''">
+                        <div class="col-8">
+                            <button class="nodataList">No Data Available!</button>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12 mt-1" *ngFor="let assign of assignmentsDetails">
+                            <div class="card">
+                                <div class="card-body {{env.deviceType() ? 'p-2' : 'p-3'}}">
+                                    <div class="row">
+                                        <div (click)="assignmentPage(assign)" class="col-12 mb-3 school-img school-card-img" title="View Assignment">
+                                            <figure *ngIf="assign.profile_url == ''">
+                                                <img src="assets/images/ristaschool/option-writing-checkbox-concepts-survey.png" class="w-100" alt="">
+                                            </figure>
+                                            <figure *ngIf="assign.profile_url != ''">
+                                                <img [src]="sanitizer.bypassSecurityTrustResourceUrl(webhost + '/' + assign.profile_url)" class="w-100" alt="">
+                                            </figure>
+                                        </div>
+                                        <div class="col-12">
+                                            <h4 class="t-period"><span class="font-weight-bold">{{assign.content_name}} </span><b class="contenttext">
+                                                <small *ngIf="assign.content_format == 1">(PDF)</small>
+                                                <small *ngIf="assign.content_format == 3">(TEXT)</small></b><br>
+<!--                                                <small>Assigned By <span class="t-name font-weight-bold">{{assign.teacher_first_name + ' ' + assign.teacher_last_name}}</span></small> -->
+                                            </h4>
+                                            <p><span>Subject: </span> <span class="t-name font-weight-bold">{{assign.subject_name}}</span></p>
+                                            <p><span>Start: </span> <span *ngIf="assign.start_date != '0000-00-00'" class="t-name font-weight-bold">{{assign.start_date|date:'MM-dd-yyyy'}}</span> &nbsp; &nbsp;
+                                                <span>End: </span> <span *ngIf="assign.end_date != '0000-00-00'" class="t-name font-weight-bold">{{assign.end_date|date:'MM-dd-yyyy'}}</span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-4 {{env.deviceType() ? 'px-1' : ''}}">
+            <div class="row">
+                <div class="col-12 {{env.deviceType() ? '' : 'mb-2'}}">
+                    <div class="card {{env.deviceType() ? 'mb-1' : ''}}">
+                        <div class="card-body small-screen-group-btn {{env.deviceType() ? 'px-3 py-2' : 'p-3'}}">
+                            <div class="row d-flex justify-content-between list-title {{env.deviceType() ? 'align-items-end mb-2 pb-2' : ''}}">
+                                <div class="col-6 col-md-5 col-xl-5 design {{!env.deviceType() ? 'pt-2' : ''}}">
+                                    <h4>Assessments</h4>
+                                </div>
+                                <div class="col-6 col-xl-7 col-md-7 d-flex justify-content-end">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" [ngStyle]="{'height' : env.deviceType() ? '34px' : '41px'}" size="50" placeholder="Search {{env.deviceType() ? '' : 'Assessment'}}" [(ngModel)]="searchAssess" (input)="updateFilter(searchAssess, 'assess')">
+                                        <div class="input-group-append">
+                                            <button class="btn btn-primary {{env.deviceType() ? 'py-0 border-radius-2' : ''}}" type="submit"><i class="fa fa-search" aria-hidden="true"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row" *ngIf="env.deviceType()">
+                                <div class="col-6 pl-1 pr-0 text-center">
+                                    <div ngbDropdown container="body">
+                                        <button class="btn btn-primary" id="gfg2"
+                                                ngbDropdownToggle><i class="fa fa-check-circle-o mr-1" aria-hidden="true"></i>{{assessButton}}</button>
+                                        <div ngbDropdownMenu="gfg2">
+                                            <button ngbDropdownItem (click)="assessmentFilter('3')">In Progress</button>
+                                            <button ngbDropdownItem (click)="assessmentFilter('4')">Completed</button>
+                                            <button ngbDropdownItem (click)="assessmentFilter('1')">All</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-6 pl-1 pr-0 text-center">
+                                    <div ngbDropdown container="body">
+                                        <button class="btn btn-outline-primary" id="gfg3"
+                                                ngbDropdownToggle><i class="mr-1 fa fa-sort-amount-desc" aria-hidden="true"></i>{{sortButton}}</button>
+                                        <div ngbDropdownMenu="gfg3">
+                                            <button ngbDropdownItem (click)="assessmentSort('1')">End Date</button>
+                                            <button ngbDropdownItem (click)="assessmentSort('2')">Assignee</button>
+                                            <button ngbDropdownItem (click)="assessmentSort('3')">Alphabetical</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row group-btn" *ngIf="!env.deviceType()">
+                                <div class="btn-group dropup">
+                                    <button class="col-12 btn btn-primary dropdown-toggle" data-toggle="dropdown"><i class="fa fa-check-circle-o" aria-hidden="true"></i> {{assessButton}} </button>
+                                    <div class="dropdown-menu">
+<!--                                        <a class="dropdown-item dropdown-link" (click)="assessmentFilter('2')">Upcoming Assessments</a>-->
+                                        <a class="dropdown-item dropdown-link" (click)="assessmentFilter('3')">In Progress Assessments</a>
+                                        <a class="dropdown-item dropdown-link" (click)="assessmentFilter('4')">Completed Assessments</a>
+                                        <a class="dropdown-item dropdown-link" (click)="assessmentFilter('1')">All Assessments</a>
+                                    </div>
+                                </div>
+                                <div class="btn-group dropup">
+                                    <button type="button" class="col-12 btn btn-outline-primary dropdown-toggle" id="dropdownMenuButton2" aria-haspopup="true" aria-expanded="false" data-toggle="dropdown">{{assessSortButton}}</button>
+                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton2">
+                                        <a class="dropdown-item dropdown-link" (click)="assessmentSort('1')">End Date</a>
+                                        <a class="dropdown-item dropdown-link" (click)="assessmentSort('2')">Assignee</a>
+                                        <a class="dropdown-item dropdown-link" (click)="assessmentSort('3')">Alphabetical</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="{{env.deviceType() ? 'pl-3 home-ipad-sec-scroll' : 'col-12 home-sec-scroll'}}" [ngStyle]="{'width': env.deviceType() ? '95%' : ''}">
+                    <div class="row d-flex justify-content-center list-card mt-5" *ngIf="assessmentDetails==''">
+                        <div class="col-8">
+                            <button class="nodataList">No Data Available!</button>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12 mt-1" *ngFor="let assess of assessmentDetails">
+                            <div class="card">
+                                <div class="card-body {{env.deviceType() ? 'p-2' : 'p-3'}}">
+                                    <div class="row">
+                                        <div (click)="checkContentTime(assess, 'assess')" class="col-12 mb-3 school-img school-card-img" title="View Assessment">
+                                            <figure *ngIf="assess.profile_url == ''">
+                                                <img src="assets/images/ristaschool/assessment.png" class="w-100" alt="">
+                                            </figure>
+                                            <figure *ngIf="assess.profile_url != ''">
+                                                <img [src]="sanitizer.bypassSecurityTrustResourceUrl(webhost + '/' + assess.profile_url)" class="w-100" alt="">
+                                            </figure>
+                                        </div>
+                                        <div class="col-12">
+                                            <h4 class="t-period"><span class="font-weight-bold">{{assess.content_name}} </span><b class="contenttext">
+                                                <small *ngIf="assess.content_format == 1">(PDF)</small>
+                                                <small *ngIf="assess.content_format == 3">(TEXT)</small></b><br>
+<!--                                                <small>With <span class="t-name font-weight-bold">{{assess.teacher_first_name + ' ' + assess.teacher_last_name}}-->
+<!--                                                </span></small> -->
+                                            </h4>
+                                            <p><span>Subject: </span> <span class="t-name font-weight-bold">{{assess.subject_name}}</span></p>
+                                            <p><span>Start: </span> <span *ngIf="assess.start_date != '0000-00-00'" class="t-name font-weight-bold">{{assess.start_date|date:'MM-dd-yyyy'}}</span> &nbsp; &nbsp;
+                                                <span>End: </span> <span *ngIf="assess.end_date != '0000-00-00'" class="t-name font-weight-bold">{{assess.end_date|date:'MM-dd-yyyy'}}</span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+<!-- Container-fluid Ends-->
+<ng-template #throwError>
+    <div class="modal-header">
+        <h4 class="modal-title letter">{{ErrorTitle}}</h4>
+        <i class="fa fa-close cursor" (click)="onSave()" ></i>
+    </div>
+    <div class="modal-body text-center">
+        <p><b>{{message}}</b></p>
+    </div>
+    <div class="modal-footer">
+        <div class="btn-popup pull-right">
+            <button class="btn btn-outline-primary" (click)="onSave()">ok</button>
+        </div>
+    </div>
+</ng-template>

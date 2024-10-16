@@ -1,0 +1,101 @@
+$primary-color: #8F008A;
+
+.inputMenu{
+
+  //padding: 30px;
+
+
+  input{
+    padding: 16px;
+  }
+  .input-group-text{
+    background: white;
+  }
+  img{
+    position: relative;
+    height: 16px;
+    width: auto;
+  }
+
+  .pointsSec{
+    .labelName{
+      font-size: 20px;
+    }
+    .pointInput{
+      height: 3rem !important;
+    }
+  }
+}
+img {
+  cursor: default !important;
+}
+
+.inputMenu1{
+  input{
+    padding: 20px;
+  }
+  .input-group-text{
+    background: white;
+  }
+  img{
+    position: relative;
+    height: 28px;
+  }
+
+  .pointsSec{
+    .labelName{
+      font-size: 20px;
+    }
+    .pointInput{
+      height: 52px !important;
+    }
+  }
+}
+
+.inputHeight{
+  height: 43px;
+}
+.multiSelectCard{
+  border: 2px solid $primary-color;
+  background: white;
+  padding: 18px;
+  border-radius: 4px;
+}
+
+.checkbox3{
+  zoom:1.5;
+
+}
+
+.ck-editor_editable_inline{
+  min-height: 400px;
+}
+
+.correct-answer{
+  color: #7F3486;
+  background: white;
+  border-style: ridge;
+  border-width: 1px;
+  border-color: #7F3486;
+  padding: 6px;
+}
+.correct-answer-selected{
+  color: white;
+  background: #7F3486;
+  border-style: ridge;
+  border-width: 1px;
+  border-color: #7F3486;
+  padding: 6px;
+}
+.wrong-answer{
+  color: red;
+  background: white;
+  border-style: ridge;
+  border-width: 1px;
+  border-color: #7F3486;
+  padding: 6px;
+}
+
+.cursor {
+  cursor: pointer !important;
+}

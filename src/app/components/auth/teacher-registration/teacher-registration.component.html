@@ -1,0 +1,188 @@
+<div class="container-fluid my-3">
+    <div class="row">
+        <div class="col-12">
+            <div class="card tab2-card">
+                <div class="card-header">
+                    <h3 class="text-capitalize pt-3 pb-2">Welcome to Teacher Registration!!!</h3>
+                    <label class="text-muted">All fields marked with <span class="text-danger">*</span> are required</label>
+                </div>
+                <div class="card-body tab2-card">
+                    <form [formGroup]="registrationform" class="needs-validation user-add">
+                        <div class="form-group row">
+                            <label class="col-12 col-md-4 col-xl-3 ml-1" for="validationCustom0"><span>*</span>
+                                First Name</label>
+                            <div class="col-12 col-md-7 col-xl-8">
+                                <input class="form-control " formControlName="first_name" id="validationCustom0"
+                                       placeholder="First Name" type="text" required="">
+                                <em *ngIf="!registrationform.get('first_name').valid && (registrationform.get('first_name').dirty || registrationform.get('first_name').touched)" class="error">First name is required</em>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-12 col-md-4 col-xl-3 ml-1" for="validationCustom1"><span>*</span>
+                                Last Name</label>
+                            <div class="col-12 col-md-7 col-xl-8">
+                                <input class="form-control " formControlName="last_name" id="validationCustom1"
+                                       placeholder="Last Name" type="text">
+                                <em *ngIf="!registrationform.get('last_name').valid && (registrationform.get('last_name').dirty || registrationform.get('last_name').touched)" class="error">Last name is required</em>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-12 col-md-4 col-xl-3 ml-1" for="validationCustom5"><span>*</span>
+                                Email Address</label>
+                            <div class="col-12 col-md-7 col-xl-8">
+                                <input class="form-control" formControlName="email_id" id="validationCustom5"
+                                       placeholder="Email" type="email" readonly>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-12 col-md-4 col-xl-3 ml-1" for="validationCustom6"><span>*</span>
+                                Contact Number</label>
+                            <div class="col-12 col-md-7 col-xl-8">
+                                <input (keypress)="numberPattern($event)" class="form-control " formControlName="mobile"
+                                       id="validationCustom6" maxlength="15" minlength="10" placeholder="Contact Number" type="text">
+                                <em *ngIf="!registrationform.get('mobile').valid && (registrationform.get('mobile').dirty || registrationform.get('mobile').touched)" class="error">Contact Number is required</em>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-12 col-md-4 col-xl-3 ml-1" for="validationCustom41"><span>*</span>
+                                Institution Name</label>
+                            <div class="col-12 col-md-7 col-xl-8">
+                                <input class="form-control " formControlName="schoolId" id="validationCustom41" placeholder="Institution Name"
+                                       readonly type="text">
+                                <em *ngIf="!registrationform.get('schoolId').valid && (registrationform.get('schoolId').dirty || registrationform.get('schoolId').touched)" class="error">Institution Name is required</em>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-12 col-md-4 col-xl-3 ml-1"><span style="visibility: hidden">*</span>
+                                Date Of Birth</label>
+                            <div class="col-12 col-md-7 col-xl-8 form-group">
+                                <div class="d-flex align-items-baseline">
+                                    <input #dp="angular-mydatepicker" (dateChanged)="onDateChanged($event)" (keypress)="datePattern($event)"
+                                           [options]="myDpOptions"  angular-mydatepicker autocomplete="off" class="form-control"
+                                           formControlName="dob" name="dp" placeholder="mm-dd-yyyy">
+                                    <div class="input-group-append">
+                                        <button (click)="dp.toggleCalendar()" class="btn btn-primary" type="button">
+                                            <i class="fa fa-calendar-o"></i></button>
+                                    </div>
+                                </div>
+                                <!--                                <em *ngIf="registrationform.get('dob').invalid && (registrationform.get('dob').dirty || registrationform.get('dob').touched)" class="error">-->
+                                <!--                                    &lt;!&ndash;                                    {{emailErrorMessage(pickerInput.value)}}&ndash;&gt;-->
+                                <!--                                    DOB is invalid-->
+                                <!--                                </em>-->
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-12 col-md-4 col-xl-3 ml-1" for="validationCustom07"><span style="visibility: hidden">*</span>
+                                Gender</label>
+                            <div class="col-12 col-md-7 col-xl-8">
+                                <select class="form-control"  formControlName="gender" id="validationCustom07">
+                                    <option disabled value="">Select Gender</option>
+                                    <option value="male">Male</option>
+                                    <option value="female">Female</option>
+                                    <option value="n/a">Do not want to disclose</option>
+                                </select>
+<!--                                <em *ngIf="!registrationform.get('gender').valid && (registrationform.get('gender').dirty || registrationform.get('gender').touched)" class="error">Gender is required</em>-->
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-12 col-md-4 col-xl-3 ml-1" for="validationCustom8"><span style="visibility: hidden">*</span>
+                                Address 1</label>
+                            <div class="col-12 col-md-7 col-xl-8">
+                                <input class="form-control" formControlName="address1" id="validationCustom8"
+                                       placeholder="Address1" type="text">
+<!--                                <em *ngIf="!registrationform.get('address1').valid && (registrationform.get('address1').dirty || registrationform.get('address1').touched)" class="error">Address 1 is required</em>-->
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-12 col-md-4 col-xl-3 ml-1" for="validationCustom9"><span style="visibility: hidden">*</span>
+                                Address 2</label>
+                            <div class="col-12 col-md-7 col-xl-8">
+                                <input class="form-control" formControlName="address2" id="validationCustom9"
+                                       placeholder="Address2" type="text" >
+                                <!--                        <em class="error" *ngIf="!studentform.get('address2').valid && (studentform.get('address2').dirty || studentform.get('address2').touched)">Address 2 is required</em>-->
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-12 col-md-4 col-xl-3 ml-1" for="validationCustom10"><span style="visibility: hidden">*</span>
+                                City</label>
+                            <div class="col-12 col-md-7 col-xl-8">
+                                <input class="form-control" formControlName="city" id="validationCustom10"
+                                       placeholder="City" type="text">
+<!--                                <em *ngIf="!registrationform.get('city').valid && (registrationform.get('city').dirty || registrationform.get('city').touched)" class="error">City is required</em>-->
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-12 col-md-4 col-xl-3 ml-1"><span style="visibility: hidden">*</span>
+                                State</label>
+                            <div class="col-12 col-md-7 col-xl-8">
+                                <ng-select [items]="stateListData"
+                                           bindLabel="name"
+                                           bindValue="state_id"
+                                           formControlName="state"
+                                           placeholder="Please Select"
+                                >
+                                </ng-select>
+<!--                                <em *ngIf="!registrationform.get('state').valid && (registrationform.get('state').dirty || registrationform.get('state').touched)" class="error">State is required</em>-->
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-12 col-md-4 col-xl-3 ml-1"><span style="visibility: hidden">*</span>
+                                Country</label>
+                            <div class="col-12 col-md-7 col-xl-8">
+                                <ng-select (change)="stateList($event.country_id)"
+                                           [items]="countryListData"
+                                           bindLabel="name"
+                                           bindValue="country_id"
+                                           formControlName="country"
+                                           placeholder="Please Select"
+                                >
+                                </ng-select>
+<!--                                <em *ngIf="!registrationform.get('country').valid && (registrationform.get('country').dirty || registrationform.get('country').touched)" class="error">Country is required</em>-->
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-12 col-md-4 col-xl-3 ml-1" for="validationCustom13"><span style="visibility: hidden">*</span>
+                                ZIP </label>
+                            <div class="col-12 col-md-7 col-xl-8">
+                                <input class="form-control" formControlName="postalCode" id="validationCustom13"
+                                       placeholder="Enter Zip" type="text">
+<!--                                <em *ngIf="!registrationform.get('postalCode').valid && (registrationform.get('postalCode').dirty || registrationform.get('postalCode').touched)" class="error">ZIP Code is required</em>-->
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-12 col-md-4 col-xl-3 ml-1" for="validationCustom13"><span>*</span>
+                                Password </label>
+                            <div class="col-12 col-md-7 col-xl-8">
+                                <input class="form-control" formControlName="password"
+                                       placeholder="Enter password" required="" type="text">
+                                <em *ngIf="!registrationform.get('password').valid && (registrationform.get('password').dirty || registrationform.get('password').touched)" class="error">Password is required</em>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-12 col-md-4 col-xl-3 ml-1"><span style="visibility: hidden">*</span>
+                                Profile Photo</label>
+                            <div class="col-12 col-xl-8 col-md-7">
+                                <input #myInput (change)="encodeImageFileAsURL($event)" accept=".png, .jpeg, .jpg" class="custom-upload-input" type="file">
+                                <!--                                <em class="error" *ngIf="!teacherForm.get('profile').valid && (teacherForm.get('profile').dirty || teacherForm.get('profile').touched)">Profile photo is required</em>-->
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-12 col-md-4 col-xl-3"  style="position: relative; left: 25%">
+                                <div *ngFor="let file of imagepath;let i= index" class="files-list fit-image">
+                                    <img  *ngIf="imagepath != ''"  [src]="sanitizer.bypassSecurityTrustResourceUrl(webhost + '/' + file)" alt="">
+                                    <i (click)="deleteImg()" *ngIf="imagepath != ''" class="fa fa-times" style="position: relative; right: 26px; bottom: 85px; cursor: pointer;  background: #eeeeee;
+       padding: 10px; border-radius: 45px;" title="close" ></i>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="pull-right">
+                        <button class="btn btn-primary" type="button" (click)="save()">Save</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,82 @@
+<!-- Container-fluid starts-->
+<div class="container-fluid">
+    <div class="row">
+        <div class="group-btn col-8 col-lg-9 mt-2">
+            <button type="button" [ngClass]="{'active1': classlisthighlight == '3'}" class="btn btn-outline-primary {{env.deviceType() ? 'border-radius-20' : ''}}" (click)="classList(3)">In Progress</button>
+            <button type="button" [ngClass]="{'active1': classlisthighlight == '2'}" class="btn btn-outline-primary {{env.deviceType() ? 'border-radius-20' : ''}}" (click)="classList(2)">Upcoming</button>
+            <button type="button" [ngClass]="{'active1': classlisthighlight == '4'}" class="btn btn-outline-primary {{env.deviceType() ? 'border-radius-20' : ''}}" (click)="classList(4)">Completed</button>
+            <button type="button" [ngClass]="{'active1': classlisthighlight == '1'}" class="btn btn-outline-primary {{env.deviceType() ? 'border-radius-20' : ''}}" (click)="classList(1)">All</button>
+        </div>
+        <div class="col-4 col-lg-3 {{env.deviceType() ? 'mt-2' : ''}}">
+            <div class="pull-right">
+                <div class="input-group">
+                    <input type="text" class="form-control"  [ngStyle]="{'height' : env.deviceType() ? '34px' : '40px'}" size="50" placeholder="Search Class" [(ngModel)]="searchClass" (input)="updateFilter(searchClass)" >
+                    <div class="input-group-append">
+                        <button class="btn btn-primary {{env.deviceType() ? 'py-0 border-radius-2' : ''}}" type="submit"><i class="fa fa-search" aria-hidden="true"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 mt-2 mb-2 text-right">
+            <button type="button" class="btn btn-outline-primary {{env.deviceType() ? 'border-radius-20' : ''}}" [routerLink]="'/studentlogin/enrollclass'">Enroll Class</button>
+        </div>
+    </div>
+    <div class="row d-flex justify-content-center list-card mt-5" *ngIf="choosedData==''">
+        <div class="col-4">
+            <button class="nodataList">No Class Available !</button>
+        </div>
+    </div>
+    <section class="row list-card" *ngIf="choosedData!=''">
+        <div class="col-md-12">
+            <div class="card class-card class-hover" *ngFor="let list of choosedData; let i = index" (click)="enterList(i, list)">
+                <div class="card-body {{env.deviceType() ? 'px-2 py-3' : ''}}">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h4 class="t-period"><span class="badge badge-secondary mr-2" *ngIf="list.status == '1'">Not Started</span>
+                                <span class="badge  badge-warning mr-2" *ngIf="list.status == '2'">In-Progress</span>
+                                <span class="badge  badge-success mr-2" *ngIf="list.status == '3'">Complete</span>
+                                <span class="font-weight-bold">{{list.class_name}} </span>
+                            </h4>
+                            <p>
+                                <span class="font-weight-bold">Subject: </span> <span class="t-name font-weight-bold">{{list.subject_name}}</span> &nbsp; &nbsp;
+                            </p>
+                        </div>
+                        <div class="col-md-6 d-flex" style="justify-content: flex-end">
+                            <div class="row">
+                                <div class="col-md-12 text-right">
+                                    <p *ngIf="list.start_date == '0000-00-00'&& list.end_date == '0000-00-00'"><span class="font-weight-bold">Start: </span>  &nbsp; &nbsp;
+                                        <span class="font-weight-bold">End: </span>
+                                    </p>
+                                    <p *ngIf="list.start_date != '0000-00-00'&& list.end_date != '0000-00-00'"><span class="font-weight-bold">Start: </span> <span class="t-name font-weight-bold">{{list.start_date|date:'MM-dd-yyyy'}}<span *ngIf="list.start_time != ''">, {{list.start_time}}</span></span> &nbsp; &nbsp;
+                                        <span class="font-weight-bold">End: </span> <span class="t-name font-weight-bold">{{list.end_date|date:'MM-dd-yyyy'}}<span *ngIf="list.end_time != ''">, {{list.end_time}}</span></span>
+                                    </p>
+                                </div>
+                                <div class="col-12 mt-2 d-flex flex-wrap justify-content-end">
+                                    <span class="badge ml-2 mb-1 p-2" style="background-color: #73b5a8; color: white;" *ngFor="let item of list.availabilityDate">{{dayFromInt(item.slotday) + ': '}}{{item.slotstarttime + ' - ' + item.slotendtime}}</span>
+                                </div>
+<!--                                <div class="col-12 mt-2">-->
+<!--                                    <button type="button" class="btn-sm-i btn-outline-primary pull-right" [disabled]="classlisthighlight == '2'  || list.status == '1'" (click)="enterList(i, list)">Enter</button>-->
+<!--                                </div>-->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+<!-- Container-fluid Ends-->
+<ng-template #throwError>
+    <div class="modal-header">
+        <h4 class="modal-title letter">{{ErrorTitle}}</h4>
+        <i class="fa fa-close cursor" (click)="onSave()" ></i>
+    </div>
+    <div class="modal-body text-center">
+        <p><b>{{message}}</b></p>
+    </div>
+    <div class="modal-footer">
+        <div class="btn-popup pull-right">
+            <button class="btn btn-outline-primary" (click)="onSave()">ok</button>
+        </div>
+    </div>
+</ng-template>

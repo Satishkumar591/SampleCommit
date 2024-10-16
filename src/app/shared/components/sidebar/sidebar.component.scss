@@ -1,0 +1,29 @@
+
+
+//.showWeb{
+//  display: revert;
+//}
+//
+//.showMob{
+//  display: block;
+//}
+
+@media only screen and (min-device-width: 1024px) {
+
+  .showWeb{
+    display: block;
+  }
+
+  .showMob{
+    display: revert;
+  }
+}
+//@media screen and (max-device-width: 1366px) and (min-device-width: 1200px) {
+//
+//
+//}
+
+//xs (for phones - screens less than 768px wide)
+//sm (for tablets - screens equal to or greater than 768px wide)
+//md (for small laptops - screens equal to or greater than 992px wide)
+//lg (for laptops and desktops - screens equal to or greater than 1200px wide)

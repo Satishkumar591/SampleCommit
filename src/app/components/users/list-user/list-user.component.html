@@ -1,0 +1,25 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12 user-card">
+            <ul class="nav nav-tabs mb-0 color-primary">
+                <li class="nav-item cursor" *ngIf="allowAdmin">
+                    <a (click)="page = 'Admin'" aria-current="page" class="nav-link {{page == 'Admin' ? 'active' : ''}}"><b>Admin</b></a>
+                </li>
+                <li class="nav-item cursor" *ngIf="allowStudent">
+                    <a (click)="page = 'Student'" aria-current="page" class="nav-link {{page == 'Student' ? 'active' : ''}}"><b>Student</b></a>
+                </li>
+                <li class="nav-item cursor" *ngIf="auth.getRoleId() != '4'">
+                    <a (click)="page = 'Teacher'" class="nav-link {{page == 'Teacher' ? 'active' : ''}}"><b>Teacher</b></a>
+                </li>
+                <li class="nav-item cursor" *ngIf="allowContent">
+                    <a (click)="page = 'Creator'" class="nav-link {{page == 'Creator' ? 'active' : ''}}"><b>Content-Creator</b></a>
+                </li>
+            </ul>
+
+                <app-list-admin [page]="schoolid" *ngIf="page == 'Admin' && allowAdmin"></app-list-admin>
+                <app-list-student [page]="schoolid" *ngIf="page == 'Student' && allowStudent"></app-list-student>
+                <app-list-teacher [page]="schoolid" *ngIf="page == 'Teacher'"></app-list-teacher>
+                <app-list-creator [page]="schoolid" *ngIf="page == 'Creator' && allowContent"></app-list-creator>
+        </div>
+    </div>
+</div>

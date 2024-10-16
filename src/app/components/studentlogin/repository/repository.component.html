@@ -1,0 +1,187 @@
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-header">
+            <div class="row mt-2 px-3">
+                <div class="col-6">
+<!--                    <h5>Content Repository</h5>-->
+                </div>
+                <div class="col-6 d-flex justify-content-end">
+                    <div class="col-6">
+                        <div class="input-group">
+                            <input (input)="updateFilter()" [(ngModel)]="searchRepositroy" class="form-control" placeholder="Search Content" size="50" style="height:40px" type="text" >
+                            <div class="input-group-append">
+                                <button class="btn btn-primary" type="submit"><i aria-hidden="true" class="fa fa-search"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="btn-popup pull-right">
+                        <a [routerLink]="'/studentlogin/repository/content/add'" class="btn btn-primary ml-3">Add Content</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div *ngIf="contentList.length != 0" class="col-12 blogger-list">
+                <div class="col-md-12 d-flex justify-content-end my-2 px-0">
+                    <button (click)="showFolderDropdown()" *ngIf="selectedContent.length > 1 && !isShowFolderDropdown" class="btn btn-outline-primary mr-3">Move to folder</button>
+                    <button (click)="clearSelectedContent()" *ngIf="isShowFolderDropdown" class="btn btn-danger-gradien mr-3">Abort</button>
+                    <ng-select (change)="selectFolder($event)"
+                               *ngIf="isShowFolderDropdown"
+                               [items]="folderList"
+                               bindLabel="category_name"
+                               bindValue="category_id"
+                               class="col-md-2 px-0"
+                               placeholder="Select Folder *"
+                    >
+                    </ng-select>
+                </div>
+                <ngx-datatable
+                        (select)="onSelect($event)"
+                        [columnMode]="ColumnMode.force"
+                        [footerHeight]="50"
+                        [headerHeight]="50"
+                        [limit]="10"
+                        [rows]="contentList"
+                        [selectionType]="selectionType.checkbox"
+                        [selected]="selectedContent"
+                        class="bootstrap repository-table"
+                        rowHeight="auto"
+                >
+                    <ngx-datatable-column
+                            [canAutoResize]="false"
+                            [checkboxable]="true"
+                            [draggable]="false"
+                            [resizeable]="false"
+                            [sortable]="false"
+                            [width]="30"
+                    >
+                    </ngx-datatable-column>
+                    <ngx-datatable-column [canAutoResize]="true" [draggable]="false" [width]="40" class="custom-table-column" name="Content" prop="name">
+                        <ng-template let-row="row" let-rowIndex="rowIndex" let-value="value" ngx-datatable-cell-template>
+                            <h6 (click)="previewContent(row)" class="text-center cursor name-hover mb-0 font-weight-bold">{{row.name}}</h6>
+                        </ng-template>
+                    </ngx-datatable-column>
+                    <ngx-datatable-column [canAutoResize]="true" [draggable]="false" [width]="30" class="custom-table-column contenttext" name="Folder" prop="category_name">
+                        <ng-template let-row="row" let-rowIndex="rowIndex" let-value="value" ngx-datatable-cell-template>
+                            <div *ngIf="row.category_name.length != 0" class="d-flex flex-wrap justify-content-center">
+                                <h6 (click)="viewAssignedContent(row, i)" *ngFor="let item of row.category_name; let i = index" class="text-center name-hover mb-0 font-weight-bold cursor" style="color: black">{{item}}{{(i + 1) != row.category_name.length ? ', &nbsp;' : ''}}</h6>
+                            </div>
+                            <span *ngIf="row.category_name.length == 0" class="font-weight-bold">-</span>
+                        </ng-template>
+                    </ngx-datatable-column>
+                    <ngx-datatable-column [canAutoResize]="true" [draggable]="false" [width]="20" class="custom-table-column contenttext" name="Status">
+                        <ng-template let-row="row" let-rowIndex="rowIndex" let-value="value" ngx-datatable-cell-template>
+                            <label class="{{row.status == '2' ? 'color-red' : ''}} font-weight-bold mr-2">In-Active</label>
+                            <label class="toggle">
+                                <input (click)="statusChange($event, row)" [checked]="row.status == '1'" type="checkbox">
+                                <span class="slider round"></span>
+                            </label>
+                            <label class="{{row.status == '1' ? 'color-green' : ''}} font-weight-bold ml-2">Active</label>
+                        </ng-template>
+                    </ngx-datatable-column>
+                    <ngx-datatable-column [canAutoResize]="true" [draggable]="false" [width]="30" class="custom-table-column contenttext" name="Action">
+                        <ng-template class="justify-content-center flex-wrap" let-row="row" let-rowIndex="rowIndex" let-value="value" ngx-datatable-cell-template>
+                            <i (click)="moveSingleFolder(row)" *ngIf="selectedContent.length < 2" class="fa fa-folder-o color-primary align-self-center cursor" style="font-size: 20px" title="Move to Folder"></i>
+                            <i (click)="showClassList(row)" class="fa fa-share-alt color-primary ml-3 align-self-center cursor" style="font-size: 20px" title="Share to Class"></i>
+                            <i (click)="previewContent(row)" class="fa fa-eye color-primary ml-3 align-self-center cursor" style="font-size: 20px" title="Preview"></i>
+                            <i (click)="editContent(row)" class="fa fa-pencil-square color-primary ml-3 align-self-center cursor" style="font-size: 20px" title="Edit"></i>
+                            <i (click)="openDeleteTemplate(row)" class="fa fa-trash color-primary ml-3 align-self-center cursor" style="font-size: 20px" title="Delete"></i>
+<!--                            <i (click)="row.selected = true" class="fa fa-archive color-primary ml-3 align-self-center cursor" style="font-size: 20px" title="Move to folder"></i>-->
+                            <div *ngIf="row.isShowClassList == true" class="col-md-12 px-0 d-flex mt-2">
+                                <ng-select (change)="shareRepository($event)"
+                                           [items]="classList"
+                                           appendTo="body"
+                                           bindLabel="class_name"
+                                           bindValue="class_id"
+                                           class="flex-fill"
+                                           dropdownPosition="bottom"
+                                           placeholder="Select Class *"
+                                >
+                                </ng-select>
+                                <i (click)="row.isShowClassList = false; this.selectedClass = ''" class="fa fa-times-circle color-red align-self-center ml-2" style="font-size: x-large"></i>
+                            </div>
+                            <div *ngIf="row.singleMove == true" class="col-md-12 px-0 d-flex mt-2">
+                                <ng-select (change)="selectFolder($event)"
+                                           [items]="folderList"
+                                           appendTo="body"
+                                           bindLabel="category_name"
+                                           bindValue="category_id"
+                                           class="flex-fill"
+                                           dropdownPosition="bottom"
+                                           placeholder="Select Folder *"
+                                >
+                                </ng-select>
+                                <i (click)="moveToFolder()" class="fa fa-check-circle color-green align-self-center ml-2" style="font-size: x-large"></i>
+                                <i (click)="row.singleMove = false;" class="fa fa-times-circle color-red align-self-center ml-2" style="font-size: x-large"></i>
+                            </div>
+                        </ng-template>
+                    </ngx-datatable-column>
+                </ngx-datatable>
+            </div>
+            <div *ngIf="contentList.length == 0" class="row my-3 d-flex justify-content-center align-items-center" style="height: 50vh">
+                <div class="col-4 text-center">
+                    <button class="nodataList">No Content Available!</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<ng-template #confirmMove let-c="close" let-d="dismiss">
+    <div class="modal-header d-flex justify-content-between">
+        <span class="d-flex flex-wrap font-weight-bold">Move to &nbsp;&nbsp;<h4 class="color-primary font-weight-bold">{{folderName}}</h4></span><i (click)="this.modalRef.close()" class="fa fa-times-circle cursor" style="font-size: 1.2rem"></i>
+    </div>
+    <div class="modal-body" style="border: 0px">
+        <div class="container-fluid">
+            <div class="col-md-12 mt-2">
+                <span class="color-grey">Are you sure to move this Content to <span class="color-primary font-weight-bold"> {{folderName}}</span>?</span>
+            </div>
+            <div class="col-12 mt-5 px-0">
+                <button (click)="moveToFolder()" class="btn btn-primary pull-right">Confirm</button>
+                <button (click)="this.modalRef.close()" class="btn btn-outline-primary mr-2 pull-right">Cancel</button>
+            </div>
+        </div>
+    </div>
+</ng-template>
+<ng-template #deleteTemplate let-c="close" let-d="dismiss">
+    <div class="modal-header d-flex justify-content-between">
+        <h4 class="color-primary font-weight-bold">{{deleteDetail.name}}</h4><i (click)="this.modalRef.close()" class="fa fa-times-circle cursor" style="font-size: 1.2rem"></i>
+    </div>
+    <div class="modal-body" style="border: 0px">
+        <div class="container-fluid">
+            <div class="col-md-12 mt-2">
+                <span class="color-grey">Are you sure to delete this Content?</span>
+            </div>
+            <div class="col-12 mt-5 px-0">
+                <button (click)="deleteContent()" class="btn btn-primary pull-right">Confirm</button>
+                <button (click)="this.modalRef.close()" class="btn btn-outline-primary mr-2 pull-right">Cancel</button>
+            </div>
+        </div>
+    </div>
+</ng-template>
+<ng-template #previewRepository let-c="close" let-d="dismiss">
+    <div class="modal-header d-flex justify-content-between">
+        <h4 class="color-primary font-weight-bold">{{previewDetail.name}}</h4><i (click)="this.modalRef.close()" class="fa fa-times-circle cursor" style="font-size: 1.2rem"></i>
+    </div>
+    <div class="modal-body" style="border: 0px">
+        <div class="container-fluid">
+            <div class="col-md-12">
+                <pdf-viewer  [src]="pdfTemplate" style="display: block;"></pdf-viewer>
+            </div>
+        </div>
+    </div>
+</ng-template>
+<ng-template #assignClass let-c="close" let-d="dismiss">
+    <div class="modal-header d-flex justify-content-between">
+        <span class="mb-0">Share Content</span><i (click)="this.modalRef.close()" class="fa fa-times-circle cursor" style="font-size: 1.2rem"></i>
+    </div>
+    <div class="modal-body" style="border: 0px">
+        <div class="container-fluid">
+            <div class="col-md-12 mt-2 px-0">
+                <textarea [(ngModel)]="this.remarks" class="form-control" cols="30" placeholder="Enter Remarks here" rows="7"></textarea>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button (click)="assignToContent()" class="btn btn-primary pull-right">Assign</button>
+    </div>
+</ng-template>

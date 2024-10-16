@@ -1,0 +1,112 @@
+<!-- Container-fluid starts-->
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card tab2-card">
+                <div class="card-header">
+                    <h5 class="text-capitalize"  *ngIf="type == 'add'" >Add Admin</h5>
+                    <h5 class="text-capitalize"  *ngIf="type == 'edit'" >Edit Admin</h5>
+                    <label class="text-muted">All fields marked with <span class="text-danger">*</span> are required</label>
+                </div>
+                <div class="card-body tab2-card">
+                    <form [formGroup]="adminForm" class="needs-validation user-add" novalida>
+                        <div class="form-group row">
+                            <label for="validationCustom0" class="col-xl-3 col-md-4"><span>*</span>
+                               First Name</label>
+                            <div class="col-xl-8 col-md-7">
+                                <input class="form-control " formControlName="firstName" id="validationCustom0"
+                                       type="text" placeholder="First Name" required="">
+                                <em class="error" *ngIf="!adminForm.get('firstName').valid && (adminForm.get('firstName').dirty || adminForm.get('firstName').touched)">First name is required</em>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="validationCustom1" class="col-xl-3 col-md-4"><span>*</span>
+                                Last Name</label>
+                            <div class="col-xl-8 col-md-7">
+                                <input  class="form-control " formControlName="lastName" id="validationCustom1"
+                                       type="text" placeholder="Last Name" required="">
+                                <em class="error" *ngIf="!adminForm.get('lastName').valid && (adminForm.get('lastName').dirty || adminForm.get('lastName').touched)">Last name is required</em>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="validationCustom2" class="col-xl-3 col-md-4"><span>*</span>
+                                 Email Address</label>
+                            <div class="col-xl-8 col-md-7">
+                                <input class="form-control" formControlName="email_id" id="validationCustom2" pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-z]{2,4}$"
+                                       type="email" placeholder="Email" required="">
+                                <em class="error" *ngIf="adminForm.get('email_id').hasError('required') && (adminForm.get('email_id').dirty || adminForm.get('email_id').touched)">Email is required</em>
+                                <em class="error" *ngIf="adminForm.get('email_id').hasError('pattern')">Invalid Email-Id</em>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="validationCustom3" class="col-xl-3 col-md-4"><span>*</span>
+                                Contact Number</label>
+                            <div class="col-xl-8 col-md-7">
+                                <input class="form-control " formControlName="mobile" id="validationCustom3"
+                                       type="text" placeholder="Contact Number" (keypress)="numberPattern($event)" maxlength="15" minlength="10" required="">
+                                <em class="error" *ngIf="!adminForm.get('mobile').valid && (adminForm.get('mobile').dirty || adminForm.get('mobile').touched)">Contact Number is required</em>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="validationCustom7" class="col-xl-3 col-md-4"><span style="visibility: hidden">*</span>
+                                Gender</label>
+                            <div class="col-xl-8 col-md-7">
+                                <select class="form-control"  formControlName="gender" id="validationCustom7">
+                                    <option value="">Select Gender</option>
+                                    <option value="male">Male</option>
+                                    <option value="female">Female</option>
+                                    <option value="n/a">Do not want to disclose</option>
+                                </select>
+                                <em class="error" *ngIf="!adminForm.get('gender').valid && (adminForm.get('gender').dirty || adminForm.get('gender').touched)">Gender is required</em>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-xl-3 col-md-4" ><span style="visibility: hidden">*</span>
+                                Date Of Birth</label>
+                            <div class="col-xl-8 col-md-7 form-group">
+                                <div class="input-group">
+                                    <input class="form-control" name="mydate" placeholder="mm-dd-yyyy" (keypress)="datePattern($event)"
+                                           formControlName="dob" angular-mydatepicker #db="angular-mydatepicker" [options]="myDpOptions"
+                                           (dateChanged)="onDateChanged($event)"/>
+                                    <div class="input-group-append">
+                                        <button type="button" class="btn btn-primary" (click)="db.toggleCalendar()">
+                                            <i class="fa fa-calendar-o"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <em class="error" *ngIf="!adminForm.get('dob').valid && (adminForm.get('dob').dirty || adminForm.get('dob').touched)">Date of Birth is required</em>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-xl-3 col-md-4">
+                                <label class="form-check-label"><span style="visibility: hidden">*</span>
+                                    Allow Dashboard</label>
+                            </div>
+                            <div class="col-xl-8 col-md-7" style="position: relative; left: 1.5rem">
+                                <input type="checkbox" class="form-check-input" formControlName="allowDash">Yes
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-xl-3 col-md-4"><span>*</span>
+                                Status</label>
+                            <div class="col-xl-8 col-md-7">
+                                <select class="form-control " formControlName="status">
+                                    <option value="1">Active</option>
+                                    <option value="2">Inactive</option>
+                                    <option *ngIf="type == 'edit'" value="3">Suspended</option>
+                                    <option *ngIf="type == 'edit'" value="4">Deleted</option>
+                                </select>
+                                <em class="error" *ngIf="!adminForm.get('status').valid && (adminForm.get('status').dirty || adminForm.get('status').touched)">status is required</em>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="pull-right">
+                        <button type="button" *ngIf="type == 'add'" (click)="addAdmin('add')" class="btn btn-primary">Save</button>
+                        <button type="button" *ngIf="type == 'edit'" (click)="addAdmin('edit')" class="btn btn-primary">Update</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Container-fluid Ends-->

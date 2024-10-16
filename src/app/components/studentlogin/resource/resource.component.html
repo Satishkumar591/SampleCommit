@@ -1,0 +1,131 @@
+<div class="container-fluid">
+    <div *ngIf="pageType == 1" class="row justify-content-end">
+        <!--        <div class="group-btn col-md-9">-->
+        <!--            <button (click)="resource(3)" class="btn btn-outline-primary" [ngClass]="{'active1': filterType == 3}" type="button">In progress</button>-->
+        <!--            &lt;!&ndash;            <button (click)="assessmentList(2, sortType)" [ngClass]="{'active1': filterType == 2}" class="btn btn-outline-primary" type="button">Upcoming</button>&ndash;&gt;-->
+        <!--            <button (click)="resource(4)" class="btn btn-outline-primary" [ngClass]="{'active1': filterType == 4}" type="button">Completed</button>-->
+        <!--            <button (click)="resource(1)" class="btn btn-outline-primary" [ngClass]="{'active1': filterType == 1}" type="button">All</button>-->
+        <!--        </div>-->
+        <div class="col-md-{{mobileView ? '4' : '3'}} btn-popup pull-right">
+            <div class="input-group">
+                <input (input)="updateFilter(searchKey)" [(ngModel)]="searchKey" class="form-control"
+                    placeholder="Search by Resource name" size="50"
+                    [ngStyle]="{'height' : env.deviceType() ? '34px' : '40px'}" type="text">
+                <div class="input-group-append">
+                    <button class="btn btn-primary  {{env.deviceType() ? 'py-0 border-radius-2' : ''}}" type="submit"><i
+                            aria-hidden="true" class="fa fa-search"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div *ngIf="pageType == 2" class="row justify-content-between px-3">
+        <h4>Resource Name: <span class="color-primary font-weight-bold">{{contentName}}</span></h4>
+        <div>
+            <button *ngIf="linkdata?.length != '0'" class="btn btn-primary pull-right mr-2"
+                (click)="otherlink()">Resources</button>
+            <!-- <a *ngIf="contentResponse?.download != '0'" [href]="pdfTemplate" [download]="downloadTemplateName"
+                class="btn btn-outline-primary pull-right mr-2">Download Pdf</a> -->
+            <a *ngIf="contentResponse?.download != '0'" [download]="downloadTemplateName" [href]="pdfTemplate">
+                <i class="fa fa-download color-primary icon" title="Download PDF" aria-hidden="true"></i>
+            </a>
+            <button (click)="pageType = 1" class="btn btn-outline-primary pull-right mr-2" type="button">Back</button>
+        </div>
+    </div>
+    <div class="row d-flex justify-content-center list-card mt-5" *ngIf="resourceList.length == 0 && pageType == 1">
+        <div class="col-4">
+            <button class="nodataList">No Resource Available!</button>
+        </div>
+    </div>
+    <section *ngIf="resourceList.length != 0 && pageType == 1" class="row list-card mt-2 d-flex">
+        <div class="col-md-12">
+            <div class="card col-md-12 px-0">
+                <div class="col-md-12 card-header px-0">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="col-md-4 d-flex mb-0">Resource</h5>
+                        <h5 class="col-md-3 d-flex mb-0">Subject</h5>
+                        <h5 class="col-md-3 d-flex mb-0">Class</h5>
+                        <h5 class="col-md-2 d-flex mb-0">End Date</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12 px-0">
+                <div (click)="viewResource(list)" *ngFor="let list of resourceList"
+                    class="card class-card class-hover px-0 mb-1-5">
+                    <div class="d-flex justify-content-between align-items-center py-2-5 cursor">
+                        <h5 class="col-md-4 mb-0"><span class="t-name font-weight-bold">{{list.content_name}}</span>
+                        </h5>
+                        <p class="col-md-3 mb-0"><span class="font-weight-bold">{{list.subject_name}}</span></p>
+                        <p class="col-md-3 mb-0"><span
+                                class="font-weight-bold"><strong>{{list.class_name}}</strong></span></p>
+                        <p class="col-md-2 mb-0"><span *ngIf="list.end_date != '0000-00-00'"
+                                class="font-weight-bold">{{list.end_date|date:'MM-dd-yyyy'}}</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <div *ngIf="pageType == 2">
+        <app-annotation (annotate)="getAreaInfo($event)" *ngIf="functionCalled && !cfs && !showLink"
+            [getAnnotate]="areaInfo" [pdfPath]="pdfTemplate" [toolAlignCenter]="true"
+            [userType]="'student'"></app-annotation>
+        <div class="col-md-12 px-0 mt-4" *ngIf="functionCalled && !cfs && showLink">
+            <a [title]="getpdf[0].link" [href]="getpdf[0].link" target="_blank">
+                <div class="col-md-12 flex-center flex-wrap link-card" style="height: 90vh">
+                    <div class="col-md-12 d-flex justify-content-center">
+                        <a [title]="getpdf[0].link" [href]="getpdf[0].link" target="_blank">
+                            <img *ngIf="getpdf[0].type == 'document'" class="size-120px"
+                                src="assets/images/icons/doc-icon.png" alt="doc">
+                            <img *ngIf="getpdf[0].type == 'audio'" class="size-120px"
+                                src="assets/images/icons/audio-icon.png" alt="mp3">
+                            <img *ngIf="getpdf[0].type == 'video'" class="size-120px"
+                                src="assets/images/icons/video-icon.png" alt="mp4">
+                            <img *ngIf="getpdf[0].type == 'ppt'" class="size-120px"
+                                src="assets/images/icons/ppt-icon.png" alt="ppt">
+                            <img *ngIf="getpdf[0].type == 'Others'" class="size-120px"
+                                src="assets/images/icons/others-icon.png" alt="others">
+                        </a>
+                    </div>
+                    <a [title]="getpdf[0].link" [href]="getpdf[0].link" target="_blank">{{getpdf[0].name}}</a>
+                </div>
+            </a>
+        </div>
+        <div *ngIf="functionCalled && cfs" class="col-12 mt-2 p-2">
+            <div class="col-12 mt-3 px-0" *ngIf="cfsData != ''">
+                <div class="card"
+                    style="border-bottom: 3px solid #e6baea !important; border-right: 3px solid #e6baea !important">
+                    <div class="card-body py-3 px-4">
+                        <h4 class="mb-3 font-weight-bold">Description:</h4>
+                        <div class="ml-2">
+                            <span [innerHTML]="cfsData | sanitizeHtml"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<ng-template #content let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h4 class="modal-title font-weight-bold" id="modal-basic-title">Resources</h4>
+    </div>
+    <div class="modal-body">
+        <!-- Container-fluid starts-->
+        <div class="container-fluid">
+            <div class="row" *ngFor="let item of linkdata; let last = last">
+                <div class="col-md-12">
+                    <a class="cursor" href="{{item.link}}" target="_blank">
+                        <span style="overflow: scroll; overflow-y: hidden" title="{{item.name}}">{{item.name != '' ?
+                            item.name : item.link}}</span>
+                    </a>
+                    <hr *ngIf="!last">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn cancel" (click)="onSave()">Cancel</button>
+    </div>
+</ng-template>

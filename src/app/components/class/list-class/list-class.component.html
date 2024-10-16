@@ -1,0 +1,957 @@
+<!-- Container-fluid starts-->
+<div id="pre-loader" *ngIf="commondata.loader.value">
+    <img src="assets/images/pre-loader/loader-01.svg" alt="">
+</div>
+
+<div class="container-fluid" *ngIf="schoolStatus?.length != 0">
+    <div id="custom-pdf-loader-editor" *ngIf="showLoader">
+        <img src="assets/images/pre-loader/loader-01.svg" alt="">
+    </div>
+    <div class="row">
+        <div class="group-btn col-12 col-lg-9 mt-2 classDisable">
+            <button type="button" [ngClass]="{'active1': classlisthighlight == '3'}" [disabled]="!buttonSelect"
+                    class="btn btn-outline-primary"
+                    (click)="pageNo = 1;choosedData = [] ;setSearch_Filter(3);classList(3)">Active
+            </button>
+            <button type="button" [ngClass]="{'active1': classlisthighlight == '2'}" [disabled]="!buttonSelect"
+                    class="btn btn-outline-primary"
+                    (click)="pageNo = 1;choosedData = [] ;setSearch_Filter(2);classList(2)">Upcoming
+            </button>
+            <button type="button" [ngClass]="{'active1': classlisthighlight == '4'}" [disabled]="!buttonSelect"
+                    class="btn btn-outline-primary"
+                    (click)="pageNo = 1;choosedData = [] ;setSearch_Filter(4);classList(4)">Completed
+            </button>
+            <button type="button" [ngClass]="{'active1': classlisthighlight == '1'}" [disabled]="!buttonSelect"
+                    class="btn btn-outline-primary"
+                    (click)="pageNo = 1;choosedData = [] ;setSearch_Filter(1);classList(1)">All
+            </button>
+            <button type="button" [ngClass]="{'active1': classlisthighlight == '6'}" [disabled]="!buttonSelect"
+                    class="btn btn-outline-primary"
+                    (click)="pageNo = 1;choosedData = [] ;setSearch_Filter(6);classList(6)">Draft
+            </button>
+        </div>
+        <div class="col-12 col-lg-3 mt-2">
+            <div class="row">
+                <div class="col-12">
+                    <button type="button" *ngIf="allowClass" class="btn btn-primary pull-right"
+                            [routerLink]="'/class/create-class/add'">Add Class
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mt-3">
+        <div *ngIf="teacherType != 1 || auth.getRoleId() == '2' || auth.getRoleId() == '6'"
+             class="col-12 col-sm-6 col-lg-2 align-self-center">
+            <ng-select [items]="batchData"
+                       bindLabel="batch_name"
+                       bindValue="batch_id"
+                       [(ngModel)]="selectCurriculumFolder"
+                       placeholder="Select Content Folder"
+                       typeToSearchText=""
+                       (change)="pageNo = 1;setSearch_Filter(classlisthighlight);classList(classlisthighlight)">
+            </ng-select>
+        </div>
+        <div class="col-12 col-sm-6 col-lg-2 align-self-center">
+            <ng-select [items]="gradeData"
+                       bindLabel="grade_name"
+                       bindValue="grade_id"
+                       [(ngModel)]="selectGrade"
+                       placeholder="Select Grade"
+                       typeToSearchText=""
+                       multiple="true"
+                       (change)="pageNo = 1;setSearch_Filter(classlisthighlight);classList(classlisthighlight)">
+            </ng-select>
+        </div>
+        <div class="col-12 col-sm-6 col-lg-2 align-self-center">
+            <ng-select [items]="subjectData"
+                       bindLabel="subject_name"
+                       bindValue="subject_id"
+                       [(ngModel)]="selectSubject"
+                       placeholder="Select Subject"
+                       typeToSearchText=""
+                       multiple="true"
+                       (change)="pageNo = 1;setSearch_Filter(classlisthighlight);classList(classlisthighlight)">
+            </ng-select>
+        </div>
+        <div class="col-12 col-sm-6 col-lg-3 align-self-center">
+            <div class="pull-right">
+                <div class="input-group">
+                    <input type="text" class="form-control" style="height:40px" size="50" placeholder="Search Class"
+                           [(ngModel)]="searchClass" (input)="pageNo = 1;updateFilter(searchClass, 'searchClass')">
+                    <div class="input-group-append">
+                        <button class="btn btn-primary" type="submit"><i class="fa fa-search" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-sm-6 col-lg-3 align-self-center">
+            <div class="pull-right">
+                <div class="input-group">
+                    <input (input)="pageNo = 1;updateFilter(searchStudent, 'searchStudent')" [(ngModel)]="searchStudent"
+                           class="form-control" placeholder="Search Student" size="50" style="height:40px" type="text">
+                    <div class="input-group-append">
+                        <button class="btn btn-primary" type="submit"><i aria-hidden="true" class="fa fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mt-3" *ngIf="auth.getRoleId() != '4' && classlisthighlight != '6'">
+        <div class="col-12 col-sm-6 col-lg-3">
+            <ng-select [items]="teacherData"
+                       bindLabel="teacher_name"
+                       bindValue="teacher_id"
+                       [(ngModel)]="selectTeacher"
+                       placeholder="Select Teacher"
+                       typeToSearchText=""
+                       (change)="pageNo = 1;selectedTeacher();setSearch_Filter(classlisthighlight); classList(classlisthighlight)">
+            </ng-select>
+        </div>
+    </div>
+    <div class="row d-flex justify-content-center list-card mt-5" *ngIf="choosedData ==''">
+        <div class="col-4">
+            <button class="nodataList">No Data Available!</button>
+        </div>
+    </div>
+    <section class="row scrollPanel4 list-card mt-3" *ngIf="choosedData!=''">
+        <div class="col-12">
+            <div class="row"
+                 infiniteScroll
+                 [infiniteScrollDistance]="2"
+                 [infiniteScrollThrottle]="100"
+                 [infiniteScrollContainer]="selector"
+                 [fromRoot]="true"
+                 (scrolled)="onScrollDown($event)"
+                 (scrolledUp)="onUp($event)">
+                <div class="col-md-12 d-flex flex-column justify-content-center">
+                    <div class="card class-card class-hover w-99" *ngFor="let list of choosedData; let i = index">
+                        <div class="card-body">
+                            <div class="row p-2 cursor" (click)="enterList(i, 'yes', $event)">
+                                <!--                        <div class="col-12 col-md-2">-->
+                                <!--                            <figure *ngIf="list.profile_url == ''">-->
+                                <!--                                <img *ngIf="teacherType == 1" src="assets/images/ristaschool/Mask Group 35.png" class="w-100" style="height: 160px" alt="">-->
+                                <!--                                <img *ngIf="teacherType != 1" src="assets/images/ristaschool/Mask Group 35.png" class="w-100" style="height: 170px" alt="">-->
+                                <!--                            </figure>-->
+                                <!--                            <figure *ngIf="list.profile_url != ''">-->
+                                <!--                                <img [src]="sanitizer.bypassSecurityTrustResourceUrl(webhost + '/' + list.profile_url)" class="w-100" style="height: 170px" alt="">-->
+                                <!--                            </figure>-->
+                                <!--                        </div>-->
+                                <div class="col-7">
+                                    <h4 class="t-period"><small class="badge badge-success mr-2"
+                                                                *ngIf="list.status == '1' && teacherType != '0'"><i
+                                            class="fa fa-check" aria-hidden="true"></i></small>
+                                        <small class="badge  badge-danger mr-2"
+                                               *ngIf="list.status == '2'  && teacherType != '0'"><i class="fa fa-times"
+                                                                                                    aria-hidden="true"></i></small><span
+                                                class="font-weight-bold">{{list.class_name}}</span>
+                                    </h4>
+                                    <p class="p-0">
+                                        <!-- <span class="font-weight-bold">class code: </span> <span class="t-name font-weight-bold">{{list.class_code}}</span> &nbsp; <small class="badge badge-pill badge-info cursor" [attr.aria-controls]="'#studentCount' + i" [attr.data-target]="'#studentCount' + i" data-toggle="collapse" (click)="enterList(i, 'yes')">{{list.no_of_students}}</small><br/> -->
+                                        <span class="font-weight-bold">Class Code: </span> <span
+                                            class="t-name font-weight-bold">{{list.class_code}}</span> &nbsp; <small
+                                            class="badge badge-pill badge-info cursor"
+                                            style="font-size: 12px">{{list.no_of_students - 0}}
+                                        Student{{list.no_of_students > 1 ? 's' : ''}}</small><br/>
+                                        <span class="font-weight-bold">Teacher Assigned: </span> <span
+                                            class="t-name font-weight-bold">{{list.teacher_name}}</span>
+                                    </p>
+                                </div>
+                                <div class="col-5">
+                                    <div class="row mb-3">
+                                        <div class="col-md-12 text-right">
+                                            <p *ngIf="list.start_date == '0000-00-00' && list.end_date == '0000-00-00'"
+                                               class="p-0"><span class="font-weight-bold">Start: </span> &nbsp; &nbsp;
+                                                <span class="font-weight-bold">End: </span>
+                                            </p>
+                                            <!--                                            <button (click)="newSubService.changeDateFormat('short')"></button>-->
+                                            <p class="p-0"
+                                               *ngIf="list.start_date != '0000-00-00'&& list.end_date != '0000-00-00'">
+                                                <span class="font-weight-bold">Start: </span>
+                                                <!--                                                <span class="t-name font-weight-bold">{{list.start_date|date:'MM-dd-yyyy'}}</span> &nbsp; &nbsp;-->
+                                                <span class="t-name font-weight-bold">{{list.start_date | customDateFormat}}</span>
+                                                &nbsp; &nbsp;
+                                                <span class="font-weight-bold">End: </span> <span
+                                                    class="t-name font-weight-bold">{{list.end_date| customDateFormat}}</span>
+                                            </p>
+                                        </div>
+                                        <!--                                <div class="col-md-12">-->
+                                        <!--                                    <small class="ml-3 pull-right">Assessment: <span class="t-name">{{list.no_of_assessments}}</span></small>-->
+                                        <!--                                    <small class="ml-3 pull-right">Assignment: <span class="t-name">{{list.no_of_assignments}} </span></small>-->
+                                        <!--                                    <small class="pull-right">Resources: <span class="t-name">{{list.no_of_resources}} </span></small>-->
+                                        <!--                                </div>-->
+                                    </div>
+                                    <!--                            <div class="row d-flex mb-5">-->
+                                    <!--                                <div class="col-md-12">-->
+                                    <!--                                    <small class="pull-right">No. of Students: <span class="t-name">{{list.no_of_students}}</span></small>-->
+                                    <!--                            </div>-->
+                                    <!--                            </div>-->
+                                    <!--                            <div class="row d-flex mb-4">-->
+                                    <!--                                <div class="col-md-12"></div>-->
+                                    <!--                            </div>-->
+                                    <div class="row d-flex justify-content-end" (click)="childCallfunction($event)">
+                                        <!-- <div class="col-6">
+                                            <div class="dropdown">
+                                                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                  Dropdown button
+                                                </button>
+                                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                                  <a class="dropdown-item" href="#">Action</a>
+                                                  <a class="dropdown-item" href="#">Another action</a>
+                                                  <a class="dropdown-item" href="#">Something else here</a>
+                                                </div>
+                                              </div>
+                                        </div> -->
+                                        <div class="col-md-6 mt-2 d-flex justify-content-end">
+                                            <div class="dropdown">
+                                                <button class="btn btn-outline-primary">Action <i
+                                                        class="fa fa-sort-desc float-right ml-2" aria-hidden="true"></i>
+                                                </button>
+                                                <div class="dropdown-content" style="right: 1px"
+                                                     [class.dropdown-content-up]="(i + 2 == choosedData.length || i + 1 == choosedData.length) && choosedData.length > 3">
+                                                    <a (click)="openZoomDialog(list)"
+                                                       *ngIf="list.class_type == '1' && ['2','4','5'].includes(auth.getRoleId())">
+                                                        <span *ngIf="!customLoader"><i class="fa fa-video-camera"
+                                                                                       aria-hidden="true"></i> Start online class</span>
+                                                        <span *ngIf="customLoader" style="width: 1rem;height: 1rem"
+                                                              class="spinner-border text-secondary" role="status">
+                                                        <span class="sr-only">Loading...</span>
+                                                    </span></a>
+                                                    <a (click)="curicullum(list)"><i class="fa fa-book"
+                                                                                     aria-hidden="true"></i> Curriculum</a>
+                                                    <a (click)="enterList(i, 'no', $event);"
+                                                       *ngIf="(!(auth.getRoleId() == '4' && classlisthighlight == '4') || allowEditCompleted)"><i
+                                                            class="fa fa-pencil" aria-hidden="true"></i> Edit class</a>
+                                                    <a *ngIf="checkClassDeleteConditions()"
+                                                       (click)="deleteClassModal(list)"><i class="fa fa-trash"
+                                                                                           title="Delete Class"
+                                                                                           aria-hidden="true"></i>
+                                                        Delete Class</a>
+                                                    <a (click)="addStudent(list, i)" *ngIf="allowStudent"><i
+                                                            class="fa fa-plus-circle" aria-hidden="true"></i> Add
+                                                        Student</a>
+                                                    <a (click)="reportDetails(list)"><i class="fa fa-file-text-o"
+                                                                                        aria-hidden="true"></i> View
+                                                        class reports</a>
+                                                    <a (click)="openNotes(i, list)"><i class="fa fa-newspaper-o"
+                                                                                       aria-hidden="true"></i> Add Notes</a>
+                                                    <a (click)="shareEmail(list)"><i class="fa fa-share-alt"
+                                                                                     aria-hidden="true"></i> Share Class
+                                                        Code</a>
+                                                    <a (click)="openRecordingList(list)"
+                                                       *ngIf="list.class_type == '1' && ['2','4','5'].includes(auth.getRoleId())">
+                                                        <span *ngIf="!recordLoader"><i class="fa fa-file-video-o"
+                                                                                       aria-hidden="true"></i> Recording</span>
+                                                        <span *ngIf="recordLoader" style="width: 1rem;height: 1rem"
+                                                              class="spinner-border text-secondary" role="status">
+                                                    <span class="sr-only">Loading...</span>
+                                                </span>
+                                                    </a>
+                                                    <a (click)="showInformation(list)"><i class="fa fa-info pl-1 pr-1"
+                                                                                          aria-hidden="true"></i>
+                                                        Information</a>
+                                                </div>
+                                            </div>
+                                            <!-- <select class="actions-class form-control" ([ngModel])="selectIcon" (change)="selectIconClass($event.target.value, list, i)">
+                                                <option value="" seleted hidden>Actions</option>
+                                                <option value="shareClass" class="action-option-class">&#xf1e0; Share Class Code</option>
+                                                <option value="videoCamera" class="action-option-class" [disabled]="recordLoader" *ngIf="list.class_type == '1' && ['2','4','5'].includes(auth.getRoleId())">
+                                                    <span *ngIf="!customLoader">&#xf03d; Video Camera</span>
+                                                    <span class="sr-only" *ngIf="customLoader">Loading...</span>
+                                                </option>
+                                                <option value="record" class="action-option-class" [disabled]="customLoader" *ngIf="list.class_type == '1' && ['2','4','5'].includes(auth.getRoleId())">
+                                                    <span *ngIf="!recordLoader">&#xf1c8; Recording</span>
+                                                    <span class="sr-only" *ngIf="recordLoader">Loading...</span>
+                                                </option>
+                                                <option value="curriculum" class="action-option-class">&#xf02d; Curriculum</option>
+                                                <option value="notes" class="action-option-class">&#xf1ea; Notes</option>
+                                                <option value="information" class="action-option-class">&#xf05a; Information</option>
+                                                <option value="reports" class="action-option-class">&#xf0f6; Reports</option> -->
+                                            <!-- <option value="enter" *ngIf="!(auth.getRoleId() == '4' && classlisthighlight == '4')">Enter</option> -->
+                                            <!-- </select> -->
+                                            <!--                                            <button type="button" class="btn-sm-i btn-outline-primary btn-sm-view mr-1 mt-1" (click)="addStudent(list)" title="Add Student" *ngIf="this.studentShow == list.class_id"><i class="fa fa-users" aria-hidden="true"></i></button>-->
+
+
+                                            <!-- <button (click)="shareEmail(list)" class="btn-outline-primary btn-sm-view mr-1 mt-1" title="Share Class Code"><i class="fa fa-share-alt" aria-hidden="true"></i></button>
+                                            <button  [disabled]="recordLoader" (click)="openZoomDialog(list)"
+                                                    *ngIf="list.class_type == '1' && ['2','4','5'].includes(auth.getRoleId())"
+                                                    class="btn-outline-primary btn-sm-view mr-1 mt-1" title="Start Meeting">
+                                                <i *ngIf="!customLoader" class="fa fa-video-camera" aria-hidden="true"></i>
+                                                <div *ngIf="customLoader" style="width: 1rem;height: 1rem" class="spinner-border text-secondary" role="status">
+                                                    <span class="sr-only">Loading...</span>
+                                                </div>
+                                            </button>
+                                            <button [disabled]="customLoader" (click)="openRecordingList(list)"
+                                                    *ngIf="list.class_type == '1' && ['2','4','5'].includes(auth.getRoleId())"
+                                                    class="btn-outline-primary btn-sm-view mr-1 mt-1" title="Recordings">
+                                                <i *ngIf="!recordLoader" class="fa fa-file-video-o" aria-hidden="true"></i>
+                                                <div *ngIf="recordLoader" style="width: 1rem;height: 1rem" class="spinner-border text-secondary" role="status">
+                                                    <span class="sr-only">Loading...</span>
+                                                </div>
+                                            </button> -->
+
+
+                                            <!--                                            <button (click)="zoomService.show()" *ngIf="list.meeting_id != ''" class="btn-outline-primary btn-sm-view mr-1 mt-1" title="Start Meeting">show</button>-->
+
+
+                                            <!-- <button (click)="curicullum(list)" class="btn-outline-primary btn-sm-view mr-1 mt-1" title="Curriculum"><i class="fa fa-book" aria-hidden="true"></i></button>
+                                            <button (click)="openNotes(i, list)" class="btn-outline-primary btn-sm-view mr-1 mt-1" title="Notes"><i class="fa fa-newspaper-o" aria-hidden="true"></i></button>
+                                            <button (click)="showInformation(list)" class="btn-outline-primary btn-sm-view mr-1 mt-1" title="Information"><i class="fa fa-info pl-1 pr-1" aria-hidden="true"></i></button>
+                                            <button (click)="reportDetails(list)" class="btn-outline-primary btn-sm-view mr-1 mt-1" title="Reports"><i class="fa fa-file-text-o" aria-hidden="true"></i></button>
+                                            <button type="button" class="btn-sm-i btn-outline-primary ml-1" *ngIf="!(auth.getRoleId() == '4' && classlisthighlight == '4')" (click)="enterList(i, 'no')">Enter</button> -->
+
+
+                                            <!--                                            <p>{{this.auth.getRoleId()}} - rollid {{this.classlisthighlight}} - classid</p>-->
+                                            <!--                                            <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 13.891 14" class="cursor float-right mt-2" (click)="reportDetails(list)">-->
+                                            <!--                                                <title>Reports</title>-->
+                                            <!--                                                <g id="noun_business_report_2032971" data-name="noun_business report_2032971" transform="translate(-51.3 -36.152)">-->
+                                            <!--                                                    <g id="Group_17426" data-name="Group 17426" transform="translate(51.3 36.152)">-->
+                                            <!--                                                        <path id="Path_3284" data-name="Path 3284" d="M12.194,54.1h-.022a.372.372,0,1,0,0,.744h.022a.372.372,0,1,0,0-.744Z" transform="translate(-9.503 -42.484)" fill="#7F3486"/>-->
+                                            <!--                                                        <path id="Path_3285" data-name="Path 3285" d="M12.4,42.959h.481l-.241-.459Z" transform="translate(-9.972 -33.422)" fill="#7F3486"/>-->
+                                            <!--                                                        <path id="Path_3286" data-name="Path 3286" d="M5.037,1.6,1.8,4.859H5.037Z" transform="translate(-1.691 -1.469)" fill="#7F3486"/>-->
+                                            <!--                                                        <rect id="Rectangle_907" data-name="Rectangle 907" width="0.766" height="0.722" transform="translate(2.297 6.016)" fill="#7F3486"/>-->
+                                            <!--                                                        <path id="Path_3287" data-name="Path 3287" d="M8.278,13.206H6.353a.219.219,0,1,1,0-.437H8.278c.262,0-.044.044-.044-1.006a3.7,3.7,0,0,1,4.834-3.5V1.656A.658.658,0,0,0,12.412,1H5.084V4.609a.235.235,0,0,1-.219.219H1.3v9.516A.645.645,0,0,0,1.956,15H10.2A8.789,8.789,0,0,1,8.278,13.206ZM6.331,2.444h4.747a.219.219,0,0,1,0,.438H6.331a.207.207,0,0,1-.219-.219A.235.235,0,0,1,6.331,2.444Zm0,1.794h4.747a.219.219,0,0,1,.219.219.235.235,0,0,1-.219.219H6.331a.219.219,0,0,1-.219-.219A.235.235,0,0,1,6.331,4.237Zm0,2.909h4.878a.235.235,0,0,1,.219.219.219.219,0,0,1-.219.219H6.331a.207.207,0,0,1-.219-.219A.235.235,0,0,1,6.331,7.147Zm0,2.822H8.256a.219.219,0,1,1,0,.438H6.331a.219.219,0,0,1-.219-.219A.235.235,0,0,1,6.331,9.969ZM3.159,6.8a.219.219,0,0,1,.219-.219h1.2A.219.219,0,0,1,4.8,6.8V7.978a.235.235,0,0,1-.219.219h-1.2a.235.235,0,0,1-.219-.219V6.8Zm.831,6.978H3.947a.809.809,0,0,1,0-1.619h.044a.809.809,0,1,1,0,1.619Zm.766-2.887a.23.23,0,0,1-.2.109h-1.2a.23.23,0,0,1-.2-.109.2.2,0,0,1,0-.219l.613-1.181a.226.226,0,0,1,.394,0l.591,1.181A.2.2,0,0,1,4.756,10.888Z" transform="translate(-1.3 -1)" fill="#7F3486"/>-->
+                                            <!--                                                        <path id="Path_3288" data-name="Path 3288" d="M36.006,40.878l2.034-2.406V35.3a3.238,3.238,0,0,0-2.034,5.578Z" transform="translate(-27.628 -27.797)" fill="#7F3486"/>-->
+                                            <!--                                                        <path id="Path_3289" data-name="Path 3289" d="M50.9,38.266l2.538-1.356A3.251,3.251,0,0,0,50.9,35.4Z" transform="translate(-40.05 -27.875)" fill="#7F3486"/>-->
+                                            <!--                                                        <path id="Path_3290" data-name="Path 3290" d="M45.978,44l-2.822,1.509L41.1,47.959a3.254,3.254,0,0,0,5.184-2.625A3.841,3.841,0,0,0,45.978,44Z" transform="translate(-32.394 -34.594)" fill="#7F3486"/>-->
+                                            <!--                                                    </g>-->
+                                            <!--                                                </g>-->
+                                            <!--                                            </svg>-->
+                                            <!--                                            <i class="fa fa-info-circle float-right letter cursor mt-2 mr-2" style="font-size: 21px;" aria-hidden="true" title="Information" (click)="showInformation(list)"></i>-->
+                                            <!--                                            <i class="fa fa-newspaper-o float-right letter cursor mt-2 mr-2" style="font-size: 21px;" aria-hidden="true" title="Notes"></i>-->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <!-- <div class="col-12 col-md-12" id="studentCount{{i}}" *ngIf="this.studentShow == list.class_id"></div> -->
+                                <div class="col-12 col-md-12" *ngIf="this.studentShow == list.class_id && list.checked">
+                                    <!-- <button type="button" class="btn-sm-i btn-outline-primary float-left mt-2 mb-2" title="Send Mail" (click)="mailAlert(list)"><i class="fa fa-paper-plane"></i></button> -->
+
+                                    <!-- <button type="button" class="btn-sm-i btn-outline-primary float-right mt-2 mb-2" (click)="addStudent(list)">Add Student</button> -->
+                                    <table class="table table-bordered text-center mt-4"
+                                           *ngIf="studentData?.length != 0">
+                                        <thead class="thead-light">
+                                        <tr>
+                                            <!--                                            <th class="pr-0" style="border-right: none"><input type="checkbox" (click)="selectAllStudent($event)"></th>-->
+                                            <th class="pl-0" style="border-left: none">First Name</th>
+                                            <th>Last Name</th>
+                                            <th *ngIf="teacherType == 1">E-Mail Id</th>
+                                            <th>Grade</th>
+                                            <th>Action</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr *ngFor="let detail of studentData; let j = index">
+                                            <!--                                            <th class="pr-0" style="border-right: none"><input type="checkbox" [(ngModel)]="detail.selected"></th>-->
+                                            <td class="pl-0" style="border-left: none">{{detail.first_name}}</td>
+                                            <td>{{detail.last_name == null ? '' : detail.last_name}}</td>
+                                            <td *ngIf="teacherType == 1">{{detail.student_id}}</td>
+                                            <td>{{detail.grade_name}}</td>
+
+                                            <td class="d-flex justify-content-center align-items-center">
+                                                <!--                                                <i class="fa fa-file-text-o mr-2" title="Report" (click)="getStudentFullDetail(detail)" aria-hidden="true"></i>-->
+                                                <img class="mr-3" alt="" src="assets/images/icons/report.png"
+                                                     title="Report" style="height: 22px"
+                                                     (click)="getStudentFullDetail(detail)">
+                                                <img class="mr-3" alt="" src="assets/images/icons/transfer-class.png"
+                                                     style="height: 22px" *ngIf="allowTransfer" title="Transfer Class"
+                                                     (click)="classChange(detail)">
+                                                <!--                                                <img class="mr-2" alt="" src="assets/images/shift-class.svg" *ngIf="allowTransfer" title="Transfer Class"-->
+                                                <!--                               aria-hidden="true" (click)="classChange(detail)">-->
+                                                <!--                                                <i class="fa fa-envelope-o cursor mr-3 color-primary" title="Send mail" style="font-size: 20px" (click)="specificMail(list, j)"></i>-->
+                                                <i class="fa fa-pencil color-primary cursor mr-3" title="Edit"
+                                                   style="font-size: 20px" *ngIf="allowStudentEdit"
+                                                   (click)="editStudent(detail)"></i>
+                                                <!-- <i class="fa fa-pencil color-primary cursor mr-3" title="Edit" style="font-size: 20px" *ngIf="allowClassEdit || !allowStudentEdit" (click)="editStudent(detail)"></i> -->
+                                                <i class="fa fa-trash text-danger cursor" title="Delete"
+                                                   style="font-size: 20px" *ngIf="allowClassEdit"
+                                                   (click)="deleteStudentAlert(detail)"></i>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                    <div class="row d-flex justify-content-center list-card mt-5"
+                                         *ngIf="studentData?.length == 0">
+                                        <div class="col-4">
+                                            <button class="nodataList">No Data Available!</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!--    <section class="row list-card mt-3" *ngIf="choosedData!=''">-->
+    <!--        <div class="col-md-12">-->
+    <!--            <div class="card" *ngFor="let list of choosedData; let i = index">-->
+    <!--                <div class="card-body">-->
+    <!--                    <div class="row p-2">-->
+    <!--&lt;!&ndash;                        <div class="col-12 col-md-2">&ndash;&gt;-->
+    <!--&lt;!&ndash;                            <figure *ngIf="list.profile_url == ''">&ndash;&gt;-->
+    <!--&lt;!&ndash;                                <img *ngIf="teacherType == 1" src="assets/images/ristaschool/Mask Group 35.png" class="w-100" style="height: 160px" alt="">&ndash;&gt;-->
+    <!--&lt;!&ndash;                                <img *ngIf="teacherType != 1" src="assets/images/ristaschool/Mask Group 35.png" class="w-100" style="height: 170px" alt="">&ndash;&gt;-->
+    <!--&lt;!&ndash;                            </figure>&ndash;&gt;-->
+    <!--&lt;!&ndash;                            <figure *ngIf="list.profile_url != ''">&ndash;&gt;-->
+    <!--&lt;!&ndash;                                <img [src]="sanitizer.bypassSecurityTrustResourceUrl(webhost + '/' + list.profile_url)" class="w-100" style="height: 170px" alt="">&ndash;&gt;-->
+    <!--&lt;!&ndash;                            </figure>&ndash;&gt;-->
+    <!--&lt;!&ndash;                        </div>&ndash;&gt;-->
+    <!--                        <div class="col-12 col-md-6">-->
+    <!--                            <h4 class="t-period"><span class="badge badge-success mr-2" *ngIf="list.status == '1' && teacherType != '0'"><i class="fa fa-check" aria-hidden="true"></i></span>-->
+    <!--                                <span class="badge  badge-danger mr-2" *ngIf="list.status == '2'  && teacherType != '0'"><i class="fa fa-times" aria-hidden="true"></i></span><span class="font-weight-bold">{{list.class_name}}</span> &nbsp; &nbsp;<small class="badge badge-pill badge-info cursor" [attr.aria-controls]="'#studentCount' + i" [attr.data-target]="'#studentCount' + i" data-toggle="collapse" *ngIf="list.no_of_students != '0'" (click)="enterList(i, 'yes')">{{list.no_of_students}}</small> <small class="badge badge-pill badge-info cursor" *ngIf="list.no_of_students == '0'">{{list.no_of_students}}</small>-->
+    <!--                            </h4>-->
+    <!--                            <p class="p-0"><small class="font-weight-bold">Subject: </small> <span class="t-name font-weight-bold">{{list.subject_name}}</span>  &nbsp; &nbsp;-->
+    <!--                                <small class="font-weight-bold">Grade: </small> <span class="t-name capital font-weight-bold">{{list.grade_name}}</span><br/>-->
+    <!--                                <span *ngIf="teacherType != 1"><small class="font-weight-bold">ClassRoom: </small> <span class="t-name capital font-weight-bold">{{list.classroom_name}}</span><br/></span>-->
+    <!--                                <small class="font-weight-bold">Teacher Assigned: </small> <span class="t-name font-weight-bold">{{list.teacher_name}}</span>-->
+    <!--                            </p>-->
+    <!--                        </div>-->
+    <!--                        <div class="col-12 col-md-6">-->
+    <!--                            <div class="row mb-3">-->
+    <!--                                <div class="col-md-12 text-right">-->
+    <!--                                    <p class="p-0" *ngIf="list.start_date == '0000-00-00'&& list.end_date == '0000-00-00'"><small class="font-weight-bold">Start: </small>  &nbsp; &nbsp;-->
+    <!--                                        <small class="font-weight-bold">End: </small>-->
+    <!--                                    </p>-->
+    <!--                                    <p class="p-0" *ngIf="list.start_date != '0000-00-00'&& list.end_date != '0000-00-00'"><small class="font-weight-bold">Start: </small> <span class="t-name font-weight-bold">{{list.start_date|date:'MM-dd-yyyy'}}</span> &nbsp; &nbsp;-->
+    <!--                                        <small class="font-weight-bold">End: </small> <span class="t-name font-weight-bold">{{list.end_date|date:'MM-dd-yyyy'}}</span>-->
+    <!--                                    </p>-->
+    <!--                                </div>-->
+    <!--&lt;!&ndash;                                <div class="col-md-12">&ndash;&gt;-->
+    <!--&lt;!&ndash;                                    <small class="ml-3 pull-right">Assessment: <span class="t-name">{{list.no_of_assessments}}</span></small>&ndash;&gt;-->
+    <!--&lt;!&ndash;                                    <small class="ml-3 pull-right">Assignment: <span class="t-name">{{list.no_of_assignments}} </span></small>&ndash;&gt;-->
+    <!--&lt;!&ndash;                                    <small class="pull-right">Resources: <span class="t-name">{{list.no_of_resources}} </span></small>&ndash;&gt;-->
+    <!--&lt;!&ndash;                                </div>&ndash;&gt;-->
+    <!--                            </div>-->
+    <!--&lt;!&ndash;                            <div class="row d-flex mb-5">&ndash;&gt;-->
+    <!--&lt;!&ndash;                                <div class="col-md-12">&ndash;&gt;-->
+    <!--&lt;!&ndash;                                    <small class="pull-right">No. of Students: <span class="t-name">{{list.no_of_students}}</span></small>&ndash;&gt;-->
+    <!--&lt;!&ndash;                            </div>&ndash;&gt;-->
+    <!--&lt;!&ndash;                            </div>&ndash;&gt;-->
+    <!--&lt;!&ndash;                            <div class="row d-flex mb-4">&ndash;&gt;-->
+    <!--&lt;!&ndash;                                <div class="col-md-12"></div>&ndash;&gt;-->
+    <!--&lt;!&ndash;                            </div>&ndash;&gt;-->
+    <!--                            <div class="row d-flex">-->
+    <!--                                <div class="col-md-12 mt-2">-->
+    <!--                                <button type="button" class="btn-sm-i btn-outline-primary pull-right ml-2" (click)="enterList(i, 'no')">Enter</button>-->
+    <!--                                    <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 13.891 14" class="cursor float-right mt-2" (click)="reportDetails(list)">-->
+    <!--                                        <title>Reports</title>-->
+    <!--                                        <g id="noun_business_report_2032971" data-name="noun_business report_2032971" transform="translate(-51.3 -36.152)">-->
+    <!--                                            <g id="Group_17426" data-name="Group 17426" transform="translate(51.3 36.152)">-->
+    <!--                                                <path id="Path_3284" data-name="Path 3284" d="M12.194,54.1h-.022a.372.372,0,1,0,0,.744h.022a.372.372,0,1,0,0-.744Z" transform="translate(-9.503 -42.484)" fill="#7F3486"/>-->
+    <!--                                                <path id="Path_3285" data-name="Path 3285" d="M12.4,42.959h.481l-.241-.459Z" transform="translate(-9.972 -33.422)" fill="#7F3486"/>-->
+    <!--                                                <path id="Path_3286" data-name="Path 3286" d="M5.037,1.6,1.8,4.859H5.037Z" transform="translate(-1.691 -1.469)" fill="#7F3486"/>-->
+    <!--                                                <rect id="Rectangle_907" data-name="Rectangle 907" width="0.766" height="0.722" transform="translate(2.297 6.016)" fill="#7F3486"/>-->
+    <!--                                                <path id="Path_3287" data-name="Path 3287" d="M8.278,13.206H6.353a.219.219,0,1,1,0-.437H8.278c.262,0-.044.044-.044-1.006a3.7,3.7,0,0,1,4.834-3.5V1.656A.658.658,0,0,0,12.412,1H5.084V4.609a.235.235,0,0,1-.219.219H1.3v9.516A.645.645,0,0,0,1.956,15H10.2A8.789,8.789,0,0,1,8.278,13.206ZM6.331,2.444h4.747a.219.219,0,0,1,0,.438H6.331a.207.207,0,0,1-.219-.219A.235.235,0,0,1,6.331,2.444Zm0,1.794h4.747a.219.219,0,0,1,.219.219.235.235,0,0,1-.219.219H6.331a.219.219,0,0,1-.219-.219A.235.235,0,0,1,6.331,4.237Zm0,2.909h4.878a.235.235,0,0,1,.219.219.219.219,0,0,1-.219.219H6.331a.207.207,0,0,1-.219-.219A.235.235,0,0,1,6.331,7.147Zm0,2.822H8.256a.219.219,0,1,1,0,.438H6.331a.219.219,0,0,1-.219-.219A.235.235,0,0,1,6.331,9.969ZM3.159,6.8a.219.219,0,0,1,.219-.219h1.2A.219.219,0,0,1,4.8,6.8V7.978a.235.235,0,0,1-.219.219h-1.2a.235.235,0,0,1-.219-.219V6.8Zm.831,6.978H3.947a.809.809,0,0,1,0-1.619h.044a.809.809,0,1,1,0,1.619Zm.766-2.887a.23.23,0,0,1-.2.109h-1.2a.23.23,0,0,1-.2-.109.2.2,0,0,1,0-.219l.613-1.181a.226.226,0,0,1,.394,0l.591,1.181A.2.2,0,0,1,4.756,10.888Z" transform="translate(-1.3 -1)" fill="#7F3486"/>-->
+    <!--                                                <path id="Path_3288" data-name="Path 3288" d="M36.006,40.878l2.034-2.406V35.3a3.238,3.238,0,0,0-2.034,5.578Z" transform="translate(-27.628 -27.797)" fill="#7F3486"/>-->
+    <!--                                                <path id="Path_3289" data-name="Path 3289" d="M50.9,38.266l2.538-1.356A3.251,3.251,0,0,0,50.9,35.4Z" transform="translate(-40.05 -27.875)" fill="#7F3486"/>-->
+    <!--                                                <path id="Path_3290" data-name="Path 3290" d="M45.978,44l-2.822,1.509L41.1,47.959a3.254,3.254,0,0,0,5.184-2.625A3.841,3.841,0,0,0,45.978,44Z" transform="translate(-32.394 -34.594)" fill="#7F3486"/>-->
+    <!--                                            </g>-->
+    <!--                                        </g>-->
+    <!--                                    </svg>-->
+    <!--                                    <i class="fa fa-info-circle float-right letter cursor mt-2 mr-2" style="font-size: 21px;" aria-hidden="true" title="Information" (click)="showInformation(list)"></i>-->
+    <!--                                    <i class="fa fa-newspaper-o float-right letter cursor mt-2 mr-2" style="font-size: 21px;" aria-hidden="true" title="Notes" (click)="openNotes(i, list)"></i>-->
+    <!--                            </div>-->
+    <!--                            </div>-->
+    <!--                        </div>-->
+    <!--                        <div class="col-12 col-md-12 collapse" id="studentCount{{i}}" *ngIf="this.studentShow == list.class_id">-->
+    <!--                            <table class="table table-bordered text-center mt-4">-->
+    <!--                                <thead>-->
+    <!--                                <tr>-->
+    <!--                                    <th>First Name</th>-->
+    <!--                                    <th>Last Name</th>-->
+    <!--                                    <th *ngIf="teacherType == 1">E-Mail Id</th>-->
+    <!--                                    <th>Grade</th>-->
+    <!--                                </tr>-->
+    <!--                                </thead>-->
+    <!--                                <tbody>-->
+    <!--                                <tr *ngFor="let list of studentData">-->
+    <!--                                   <td>{{list.first_name}}</td>-->
+    <!--                                   <td>{{list.last_name == null ? '' : list.last_name}}</td>-->
+    <!--                                   <td *ngIf="teacherType == 1">{{list.student_id}}</td>-->
+    <!--                                   <td>{{list.grade_name}}</td>-->
+    <!--                                </tr>-->
+    <!--                                </tbody>-->
+    <!--                            </table>-->
+    <!--                        </div>-->
+    <!--                    </div>-->
+    <!--                </div>-->
+    <!--            </div>-->
+    <!--        </div>-->
+    <!--    </section>-->
+</div>
+<div *ngIf="schoolStatus?.length == 0">
+    <app-emptyschool>
+    </app-emptyschool>
+</div>
+<ng-template #reports>
+    <div class="modal-header">
+        <h4 class="modal-title">Report</h4>
+        <i class="fa fa-close cursor" (click)="onSave()"></i>
+    </div>
+    <div class="modal-body">
+        <app-missed-work-report
+                [classShow]="true"
+                [showContent]="'other'"
+                [studentView]="false"
+                [timeView]="true"
+                [calledForm]="'class'"
+                [contentNameValue]="contentNameValue"
+        >
+        </app-missed-work-report>
+    </div>
+
+</ng-template>
+<ng-template #showInform>
+    <div class="modal-header">
+        <h4 class="modal-title">Info</h4>
+        <i class="fa fa-close cursor" (click)="onSave()"></i>
+    </div>
+    <div class="modal-body">
+        <p class="p-0" *ngIf="classInfo?.subject_name != ''"><span class="letter">Subject: </span> <span
+                class="t-name font-weight-bold">{{classInfo.subject_name}}</span></p>
+        <p class="p-0" *ngIf="classInfo?.grade_name != ''"><span class="letter">Grade: </span> <span
+                class="t-name capital font-weight-bold">{{classInfo.grade_name}}</span></p>
+        <p class="p-0"
+           *ngIf="teacherType != 1 || auth.getRoleId() == '2' || auth.getRoleId() == '6' && classInfo?.classroom_name != ''">
+            <span class="letter">Content Folder: </span><span
+                class="t-name font-weight-bold capital">{{classInfo.classroom_name}}</span></p>
+        <p class="p-0"><span class="letter">Class Code: </span> <span
+                class="t-name font-weight-bold">{{classInfo.class_code}}</span></p>
+        <p class="p-0"><span class="letter">Assessment: </span> <span
+                class="t-name">{{classInfo.no_of_assessments}}</span></p>
+        <p class="p-0"><span class="letter">Assignment: </span> <span
+                class="t-name">{{classInfo.no_of_assignments}} </span></p>
+        <p class="p-0"><span class="letter">Resources: </span> <span
+                class="t-name">{{classInfo.no_of_resources}} </span></p>
+    </div>
+
+</ng-template>
+
+<!-- Container-fluid Ends-->
+<ng-template #writeNoteOpen let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h4 class="modal-title text-center">Add Notes</h4>
+        <i class="fa fa-close cursor" (click)="onsave()"></i>
+    </div>
+    <div class="modal-body">
+        <div class="row d-flex px-3 justify-content-center">
+            <div class="col-11 mt-2 card class-card1 class-hover w-99" *ngFor="let list of showNotes; let i = index">
+                <div class="row" *ngIf="list.add_date != '00-00-0000'">
+                    <div class="col-9" style="word-wrap: break-word;">
+                        <p class="py-2"><span class="letter"
+                                              *ngIf="list.created_by != '' && list.add_date != ''"><strong>{{list.created_by}}</strong> - <small>{{list.add_date | customDateFormat}}</small><br></span>
+                        </p>
+                        <p><span [innerHTML]="list.note" class="mb-0 mt-3"></span></p>
+                        <!--                        {{list.note}}-->
+                    </div>
+                    <div class="col-3 d-flex align-items-center justify-content-end">
+                        <i class="fa fa-trash fa-1x text-danger" aria-hidden="true" style="cursor:pointer"
+                           (click)="deletedNotes(list)"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-11 p-0 mt-2">
+                <!-- <textarea name="" id="" placeholder="Enter Notes" [(ngModel)]="notes" style="width: 100%; height: 100px; padding: 4px"></textarea> -->
+                <app-tiny-mice (emitEditorValue)="getEditorValue($event)"
+                               [editorPatchValue]="false"
+                               [height]="300"
+                               [id]="'notes'"
+                               [(ngModel)]="notes"
+                               [showDropBtn]="false"
+                               [showInputBtn]="false">
+                </app-tiny-mice>
+            </div>
+            <div class="col-11 text-right mt-2">
+                <button type="button" (click)="onsave()" class="btn btn-outline-primary mr-2">Close</button>
+                <button type="button" (click)="addNotes()" class="btn btn-primary">Add</button>
+            </div>
+        </div>
+    </div>
+</ng-template>
+<!--//zoom confirmation pop-up-->
+
+<ng-template #zoomDialog let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h4 class="modal-title text-center">Zoom Meet</h4>
+        <i class="fa fa-close cursor" (click)="modalRef.close()"></i>
+    </div>
+    <div class="modal-body d-flex justify-content-right">
+        <div class="col-12 text-center">
+            <h5>Open zoom in </h5>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" (click)="modalRef.close();zoomService.initZoomMeeting(selectedClass)">In App
+        </button>
+        <button (click)="navigateOutsideZoom(this.selectedClass)" class="btn btn-outline-primary" type="button">New
+            Tab
+        </button>
+    </div>
+</ng-template>
+<ng-template #zoomDialog1 let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h4 class="modal-title text-center">Zoom Meet</h4>
+        <i class="fa fa-close cursor" (click)="modalRef.close()"></i>
+    </div>
+    <div class="modal-body d-flex justify-content-right">
+        <div class="col-12 text-center">
+            <h5>No Zoom Meet Scheduled for this day</h5>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" (click)="modalRef.close();">OK</button>
+    </div>
+</ng-template>
+<ng-template #recordinglist let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h4 class="modal-title text-center">Recordings</h4>
+        <i class="fa fa-close cursor" (click)="modalRef.close()"></i>
+    </div>
+    <div class="modal-body d-flex justify-content-right">
+        <div class="row w-100">
+            <div class="col-md-12 home-sec-scroll">
+                <div class="row">
+                    <div *ngFor="let source of videoSource;let i=index" class="col-md-12 mt-1 cursor">
+                        <div class="card">
+                            <!--                            <div (click)="videoTemplate(source)" class="card-body card-hover2">-->
+                            <div (click)="navigateOutsideRecording(source)" class="card-body card-hover2">
+                                <div class="row">
+                                    <!--                                    <div class="col-1">-->
+                                    <!--                                        <a  href="{{source.play_video}}" target="_blank"-->
+                                    <!--                                                class="btn-outline-primary btn-sm-view mr-1 mt-1" title="Play Recording">-->
+                                    <!--                                            <i class="fa fa-file-video-o" aria-hidden="true"></i></a>-->
+                                    <!--                                    </div>-->
+                                    <!--                                    <div class="col-4 align-self-center">-->
+                                    <!--                                        <p><small>Passcode: </small>-->
+                                    <!--                                            <span class="t-name font-weight-bold" style="font-size: 11px;">{{source.passcode}}-->
+                                    <!--                                            </span> &nbsp; &nbsp;-->
+                                    <!--                                        </p>-->
+                                    <!--                                    </div>-->
+                                    <!--                                    <div class="col-4 align-self-center">-->
+                                    <!--                                        <h4 class="t-period mb-0"><span class="font-weight-bold">{{source.name}} </span></h4>-->
+                                    <!--                                    </div>-->
+                                    <div class="col-4 align-self-center">
+                                        <p><span>Start: </span> <span *ngIf="source.recording_start != '0000-00-00'"
+                                                                      class="t-name font-weight-bold"
+                                                                      style="font-size: 11px;">{{source.recording_start|date:'MM-dd-yyyy'}}
+                                            &nbsp;{{source.recording_start}}</span>
+                                        </p>
+                                    </div>
+                                    <div class="col-4 align-self-center">
+                                        <p>
+                                            <span>End: </span> <span *ngIf="source.recording_end != '0000-00-00'"
+                                                                     class="t-name font-weight-bold"
+                                                                     style="font-size: 11px;">{{source.recording_end|date:'MM-dd-yyyy'}}
+                                            &nbsp;{{source.recording_end}}</span>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div *ngIf="videoSource.length == 0" class="col-md-12 mt-1 cursor">
+                        <div class="card">
+                            <div class="card-body card-hover2" style="align-self: center;">
+                                <div class="row">
+                                    <span>No data found</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" (click)="modalRef.close();">close</button>
+    </div>
+</ng-template>
+<ng-template #video let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h4 class="modal-title text-center">Video Title</h4>
+        <i (click)="modalRef1.close()" class="fa fa-close cursor"></i>
+    </div>
+    <div class="modal-body d-flex justify-content-right">
+        <div class="col-12 text-center">
+            <video controls height="420" width="700">
+                <source src="http://static.videogular.com/assets/videos/videogular.mp4" type="video/mp4">
+            </video>
+        </div>
+    </div>
+</ng-template>
+<ng-template #meetingSelection let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h4 class="modal-title text-center">Select Meeting</h4>
+        <i (click)="modalRef.close()" class="fa fa-close cursor"></i>
+    </div>
+    <div class="modal-body">
+        <!--        <div class="col-12 text-center">-->
+        <!--            More than one meeting found. Please choose which one-->
+        <!--        </div>-->
+        <div class="col-12 mt-2 d-flex flex-wrap justify-content-around">
+            <div (click)="chooseSchedule(selectedClass, i)"
+                 *ngFor="let data of selectedClass.availabilityDate; let i = index" class="col-5 mx-1 mb-2 card-hover3">
+                <label class="color-primary font-weight-bold">{{data.class_name}}</label>
+                <div>
+                    <small class="color-grey">Timing :</small>&nbsp;<span
+                        style="font-size: 0.8rem; font-weight: 600">{{data.slotstarttime + ' - ' + data.slotendtime}}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #addStudentDialog class="customModalRef" let-c="close" let-d="dismiss">
+    <div class="modal-header d-flex align-items-center">
+        <h4 class="modal-title pl-0 col-7">Add Student</h4>
+        <div class="col-5 d-flex justify-content-end align-items-center">
+            <button class="btn cancel" title="Invite By Email" (click)="shareEmail(selectClassData, 'addStudent')">
+                Invite By Email
+            </button>
+            <i class="fa fa-close cursor ml-3" (click)="closeStudentModRef()" title="Close Add Student"></i>
+        </div>
+    </div>
+    <div class="modal-body">
+        <div class="col-md-10 form-group">
+            <label>Grade</label>
+            <ng-select [items]="gradeData"
+                       bindLabel="grade_name"
+                       bindValue="grade_id"
+                       placeholder="Select Grade"
+                       typeToSearchText=""
+                       multiple="true"
+                       [(ngModel)]="gradName"
+                       (change)="getGradeValue($event)"
+            >
+            </ng-select>
+        </div>
+        <div class="col-md-10 form-group">
+            <label>Student Name<span class="text-danger ml-1">*</span></label>
+            <ng-multiselect-dropdown #multiSelect
+                                     [placeholder]="'Select Student'"
+                                     [data]="studentDataList"
+                                     [settings]="settings"
+                                     [disabled]="false"
+                                     [(ngModel)]="studentName"
+                                     (onFilterChange)="onFilterChange($event)"
+                                     (onDropDownClose)="onDropDownClose($event)"
+                                     (onSelect)="onItemSelect($event, 'single')"
+                                     (onDeSelect)="onDeSelect($event)"
+                                     (onSelectAll)="onItemSelect($event, 'all')"
+                                     (onDeSelectAll)="onDeSelectAll()">
+            </ng-multiselect-dropdown>
+
+            <!-- <ng-select [items]="studentDataList"
+                       bindLabel="name"
+                       bindValue="student_id"
+                       placeholder="Select Student"
+                       typeToSearchText=""
+                       multiple="true"
+                       (change)="studentSelect($event)"
+                       [(ngModel)]="studentName">
+                <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
+                    <input id="item-{{index}}" type="checkbox" name="item-{{index}}" [ngModel]="item$.selected"/> {{this.auth.getRoleId() == '2' ? item.name_with_email : item.name}}
+                </ng-template>
+            </ng-select> -->
+
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-outline-primary" type="button" (click)="submitClass(1)">Submit</button>
+    </div>
+</ng-template>
+<ng-template #addMultipleEmailDialog let-c="close" let-d="dismiss">
+    <div class="modal-header d-flex align-items-center">
+        <h4 class="modal-title text-center">Invite By Email</h4>
+        <i class="fa fa-close cursor" (click)="modalRef.close()"></i>
+    </div>
+    <div class="modal-body">
+        <div class="col-sm-12">
+
+            <form [formGroup]="studentEmailForm">
+                <mat-form-field class="col-12">
+                    <mat-chip-list #chipList formArrayName="emails">
+                        <mat-chip [color]="(item.invalid)?'warn':''" selected
+                                  *ngFor="let item of emailList; let i=index" [selectable]="true"
+                                  [removable]="removable"
+                                  (removed)="removeEmail(item)" required name="chips">{{item.value}}
+                            <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+                        </mat-chip>
+                        <input placeholder="Enter Email Id" [matChipInputFor]="chipList"
+                               [matChipInputSeparatorKeyCodes]="separatorKeysCodes " [matChipInputAddOnBlur]="true"
+                               (matChipInputTokenEnd)="add($event)"/>
+
+                    </mat-chip-list>
+                </mat-form-field>
+                <mat-error class="col-12" *ngIf="!validationEmail && emailList.length != 0">Invalid email ID</mat-error>
+                <div class="col-12">
+                    <p>Note: You can give comma separator email-Id and press enter.</p>
+                </div>
+
+                <div class="col-12">
+<!--                    <p class="mb-1 color-primary font-weight-bold" style="font-size: 14px">Reference Email Template</p>-->
+                    <p class="my-2" style="color: black">
+<!--                        Dear User,-->
+                        <span><p class="mt-2 mb-3" style="color: black">
+                        ClassCode : <strong> {{selectClassData.class_code}} </strong> <br>
+
+                        If you are new to edquill, use the below URL to register and join class<br>
+
+                            <span class="color-primary">{{env.envProperties.envURL + '#/auth/login/studentRegister/'+ selectClassData.class_code}}</span><br><br>
+
+                        If you are an existing user, use the below URL to login and join class<br>
+
+                            <span class="color-primary">{{env.envProperties.envURL + '#/enrollclasscode/'+ selectClassData.class_code}}</span><br>
+
+                        </p>
+<!--                        Thanks<br>-->
+
+<!--                        Team EdQuill.-->
+                    </span>
+                    </p>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <button class="btn btn-outline-primary" type="button" (click)="bulkMail()"
+                [disabled]="!validationEmail && emailList.length != 0">Submit
+        </button>
+    </div>
+</ng-template>
+<ng-template #deleteStudentAlertDialog let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h4 class="modal-title text-center">Remove student from class</h4>
+        <i class="fa fa-close cursor" (click)="modalRef.close()"></i>
+    </div>
+    <div class="modal-body">
+        <div class="col-md-12 text-center">
+            <p><strong>Are you sure to remove student from the class?</strong></p>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-outline-danger" type="button" (click)="modalRef.close()">close</button>
+        <button class="btn btn-outline-primary" type="button" (click)="deleteStudentList(getDeleteStudentData)">Ok
+        </button>
+    </div>
+</ng-template>
+
+<ng-template #deleteClass let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h4 class="modal-title align-items-center">Delete Class</h4>
+        <i class="fa fa-close cursor" (click)="modalRef.close()"></i>
+    </div>
+    <div class="modal-body">
+        <div class="col-md-12">
+            <p><strong>Are you sure to delete the <span class="color-primary">{{classDetails.class_name}}</span> class?</strong>
+            </p>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn cancel" type="button" (click)="modalRef.close()">close</button>
+        <button class="btn btn-primary" type="button" (click)="deleteClassList()">Ok</button>
+    </div>
+</ng-template>
+<ng-template #mailbox let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h4 class="modal-title text-center">Send mail</h4>
+        <i class="fa fa-close cursor align-self-center" style="font-size: 1.2rem" (click)="modalRef.close()"></i>
+    </div>
+    <div class="modal-body">
+        <div class="col-12 my-3">
+            <app-tiny-mice (emitEditorValue)="getEditorValue($event)"
+                           [editorPatchValue]="false"
+                           [height]="300"
+                           [id]="'mailbox'"
+                           [showDropBtn]="false"
+                           [showInputBtn]="false">
+            </app-tiny-mice>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-outline-danger" type="button" (click)="modalRef.close()">close</button>
+        <button class="btn btn-outline-primary" type="button" (click)="sendMail()"><i class="fa fa-paper-plane-o"></i>
+        </button>
+    </div>
+</ng-template>
+
+<ng-template #studentChange let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h4 class="modal-title col-12 text-center">Transfer Class</h4>
+    </div>
+    <div class="modal-body">
+        <div class="container-fluid">
+            <form [formGroup]="studentClassChange">
+                <div class="form-group row">
+                    <label class="col-xl-4 col-md-5 align-self-center"><span class="text-danger">*</span>
+                        From Class</label>
+                    <div class="col-xl-8 col-md-7">
+                        <input class="form-control" readonly type="text" placeholder="Enter the Class Name"
+                               value="{{className}}">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-xl-4 col-md-5 align-self-center"><span class="text-danger">*</span>
+                        To Class</label>
+                    <div class="col-xl-8 col-md-7">
+                        <ng-select [items]="allClassList"
+                                   bindLabel="fromClassLabel"
+                                   bindValue="class_id"
+                                   placeholder="Please Select"
+                                   typeToSearchText=""
+                                   formControlName="toClass"
+                                   (change)="selectedClassDetails($event)"
+                                   required=""
+                        >
+                        </ng-select>
+                        <em class="error"
+                            *ngIf="!studentClassChange.get('toClass').valid && (studentClassChange.get('toClass').dirty || studentClassChange.get('toClass').touched)">Select
+                            the To Class</em>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-xl-4 col-md-5 align-self-center"><span class="text-danger">*</span>
+                        Effective Date</label>
+                    <div class="col-xl-8 col-md-7 form-group">
+                        <div class="d-flex align-items-baseline">
+                            <input class="form-control" placeholder="mm-dd-yyyy"
+                                   name="dp2" formControlName="from_startdate" angular-mydatepicker
+                                   #dp2="angular-mydatepicker"
+                                   [options]="myDpOptions1" (dateChanged)="onDateChanged($event)" autocomplete="off"
+                                   required="">
+                            <div class="input-group-append">
+                                <button type="button" class="btn btn-primary" (click)="dp2.toggleCalendar()">
+                                    <i class="fa fa-calendar-o"></i></button>
+                            </div>
+                        </div>
+                        <em *ngIf="!studentClassChange.get('from_startdate').valid && (studentClassChange.get('from_startdate').dirty || studentClassChange.get('from_startdate').touched)"
+                            class="error">Please Enter Effective Date</em>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-outline-primary" (click)="close()">Close</button>
+        <button class="btn btn-primary" (click)="submitChangeClass()">Save</button>
+    </div>
+</ng-template>
+<ng-template #viewoveralldetails let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h4 class="modal-title color-primary" id="modal-basic-title">{{studentName}} Overall details</h4>
+        <i (click)="closeOverAll()" aria-hidden="true"
+           class="fa fa-close fa-lg mt-1" style="color:#7F3486; cursor: pointer; float: right;"></i>
+    </div>
+    <div class="modal-body">
+        <app-overalldetails
+                [studentdata]="viewdetail"
+        >
+        </app-overalldetails>
+    </div>
+</ng-template>

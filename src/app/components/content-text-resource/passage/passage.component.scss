@@ -1,0 +1,10 @@
+ngx-datatable {
+    .datatable-header {
+        padding: 0.25rem !important;
+    }
+    &.bootstrap {
+      .datatable-header, .datatable-body {
+        border-bottom: none !important;
+    }
+    }
+}

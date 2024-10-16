@@ -1,0 +1,49 @@
+<!--<div class="row" *ngIf="editPatchValue == false">-->
+<div class="container row">
+      <!--                        <div class="row ">-->
+      <div class="col-12 d-flex justify-content-center pl-5 pb-0" *ngIf="editMode">
+            <button (click)="resetBoard()" style="font-size: 9px;padding: 7px;margin-left: -7%;margin-right: 34px"  class="mt-2 ii btn btn-danger">Reset</button>
+
+            <button [disabled]="!item.status" style="font-size: 9px;padding: 7px;"
+                    [ngClass]="{'myButton btn-primary' : markType == item.type}"
+                    [ngStyle]="{'color': markType == item.type ? 'white': ''}"
+                    class="myButton  mt-2 ml-2 mr-2 btn btn-outline-primary" *ngFor="let item of graphTools;let i=index" (click)="markPoint(item.type)">{{item.name}}</button>
+
+
+      </div>
+<!--      <div class="col-6 pr-5 pb-0">-->
+<!--            <button style="font-size: 9px;padding: 7px;" disabled  class="mt-2 ml-2 mr-2 btn btn-outline-primary">Undo</button>-->
+
+<!--            <button style="font-size: 9px;padding: 7px;" disabled  class="mt-2 ml-2 mr-2 btn btn-outline-primary">Redo</button>-->
+<!--            <button style="font-size: 9px;padding: 7px;" disabled  class="mt-2 ml-2 mr-2 btn btn-danger">Delete</button>-->
+<!--            <button (click)="submitValue()" style="font-size: 9px;padding: 7px;"  class="mt-2 btn btn-danger">update</button>-->
+<!--            <button (click)="setMarkType('s')" style="font-size: 9px;padding: 7px;"  class="mt-2 btn btn-danger">emitt</button>-->
+<!--      </div>-->
+      <div class="col-12 mt-0 d-flex justify-content-center" >
+            <div  [id]="graphId" class="jxgbox mt-3" style="width:500px; height:500px;"></div>
+      </div>
+      <!--                        </div>-->
+
+</div>
+
+
+<!--<div class="row" [hidden]="editPatchValue == false">-->
+<!--      <div class="col-6 pl-5 pb-0" *ngIf="editMode">-->
+<!--            <button [disabled]="!item.status" style="font-size: 9px;padding: 7px;" class="myButton  mt-2 ml-2 mr-2 btn btn-outline-primary" *ngFor="let item of graphTools;let i=index" (click)="markPoint(item.type)">{{item.name}}</button>-->
+<!--      </div>-->
+<!--      <div class="col-6 pr-5 pb-0" [hidden]="!editMode">-->
+<!--            &lt;!&ndash;            <button style="font-size: 9px;padding: 7px;" disabled  class="mt-2 ml-2 mr-2 btn btn-outline-primary">Undo</button>&ndash;&gt;-->
+
+<!--            &lt;!&ndash;            <button style="font-size: 9px;padding: 7px;" disabled  class="mt-2 ml-2 mr-2 btn btn-outline-primary">Redo</button>&ndash;&gt;-->
+<!--            &lt;!&ndash;            <button style="font-size: 9px;padding: 7px;" disabled  class="mt-2 ml-2 mr-2 btn btn-danger">Delete</button>&ndash;&gt;-->
+<!--            <button (click)="resetBoard()" style="font-size: 9px;padding: 7px;"  class="mt-2 btn btn-danger">Reset</button>-->
+<!--            &lt;!&ndash;            <button (click)="submitValue()" style="font-size: 9px;padding: 7px;"  class="mt-2 btn btn-danger">update</button>&ndash;&gt;-->
+<!--            &lt;!&ndash;            <button (click)="setMarkType('s')" style="font-size: 9px;padding: 7px;"  class="mt-2 btn btn-danger">emitt</button>&ndash;&gt;-->
+<!--      </div>-->
+<!--      &lt;!&ndash;                        <div class="row ">&ndash;&gt;-->
+<!--      <div class="col-12 mt-0 d-flex justify-content-center" >-->
+<!--            <div  [id]="graphId" class="jxgbox mt-3" style="width:500px; height:500px;"></div>-->
+<!--      </div>-->
+<!--      &lt;!&ndash;                        </div>&ndash;&gt;-->
+
+<!--</div>-->

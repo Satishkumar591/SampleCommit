@@ -1,0 +1,67 @@
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-header">
+            <h5>Upgrade Student</h5>
+        </div>
+        <div class="card-body">
+            <div class="row px-3 d-flex justify-content-between">
+                <div class="col-md-6 px-0">
+                    <ng-select  (change)="filterByGrade($event)"
+                                [items]="gradeData"
+                                bindLabel="grade_name"
+                                bindValue="grade_id"
+                                class="col-md-5 px-0"
+                                placeholder="Grade filter"
+                                typeToSearchText=""
+                    >
+                    </ng-select>
+                </div>
+                <button (click)="openUpgradeAlert()" class="btn btn-primary">Upgrade</button>
+            </div>
+            <div class="row px-3 my-3 table-responsive-xl">
+                <table class="table table-hover">
+                    <thead class="thead-dark">
+                    <tr>
+                        <th scope="col">Student Name</th>
+                        <th scope="col">E-Mail</th>
+                        <th scope="col">Grade</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Last Upgrade</th>
+                    </tr>
+                    </thead>
+                    <tbody [hidden]="listData.length == 0">
+                    <tr (click)="item.selected = !item.selected" *ngFor="let item of listData; let i = index" [ngClass]="item.selected ? 'table-success' : ''">
+                        <td>{{item.first_name + ' ' + item.last_name}}</td>
+                        <td>{{item.email_id}}</td>
+                        <td>{{item.grade_name}}</td>
+                        <td>{{item.status}}</td>
+                        <td>{{item.upgrade_date | customDateFormat}}</td>
+                    </tr>
+                    </tbody>
+                </table>
+                <div *ngIf="listData.length == 0" class="col-12 px-0">
+                    <div class="d-flex justify-content-center align-items-center color-primary font-weight-bold" style="height: 30vh; width: 100%">No student available</div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<ng-template #upgrade let-c="close" let-d="dismiss">
+    <div class="modal-header d-flex justify-content-between">
+        <h4 class="mb-0">Upgrade</h4><i (click)="close()" class="fa fa-times-circle cursor" style="font-size: 1.2rem"></i>
+    </div>
+    <div class="modal-body" style="border: 0px">
+        <div class="container-fluid">
+            <div>
+                <div class="d-flex">
+                    <span>Last Upgrade:</span>&nbsp; &nbsp; <h4 class="font-weight-bold color-primary">{{this.lastUpgrade}}</h4>
+                </div>
+                <p class="mb-0">Are you sure ? Do you want to upgrade all student in this institution</p>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button (click)="upgradeSelectedStudent()" class="btn btn-primary pull-right">Confirm</button>
+    </div>
+</ng-template>

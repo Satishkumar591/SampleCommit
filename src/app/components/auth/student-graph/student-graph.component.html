@@ -1,0 +1,76 @@
+
+<div class="container custom-scrollbar" *ngIf="typeId != '3'">
+    <div [hidden]="question == '' || question == undefined" class="col-12 mt-3 customize-card3">
+        <div [innerHTML]="question | sanitizeHtml"></div>
+    </div>
+    <div class="col-12 mt-3" *ngIf="false">
+        <button [attr.aria-controls]="'#workspace'" [attr.data-target]="'#workspace'" aria-expanded="false" class="btn-sm btn-outline-primary mr-2" data-toggle="collapse">work space</button>
+        <button [attr.aria-controls]="'#answer'" [attr.data-target]="'#answer'" aria-expanded="false" class="btn-sm btn-outline-primary mr-2" data-toggle="collapse">Set Answer</button>
+    </div>
+    <div class="col-12 mt-3 collapse"  id="workspace" #workspace>
+        <div class="col-12 d-flex justify-content-center">
+            <app-tiny-mice (emitEditorValue)="getRoughWorkEvent($event)"
+                           [editorPatchValue]="false"
+                           [height]="150"
+                           [width]="600"
+                           [readonly]="false"
+                           [id]="'workspace'"
+                           [showDropBtn]="false"
+                           [showInputBtn]="false">
+            </app-tiny-mice>
+        </div>
+    </div>
+    <div class="col-12 collapse"  id="answer" #answer>
+        <div class="col-12 mt-2 d-flex justify-content-center">
+            <app-tiny-mice (emitEditorValue)="getNumericWorkSpaceValue($event)"
+                           [editorPatchValue]="false"
+                           [height]="150"
+                           [width]="600"
+                           [readonly]="false"
+                           [id]="'answer'"
+                           [showDropBtn]="false"
+                           [showInputBtn]="false">
+            </app-tiny-mice>
+        </div>
+    </div>
+
+    <div class="col-12 mt-3 d-flex justify-content-center" *ngIf="typeId != '3'">
+        <h4>Draw Type - {{markType ? markType : 'None'}}</h4>
+    </div>
+    <div class="col-12 mt-0 d-flex justify-content-center">
+        <app-graph-component [editMode]="editMode"
+                             [editPatchValue]="studentAns1"
+                             [graphId]="'studentAns1'"
+                             [questionType]="'40'"
+                             (emitItem)="getEmitedValue($event)" (valueChange)="getGraphValue($event)"
+        ></app-graph-component>
+    </div>
+
+
+    <div class="col-12 d-flex justify-content-center mt-3" *ngIf="typeId != '3'">
+        <button class="btn btn-primary p-3" (click)="getGraphDetails('1')">Submit</button>
+    </div>
+</div>
+
+<div *ngIf="typeId == '3'">
+    <div [hidden]="question == '' || question == undefined" class="col-12 mt-3 customize-card3">
+        <div [innerHTML]="question | sanitizeHtml"></div>
+    </div>
+    <div class="col-md-12 mt-3 px-0 d-flex">
+        <div class="col-md-6 ">
+<!--            div-disable-->
+            <label>Correct Answer: </label>
+            <app-graph-component [editMode]="false"
+                                 [editPatchValue]="teacherAns"
+                                 [graphId]="'teacherAns'"
+                                 [questionType]="questionType"></app-graph-component>
+        </div>
+        <div class="col-md-6">
+            <label>Student Answer: </label>
+            <app-graph-component [editMode]="false"
+                                 [editPatchValue]="studentAns"
+                                 [graphId]="'studentAns'"
+                                 [questionType]="questionType"></app-graph-component>
+        </div>
+    </div>
+</div>

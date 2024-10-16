@@ -1,0 +1,340 @@
+<section class=" container-fluid report">
+    <form [formGroup]="studentReport">
+        <div class="row">
+            <div class="group-btn col-12 col-lg-12 mt-2">
+                <button type="button" [ngClass]="{'active1': this.studentlisthighlight == '1'}" class="btn btn-outline-primary" (click)="studentList(1)">All</button>
+                <button type="button" [ngClass]="{'active1': this.studentlisthighlight == '2'}" class="btn btn-outline-primary" (click)="studentList(2)">Master</button>
+                <button type="button" [ngClass]="{'active1': this.studentlisthighlight == '3'}" class="btn btn-outline-primary" (click)="studentList(3)">Excellent</button>
+                <button type="button" [ngClass]="{'active1': this.studentlisthighlight == '4'}" class="btn btn-outline-primary" (click)="studentList(4)">Proficiant</button>
+                <button type="button" [ngClass]="{'active1': this.studentlisthighlight == '6'}" class="btn btn-outline-primary" (click)="studentList(6)">Average</button>
+                <button type="button" [ngClass]="{'active1': this.studentlisthighlight == '7'}" class="btn btn-outline-primary" (click)="studentList(7)">Bellow Average</button>
+            </div>
+        </div>
+        <div class="row mb-2 mt-4">
+            <div class="form-group col-4">
+                <label class="col-xl-12 col-md-12">Class Code & Class Name</label>
+                <select class="custom-select col-md-12" formControlName="className" (change)="selectClass($event)">
+                    <option value="" hidden>--Select--</option>
+                    <option *ngFor="let class of classList" [value]="class.class_code">{{class.class_name}}</option>
+                </select>
+            </div>
+            <div class="form-group col-4">
+                <label class="col-xl-12 col-md-12" ><span style="visibility: hidden">*</span>
+                    From Date</label>
+                <div class="col-xl-12 col-md-12 form-group">
+                    <div class="input-group">
+                        <input class="form-control" name="fromdate" placeholder="mm-dd-yyyy"
+                               formControlName="fromDate" angular-mydatepicker #dp="angular-mydatepicker" (dateChanged)="onDateChanged1($event, '1')">
+                        <div class="input-group-append">
+                            <button type="button" class="btn btn-primary" (click)="dp.toggleCalendar()">
+                                <i class="fa fa-calendar-o"></i>
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="form-group col-4">
+                <label class="col-xl-12 col-md-12" ><span style="visibility: hidden">*</span>
+                    To Date</label>
+                <div class="col-xl-12 col-md-12 form-group">
+                    <div class="input-group">
+                        <input class="form-control" name="todate" placeholder="mm-dd-yyyy"
+                               formControlName="toDate" angular-mydatepicker #dp1="angular-mydatepicker" [options]="myDpOptions" (dateChanged)="onDateChanged1($event, '2')"/>
+                        <div class="input-group-append">
+                            <button type="button" class="btn btn-primary" (click)="dp1.toggleCalendar()">
+                                <i class="fa fa-calendar-o"></i>
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <ngb-accordion [closeOthers]="true" *ngFor="let list of reportList; let gradeIndex = index" activeIds="0" class="grade">
+        <ngb-panel id="{{gradeIndex}}">
+            <ng-template ngbPanelHeader let-opened="opened">
+                <div>
+                    <button class="btn btn-link d-flex align-items-center justify-content-between p-2 w-100"
+                            ngbPanelToggle>
+                        <h4 class="m-0">{{list.class_code}} & {{list.class_name}} </h4>
+                        <div class="d-flex align-items-center justify-content-between">
+                            <h4 class="mb-0 mr-5">Avg% = {{list.percentage}}</h4>
+                            <i class="fa fa-caret-down" aria-hidden="true" *ngIf="opened; else uparrow"></i>
+                        </div>
+                        <ng-template #uparrow><i class="fa fa-caret-up" aria-hidden="true"></i></ng-template>
+                    </button>
+                </div>
+            </ng-template>
+            <ng-template ngbPanelContent>
+
+                <ngb-accordion [closeOthers]="true" *ngFor="let item of list.student_list; let subjectIndex = index"
+                               activeIds="0" class="subject">
+                    <ngb-panel id="{{subjectIndex}}">
+                        <ng-template ngbPanelHeader let-opened="opened">
+                            <div>
+                                <button class="btn btn-link d-flex align-items-center justify-content-between p-2 w-100"
+                                        ngbPanelToggle>
+                                    <h4 class="m-0">{{item.student_name}}</h4>
+                                    <div class="d-flex align-items-center justify-content-between">
+<!--                                        <h4 class="mb-0 mr-5">Avg% = {{item.percentage}}</h4>-->
+                                        <i class="fa fa-caret-down" aria-hidden="true" *ngIf="opened; else uparrow"></i>
+                                    </div>
+                                    <ng-template #uparrow><i class="fa fa-caret-up" aria-hidden="true"></i>
+                                    </ng-template>
+                                </button>
+                            </div>
+                        </ng-template>
+                        <ng-template ngbPanelContent>
+                            <ngb-accordion [closeOthers]="true" class="assessment">
+                                <ngb-panel>
+                                    <ng-template ngbPanelHeader let-opened="opened">
+                                        <div>
+                                            <button class="btn btn-link d-flex align-items-center justify-content-between p-2 w-100"
+                                                    ngbPanelToggle>
+                                                <h4 class="m-0">Assessment</h4>
+                                                <div class="d-flex align-items-center justify-content-between">
+                                                    <h4 class="mb-0 mr-5">Avg% = {{item.assessment_percentage}}</h4>
+                                                    <i class="fa fa-caret-down" aria-hidden="true"
+                                                       *ngIf="opened; else uparrow"></i>
+                                                </div>
+                                                <ng-template #uparrow><i class="fa fa-caret-up" aria-hidden="true"></i>
+                                                </ng-template>
+                                            </button>
+                                        </div>
+                                    </ng-template>
+                                    <ng-template ngbPanelContent>
+                                        <ng2-smart-table [settings]="assessment"  [source]="item.assessment" (userRowSelect)="studentCorrectionDetail($event)"></ng2-smart-table>
+                                    </ng-template>
+                                </ngb-panel>
+                            </ngb-accordion>
+
+                            <ngb-accordion [closeOthers]="true" class="assignment">
+                                <ngb-panel>
+                                    <ng-template ngbPanelHeader let-opened="opened">
+                                        <div>
+                                            <button class="btn btn-link d-flex align-items-center justify-content-between p-2 w-100"
+                                                    ngbPanelToggle>
+                                                <h4 class="m-0">Assignment</h4>
+                                                <div class="d-flex align-items-center justify-content-between">
+                                                    <h4 class="mb-0 mr-5">Avg% = {{item.assignment_percentage}}</h4>
+                                                    <i class="fa fa-caret-down" aria-hidden="true"
+                                                       *ngIf="opened; else uparrow"></i>
+                                                </div>
+                                                <ng-template #uparrow><i class="fa fa-caret-up" aria-hidden="true"></i>
+                                                </ng-template>
+                                            </button>
+                                        </div>
+                                    </ng-template>
+                                    <ng-template ngbPanelContent>
+                                        <ng2-smart-table [settings]="assignment"  [source]="item.assignment" (userRowSelect)="studentCorrectionDetail($event)"></ng2-smart-table>
+                                    </ng-template>
+                                </ngb-panel>
+                            </ngb-accordion>
+                        </ng-template>
+                    </ngb-panel>
+                </ngb-accordion>
+            </ng-template>
+        </ngb-panel>
+
+    </ngb-accordion>
+</section>
+
+
+
+<ng-template #content let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h4 class="modal-title col-12 text-center" *ngIf="type == 1"><b>Assessment List</b></h4>
+        <h4 class="modal-title col-12 text-center" *ngIf="type == 2"><b>Assignment List</b></h4>
+    </div>
+    <div class="modal-body">
+        <!-- Container-fluid starts-->
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-12" *ngIf="viewData != ''">
+                    <div class="d-flex text-center mt-3" *ngFor="let class of viewData; let i = index">
+                        <label class="ml-3">{{i + 1}}.</label>
+                        <label class="ml-3">ContentName : {{class.content_name}}</label>
+                        <label class="ml-3">Percentage : {{class.percentage}}</label>
+                    </div>
+                </div>
+                <div class="col-sm-12" *ngIf="viewData == ''">
+                    <button class="nodataList w-50 ml-5">No List Available!</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-primary" (click)="close()">Ok</button>
+    </div>
+</ng-template>
+
+<ng-template #viewStudentDetails let-c="close" let-d="dismiss">
+    <div class="modal-body">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12 modal-header">
+                    <h4 class="modal-title">Correction Details</h4>
+                    <p class="text-right">
+                        <i (click)="close()" aria-hidden="true" class="fa fa-close fa-2x" style="cursor:pointer"></i>
+                    </p>
+                </div>
+                <div [hidden]="studentAnswer.answers.length == 0" class="col-md-12 scrollPanel view-question" style="height: 100vh">
+                    <div *ngFor="let sec of totalAns; let i = index" class="card mt-2 div-disable">
+                        <div *ngIf="sec.heading != ''" class="col-md-12 mb-3">
+                            <input [value]="sec.heading" class="input-custom-modal div-disable" type="text">
+                        </div>
+                        <div *ngFor="let item of sec.section; let j = index" class="card-body mb-3">
+                            <div class="row d-flex justify-content-between">
+                                <div class="col-md-1">
+                                    <button class="btn btn-primary mr-3">{{item.sub_question_no}}</button>
+                                </div>
+                                <!--                                <div *ngIf="showpdf == true" class="col-md-6 text-right">-->
+                                <!--                                    <input (input)="getPoints($event , i, j); markValidation($event, item.points , i, j)" (keypress)="numberValidate($event)" [value]="item.given_points" autocomplete="off" class="mark-input" name="points" style="text-align: center">-->
+                                <!--                                    <input (keypress)="numberValidate($event)" [value]="item.points" class="mark-input div-disable" style="text-align: center">-->
+                                <!--                                    <br>-->
+                                <!--                                    <span *ngIf="item.maxValErr" class="errormessage">Invalid Points </span>-->
+                                <!--                                </div>-->
+                                <div class="col-md-3 text-right">
+                                    <input (input)="getPoints($event , i, j); markValidation($event, item.points, i, j)" (keypress)="numberValidate($event)" [value]="item.given_points" autocomplete="off" class="mark-input" name="points" style="text-align: center">
+                                    <input (keypress)="numberValidate($event)" [value]="item.points" class="mark-input div-disable" style="text-align: center">
+                                    <br>
+                                    <span *ngIf="item.maxValErr" class="errormessage">Invalid Points</span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <!--<p class="mb-0 mt-2">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Alias, magnam!</p>-->
+                                    <ul *ngIf="item.question_type_id == 1" class="mt-4">
+                                        <p [hidden]="item.question == ''" class="mb-0 mt-2" [innerHTML]="item.question"></p>
+                                        <li *ngFor="let option of item.array" [ngClass]="{'ans-correct': option == item.answer, 'ans-selected': option == item.student_answer, 'ans-wrong': option != item.answer && option == item.student_answer}"><span><span>{{option}}</span>
+                            <i aria-hidden="true" class="fa fa-check"></i>
+                            <i aria-hidden="true" class="fa fa-times"></i>
+                        </span>
+                                        </li>
+                                    </ul>
+                                    <ul *ngIf="item.question_type_id == 3" class="mt-4">
+                                        <p [hidden]="item.question == ''" class="mb-0 mt-2" [innerHTML]="item.question"></p>
+                                        <li [ngClass]="{'ans-correct': item.answer == 'true', 'ans-selected': item.student_answer == 'true', 'ans-wrong': item.answer == 'false' && item.student_answer == 'true'}">
+                            <span><input [checked]="item.student_answer == 'true'" class="radio-size form-control mr-2 div-disable" name="ans" type="radio" value="true"> True
+                            <i aria-hidden="true" class="fa fa-check"></i>
+                            <i aria-hidden="true" class="fa fa-times"></i>
+                            </span>
+                                        </li>
+                                        <li [ngClass]="{'ans-correct': item.answer == 'false', 'ans-selected': item.student_answer == 'false', 'ans-wrong': item.answer == 'true' && item.student_answer == 'false'}">
+                            <span><input [checked]="item.student_answer == 'false'" class="radio-size form-control mr-2 div-disable" name="ans" type="radio" value="false"> False
+                            <i aria-hidden="true" class="fa fa-check"></i>
+                            <i aria-hidden="true" class="fa fa-times"></i>
+                            </span>
+                                        </li>
+                                    </ul>
+                                    <ul *ngIf="item.question_type_id == 9" class="mt-4">
+                                        <p [hidden]="item.question == ''" class="mb-0 mt-2" [innerHTML]="item.question"></p>
+                                        <li *ngFor="let option of item.mob_options" [ngClass]="{'ans-correct': option == item.answer, 'ans-selected': option == item.student_answer, 'ans-wrong': option != item.answer && option == item.student_answer}"><span class="capital">{{option}}
+                                            <i aria-hidden="true" class="fa fa-check"></i>
+                            <i aria-hidden="true" class="fa fa-times"></i>
+                        </span></li>
+                                    </ul>
+                                    <div *ngIf="item.question_type_id == 10" class="col-md-6 mt-4 px-0">
+                                        <p [hidden]="item.question == ''" class="mb-0 mt-2" [innerHTML]="item.question"></p>
+                                        <input [ngClass]="{'wrong-ans': item.match_case ? (item.answer != item.student_answer) : (item.answer.toLowerCase() != item.student_answer.toLowerCase()),
+                                'correct-ans': item.match_case ? (item.answer == item.student_answer) : (item.answer.toLowerCase() == item.student_answer.toLowerCase())}"
+                                               [value]="item.student_answer"
+                                               class="form-control div-disable mt-2"
+                                               type="text">
+                                        <label class="mt-4" value="Correct answer">Correct answer : {{item.answer}}</label>
+                                    </div>
+                                    <div *ngIf="item.question_type_id == 20" class="col-md-12 mt-4 px-0">
+                                        <textarea class="form-control div-disable" cols="30" rows="4">{{item.student_answer}}</textarea>
+                                    </div>
+                                    <div *ngIf="item.question_type_id == 30" class="col-md-12 mt-4 px-0">
+                                        <div class="d-flex">
+                                            <label>Student Answer: </label>
+                                            <h4 [innerHTML]="item.student_answer | sanitizeHtml" class="ml-3"></h4>
+                                        </div>
+                                        <div class="d-flex">
+                                            <label>Correct Answer: </label>
+                                            <h4 [innerHTML]="item.answer | sanitizeHtml" class="ml-3"></h4>
+                                        </div>
+                                    </div>
+                                    <div *ngIf="item.question_type_id == 40" class="col-md-12 mt-4 px-0 d-flex">
+                                        <div class="col-md-6 div-disable">
+                                            <label>Correct Answer: </label>
+                                            <app-graph-component [editMode]="false"
+                                                                 [editPatchValue]="parseVal(item.answer)"
+                                                                 [graphId]="i+'correctgraph'+item.sub_question_no+'id'"
+                                                                 [questionType]="'40'"></app-graph-component>
+                                        </div>
+                                        <div class="col-md-6 div-disable">
+                                            <label>Student Answer: </label>
+                                            <app-graph-component *ngIf="item.student_answer != ''"
+                                                                 [editMode]="false"
+                                                                 [editPatchValue]="parseVal(item.student_answer[0].correctAnswer)"
+                                                                 [graphId]="i+'Editgraph'+item.sub_question_no+'id'"
+                                                                 [questionType]="'40'"></app-graph-component>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mt-4 d-flex">
+                                <div class="col-md-6">
+                                    <label>Student feedback</label>
+                                    <textarea [value]="item.student_feedback == null ? '' : item.student_feedback" class="form-control div-disable" rows="3"></textarea>
+                                </div>
+                                <div class="col-md-6">
+                                    <label>Feedback</label>
+                                    <textarea (input)="getFeedback($event, i, j)" [value]="item.feedback" class="form-control div-disable" placeholder="Feed Back" rows="3"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12 mt-3 card p-4">
+                        <div class="col-md-12 d-flex">
+                            <div class="col-md-6 px-0 mb-2">
+                                <div class="col-md-12">
+                                    <label>Obtained Points</label>
+                                    <input [(ngModel)]="studentPoints" class="form-control div-disable" type="text">
+                                </div>
+                                <div class="col-md-12 mt-3">
+                                    <label>Total Points</label>
+                                    <input [(ngModel)]="totalPoints" class="form-control div-disable" type="text">
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-1">
+                                <label>Feedback</label>
+                                <textarea [(ngModel)]="totalFeedBack" class="form-control div-disable" cols="30" rows="5"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div [hidden]="studentAnswer.answers.length != 0" class="col-md-12">
+                    <app-annotation [getAnnotate]="areaInfo"
+                                    [getDragQues]="dragQuestionsList"
+                                    [pdfPath]="pdfTemplate"
+                                    [toolHide]="true"
+                                    [userType]="'teacher'"></app-annotation>
+                    <div class="col-md-12 mt-3 card p-4">
+                        <div class="col-md-12 d-flex">
+                            <div class="col-md-6 px-0 mb-2">
+                                <div class="col-md-12">
+                                    <label>Obtained Points</label>
+                                    <input [(ngModel)]="studentPoints" class="form-control div-disable" type="text">
+                                </div>
+                                <div class="col-md-12 mt-3">
+                                    <label>Total Points</label>
+                                    <input [(ngModel)]="totalPoints" class="form-control div-disable" type="text">
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-1">
+                                <label>Feedback</label>
+                                <textarea [(ngModel)]="totalFeedBack" class="form-control div-disable" cols="30" rows="5"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Container-fluid Ends-->
+    </div>
+</ng-template>

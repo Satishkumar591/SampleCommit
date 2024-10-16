@@ -1,0 +1,26 @@
+.payment-color {
+  text-decoration: underline;
+  text-decoration-color: blue;
+  color: blue;
+}
+
+.marquee {
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.marquee div {
+  padding-left: 100%;
+  display: inline-block;
+  animation: animate 20s linear infinite;
+}
+
+.marquee:hover div{
+  animation-play-state: paused;
+}
+
+@keyframes animate {
+  100% {
+    transform: translate(-100%, 0);
+  }
+}

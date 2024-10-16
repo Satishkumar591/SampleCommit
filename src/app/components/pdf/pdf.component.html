@@ -1,0 +1,48 @@
+<!--<div class="page">-->
+<!--&lt;!&ndash;    <div #viewer class="viewer"></div>&ndash;&gt;-->
+<!--    </div>-->
+
+<div class="container">
+    <!--<div class="container__left-side">-->
+        <!--<div class="header">-->
+            <!--<h2>Angular PDF highlighter</h2>-->
+            <!--<div class="link">-->
+                <!--<a href="https://github.com/kbatyrbayev/ng-pdf-highlighter" target="blank">Open in GitHub</a>-->
+            <!--</div>-->
+        <!--</div>-->
+        <!--<div class="list">-->
+            <!--<div class="list-row" *ngFor="let list of areaInfo;" (click)="moveTo(list); $event.stopPropagation();">-->
+                <!--<div class="delete-btn">-->
+                    <!--<i class="material-icons icon" (click)="delete(list); $event.stopPropagation();">close</i>-->
+                <!--</div>-->
+                <!--<div class="title">Position:</div>-->
+                <!--<pre>-->
+          <!--<div [innerHTML]="list?.rect | json"></div>-->
+        <!--</pre>-->
+                <!--<div class="page-number">-->
+                    <!--Page {{list?.pageNumber}}-->
+                <!--</div>-->
+            <!--</div>-->
+        <!--</div>-->
+    <!--</div>-->
+
+
+
+
+    <div class="container__right-side"
+         (mousemove)="mouseEvent($event)"
+         (mousedown)="mouseEvent($event)"
+         (mouseup)="mouseEvent($event)">
+        <pdf-viewer src="assets/MF19.pdf" [render-text]="true" (page-rendered)="pageRendered($event)" style="display: block;"></pdf-viewer>
+    </div>
+
+</div>
+
+<div class="js-popper popper" [style.display]="getStyle()">
+    <div class="icons">
+        <i class="fa fa-check" aria-hidden="true" (click)="save()"></i>
+        <i class="fa fa-times" (click)="cancel()">close</i>
+    </div>
+</div>
+
+

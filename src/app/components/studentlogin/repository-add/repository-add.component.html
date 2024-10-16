@@ -1,0 +1,235 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card tab2-card">
+                <div class="card-header pb-0">
+                    <h5 *ngIf="type == 'add'" class="text-capitalize">Add Content</h5>
+                    <h5 *ngIf="type == 'edit'" class="text-capitalize">Edit Content</h5>
+                    <label class="text-muted">All fields marked with <span class="text-danger">*</span> are required</label>
+                    <ul *ngIf="type == 'add'" class="nav nav-tabs mb-0 color-primary">
+                        <li class="nav-item cursor">
+                            <a (click)="uploadType = 'single'; resetForm()" aria-current="page" class="nav-link {{uploadType == 'single' ? 'active' : ''}}"><b>Single Upload</b></a>
+                        </li>
+                        <li class="nav-item cursor">
+                            <a (click)="uploadType = 'multi'; resetForm()" class="nav-link {{uploadType == 'multi' ? 'active' : ''}}"><b>Multi Upload</b></a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card-body tab2-card">
+                    <form *ngIf="uploadType == 'single'" [formGroup]="contentForm" class="needs-validation user-add">
+                        <div class="form-group col-12 d-flex mt-4">
+                            <label class="col-12 col-md-4 col-xl-3" for="validationCustom1"><span>*</span>
+                                Name</label>
+                            <div class="col-12 col-md-7 col-xl-8">
+                                <input class="form-control " formControlName="name" id="validationCustom1"
+                                       placeholder="Name" required="" type="text">
+                                <em *ngIf="!contentForm.get('name').valid && (contentForm.get('name').dirty || contentForm.get('name').touched)" class="error">Name is required</em>
+                            </div>
+                        </div>
+                        <div class="form-group col-12 d-flex">
+                            <label class="col-12 col-md-4 col-xl-3" for="validationCustom2"><span style="visibility: hidden">*</span>
+                                Description</label>
+                            <div class="col-12 col-md-7 col-xl-8">
+                                <textarea class="form-control " formControlName="description" id="validationCustom2" placeholder="Description"
+                                          rows="3" type="email"></textarea>
+                            </div>
+                        </div>
+                        <div class="form-group col-12 d-flex">
+                            <label class="col-md-4 col-xl-3" for="validationCustom5"><span style="visibility: hidden">*</span>
+                                Category</label>
+                            <div class="col-md-{{showCategoryInput ? '3' : '6'}} col-xl-{{showCategoryInput ? '4' : '7'}}">
+                                <ng-select [items]="categoryList"
+                                           bindLabel="category_name"
+                                           bindValue="category_id"
+                                           formControlName="category"
+                                           multiple="true"
+                                           placeholder="Select Category">
+                                </ng-select>
+<!--                                <select class="form-control" formControlName="category">-->
+<!--                                    <option disabled selected value="">&#45;&#45;Select Category&#45;&#45;</option>-->
+<!--                                    <option *ngFor="let item of categoryList" value="{{item.category_id}}">{{item.category_name}}</option>-->
+<!--                                </select>-->
+                                <em *ngIf="!contentForm.get('category').valid && (contentForm.get('category').dirty || contentForm.get('category').touched)" class="error">Category is required</em>
+                            </div>
+                            <div *ngIf="!showCategoryInput" class="col-md-1 col-xl-1 px-0 d-flex">
+                                <i (click)="onSelectNewFolder()" class="fa fa-plus-square color-primary cursor" style="font-size: 2.1rem" title="Add New Folder"></i>
+                            </div>
+                            <div *ngIf="showCategoryInput" class="col-md-4 col-xl-4 d-flex">
+                                <input class="form-control" id="newFolder"
+                                       placeholder="Enter New Folder Name" type="text">
+                                <i (click)="showCategoryInput = false" class="fa fa-times-circle color-red mx-2 align-self-center cursor" style="font-size: 1.4rem"></i>
+                                <i (click)="addNewFolder(0)" class="fa fa-check-circle color-green align-self-center cursor" style="font-size: 1.4rem"></i>
+                            </div>
+                        </div>
+                        <div class="form-group col-12 d-flex">
+                            <label class="col-12 col-md-4 col-xl-3" for="validationCustom5"><span>*</span>
+                                Status</label>
+                            <div class="col-12 col-md-7 col-xl-8">
+                                <select class="form-control" formControlName="status" id="validationCustom5">
+                                    <option disabled selected>&#45;&#45;Select Status&#45;&#45;</option>
+                                    <option value="1">Active</option>
+                                    <option value="2">In-Active</option>
+                                </select>
+                                <em *ngIf="!contentForm.get('status').valid && (contentForm.get('status').dirty || contentForm.get('status').touched)" class="error">Status is required</em>
+                            </div>
+                        </div>
+                        <div class="form-group col-12 d-flex">
+                            <label class="col-12 col-md-4 col-xl-3"><span style="visibility: hidden">*</span>
+                                Subject</label>
+                            <div class="col-12 col-md-7 col-xl-8">
+                                <input class="form-control " formControlName="subject"
+                                       placeholder="Enter Subject" type="text">
+                            </div>
+                        </div>
+                        <div class="form-group col-12 d-flex">
+                            <label class="col-12 col-md-4 col-xl-3"><span style="visibility: hidden">*</span>
+                                Grade</label>
+                            <div  class="col-12 col-md-7 col-xl-8">
+                                <input class="form-control " formControlName="grade"
+                                       placeholder="Enter Grade" type="text">
+                            </div>
+                        </div>
+                        <div class="form-group col-12 d-flex">
+                            <label class="col-12 col-md-4 col-xl-3"><span style="visibility: hidden">*</span>
+                                Resources Link</label>
+                            <div  class="col-12 col-md-7 col-xl-8">
+                                <tag-input [addOnBlur]="true"
+                                           [addOnPaste]="true"
+                                           [clearOnBlur]="true"
+                                           [editable]='true'
+                                           [pasteSplitPattern]="' '"
+                                           [placeholder]="'Add Resources'"
+                                           [secondaryPlaceholder]="'Enter Resources'"
+                                           formControlName="resourcesLink"
+                                           theme='bootstrap'>
+                                </tag-input>
+                            </div>
+                        </div>
+                        <div class="form-group col-12 d-flex">
+                            <div class="col-md-6 px-0">
+                                <label class="col-12 col-md-6 col-xl-6"><span>*</span>
+                                    Upload Files</label>
+                                <input #attachments #hiddenfileinput (change)="encodePdfFileAsURL($event, '1')" accept=".pdf" style="display: none" type="file">
+                                <button (click)="hiddenfileinput.click()" aria-describedby="inputGroupFileAddon01" class="btn btn-primary mt-2 ml-2"
+                                        type="file"><i class="fa fa-upload"></i> Upload PDF</button>
+                            </div>
+                        </div>
+                        <div class="form-group col-12 d-flex">
+                            <div class="col-md-6">
+                                <div class="col-12 col-md-4 col-xl-4">
+                                    <div *ngFor="let file of pdfpath; let i= index" class="form-group card-resource ml-4">
+                                        <div *ngIf="pdfpath.length > 0" class="delete-icon w-100">
+                                            <img alt="" class="cursor img-path" src="assets/images/ristaschool/books.png" title="{{file.image}}">
+                                            <br/>
+                                            <img (click)="deletePdf(i, 'single')" *ngIf="pdfpath.length != 0" alt="" class="img-icon mt-2 float-right"  src="assets/images/pdf-icons/Icon material-delete@2x.png">
+                                            <h6 class="mt-2 cursor classresource">{{file.image}}</h6>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <form *ngIf="uploadType == 'multi'" [formGroup]="contentForm" class="needs-validation user-add">
+                        <div class="form-group col-12 flex-wrap d-flex justify-content-center my-3 dragNDrop">
+                            <div class="form-group col-md-12 flex-wrap dragNDrop">
+                                <div style="padding: 15px;">
+                                    <div class="col-md-12 d-flex px-0">
+                                        <div class="col-md-12 text-center">
+                                            <div (filesChangeEmiter)="onFileChange($event)" appFileDragNDrop class="dropzone">
+                                                <div class="text-wrapper">
+                                                    <div class="centered">
+                                                        <label>Drop it here!</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <hr>
+                                </div>
+                                <div class="col-md-12 d-flex flex-wrap px-0">
+<!--                                    <h3 *ngIf="pdfpath.length >0">Files</h3>-->
+                                    <div *ngFor="let f of multiPdf; let ind = index" class="col-md-4 d-flex flex-wrap align-self-baseline">
+                                        <div class="col-md-12 d-flex flex-wrap fileItem" title="{{f.file_path[0].image}}">
+                                            <div class="col-sm-12 fileItemIconDiv">
+                                                <i (click)="deletePdf(ind, 'multi')" class="fa fa-trash-o"></i>
+                                            </div>
+                                            <div class="col-sm-12 fileItemText">
+                                                <span>{{f.file_path[0].image}}</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12 px-0 my-2">
+                                            <input (input)="patchName($event, ind)" [value]="f.name" class="form-control" placeholder="Enter Content Name" type="text">
+                                        </div>
+                                        <div class="col-md-12 d-flex px-0">
+                                            <select (change)="multiCategorySelection($event, ind)" [(ngModel)]="f.category_id" [ngModelOptions]="{standalone: true}" class="form-control">
+                                                <option disabled selected value="">&#45;&#45;Select Category&#45;&#45;</option>
+                                                <option *ngFor="let item of categoryList" value="{{item.category_id}}">{{item.category_name}}</option>
+                                            </select>
+                                            <i (click)="showNewFolderInput(ind)" *ngIf="!showCategoryInput" class="fa fa-plus-square color-primary cursor ml-2 align-self-center"
+                                               style="font-size: 1.9rem" title="Add New Folder"></i>
+                                        </div>
+                                        <div class="col-md-12 px-0 mt-2 display-none" id="multiFolder{{ind}}">
+                                            <input class="form-control" id="folderInput{{ind}}" placeholder="Enter New Folder Name" type="text">
+                                            <i (click)="closeNewFolderInput(ind)" class="fa fa-times-circle color-red mx-2 align-self-center" style="font-size: 1.2rem"></i>
+                                            <i (click)="addNewFolder(ind)" class="fa fa-check-circle color-green align-self-center" style="font-size: 1.2rem"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!--                        <input #hiddenfileinput1 type="file" accept=".pdf" style="display: none" (change)="encodePdfFileAsURL($event, 3)" multiple>-->
+                        <!--                        <div class="form-group row">-->
+                        <!--                            <label class="col-xl-3 col-md-4" for="validationCustom5"><span>*</span>-->
+                        <!--                                Book Type</label>-->
+                        <!--                            <div class="col-xl-8 col-md-7">-->
+                        <!--                                <select (change)="typeSelection($event)" class="form-control" formControlName="bookType" >-->
+                        <!--                                    <option disabled selected>&#45;&#45;Select&#45;&#45;</option>-->
+                        <!--                                    <option value="1">Resource</option>-->
+                        <!--                                    <option value="3">Assessment</option>-->
+                        <!--                                    <option value="2">Assignment</option>-->
+                        <!--                                </select>-->
+                        <!--                                <em *ngIf="!contentForm.get('bookType').valid && (contentForm.get('bookType').dirty || contentForm.get('bookType').touched)" class="error">Book type is required</em>-->
+                        <!--                            </div>-->
+                        <!--                        </div>-->
+                        <div class="form-group col-12 d-flex justify-content-center">
+                            <label class="col-12 col-md-4 col-xl-3"><span style="visibility: hidden">*</span>
+                                Subject</label>
+                            <div class="col-12 col-md-7 col-xl-8">
+                                <input class="form-control " formControlName="subject"
+                                       placeholder="Enter Subject" type="text">
+                            </div>
+                        </div>
+                        <div class="form-group col-12 d-flex justify-content-center">
+                            <label class="col-12 col-md-4 col-xl-3"><span style="visibility: hidden">*</span>
+                                Grade</label>
+                            <div  class="col-12 col-md-7 col-xl-8">
+                                <input class="form-control " formControlName="grade"
+                                       placeholder="Enter Grade" type="text">
+                            </div>
+                        </div>
+                        <div class="form-group col-12 d-flex justify-content-center">
+                            <label class="col-12 col-md-4 col-xl-3"><span>*</span>
+                                Status</label>
+                            <div class="col-12 col-md-7 col-xl-8">
+                                <select class="form-control" formControlName="status">
+                                    <option disabled selected>&#45;&#45;Select&#45;&#45;</option>
+                                    <option value="1">Active</option>
+                                    <option value="2">In-Active</option>
+<!--                                    <option *ngIf="type =='edit'" value="3">Suspended</option>-->
+<!--                                    <option *ngIf="type =='edit'" value="4">Deleted</option>-->
+                                </select>
+                                <em *ngIf="!contentForm.get('status').valid && (contentForm.get('status').dirty || contentForm.get('status').touched)" class="error">Status is required</em>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer px-4 py-3">
+                    <div class="pull-right">
+                        <button (click)="addContent('add')" *ngIf="type == 'add'" class="btn btn-primary" type="button">Save</button>
+                        <button (click)="addContent('edit')" *ngIf="type == 'edit'" class="btn btn-primary" type="button">Update</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,20 @@
+<!--<editor id="editor" *ngIf="editorPatchValue"-->
+<div id="custom-pdf-loader-editor" *ngIf="showLoader" style="height: 10vh">
+    <img src="assets/images/pre-loader/loader-01.svg" alt="">
+</div>
+<editor *ngIf="editorPatchValue"
+        [init]="editorConf"
+        [id]="id"
+        [initialValue]="editorPatchValue"
+        plugins="lists code"
+        apiKey="ku7lmhqp5kuubc17r132kleoxa4430oz1tb13q81fwj148yb"
+></editor>
+<!--(onInit)="manuallTrigger1($event)"-->
+
+<editor [id]="id" *ngIf="!editorPatchValue"
+        [init]="editorConf"
+        plugins="lists code"
+        apiKey="ku7lmhqp5kuubc17r132kleoxa4430oz1tb13q81fwj148yb"
+></editor>
+
+<input (change)="encodeImageFileAsURL($event)" accept=".png, .jpg, .jpeg"  id="imageUpload{{getRandom}}" style="display: none" type='file' />

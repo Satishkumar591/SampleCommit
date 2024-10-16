@@ -1,0 +1,68 @@
+.search-input {
+  font-size: 12px;
+  padding: 8px 10px;
+  border-radius: 4px;
+  border: none;
+  &:active {
+    border: none;
+    box-shadow: none;
+  }
+}
+.mail-input {
+  padding: 18px 12px;
+  border: none;
+  border-bottom: 1px solid #8F008A;
+  font-size: 14px;
+  width: 100%;
+  &:focus,&:active,&:focus-visible {
+    box-shadow: none;
+    border-bottom: 3px solid #8F008A;
+  }
+}
+.btn-outline {
+  color: #8F008A;
+  background: white;
+  padding: 8px 14px;
+  border-radius: 6px;
+  border: 1px solid lightgray;
+  box-shadow: 0 0 2px lightgray;
+  &:active, &:focus {
+    box-shadow: 1px 1px 12px lightgray;
+  }
+}
+.outline-no-border {
+  box-shadow: none !important;
+  font-weight: bold;
+}
+.btn-primary-alt {
+  color: white;
+  background: #8F008A;
+  font-weight: bold;
+  padding: 8px 14px;
+  border-radius: 6px;
+  border: 1px solid #8F008A;
+  &:active, &:focus {
+    box-shadow: 1px 1px 12px #8F008A;
+  }
+}
+.bottom-border {
+  box-shadow: 0 1px 1px lightgrey;
+}
+ng-select.ng-select-container {
+  border: none !important;
+  border-bottom: 1px solid #8F008A;
+  border-radius: 0;
+  padding: 24px 0;
+  i{
+    visibility: hidden;
+  }
+}
+.mail-drop {
+  .ng-select-container {
+    border: none !important;
+    border-bottom: 1px solid #8F008A !important;
+    border-radius: 0 !important;
+    padding: 24px 0 !important;
+  }
+
+}

@@ -1,0 +1,18 @@
+.page-sidebar2 {
+  top: 60px !important;
+  height: calc(100vh - 60px) !important;
+  ~ {
+    .page-body {
+      margin-top: 70px;
+      margin-left: 55px;
+      padding-right: 0;
+      .page-header{
+        .row{
+          .page-header-left{
+            display: inherit;
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,36 @@
+<div class="container-fluid">
+<!--    add questions side topics and inside images-->
+    <div class="row mb-1">
+<!--        <div class="col-md-12">-->
+            <div class="col-md-6 align-self-center">
+                <h4><span class="color-primary pull-left">{{contentName}}</span></h4>
+            </div>
+            <div class="col-md-6">
+                <button class="btn btn-outline-primary pull-right" (click)="backAction()"><i class="fa fa-long-arrow-left fa-1x" aria-hidden="true"></i> Back</button>
+            </div>
+<!--        </div>-->
+    </div>
+    <div class="row">
+        <div class="col-3">
+            <div class="row">
+                <div class="col-12 mt-3">
+                    <button class="btn-dashboard w-100" *ngFor="let list of contentQuestionList" [ngClass]="{'active2': questionsItems == list.resource_type}" (click)="questionType(list.resource_type)">{{list.resource_type}}</button>
+                </div>
+            </div>
+        </div>
+        <div class="col-8">
+            <div class="row" *ngFor="let details of contentQuestionList">
+                <div class="col-12" *ngIf="questionsItems == details.resource_type">
+                    <div class="row">
+                        <div class="col-6 mt-3"  *ngFor="let list of details.types">
+                            <div class="question-card cursor" (click)="questionsSelected(list)">
+                                <h5 class="letter">{{list.question_type}}</h5>
+                                <img class="w-100" [src]="sanitizer.bypassSecurityTrustResourceUrl(webhost + '/' + list.image_path)" alt="Multiple Choice-Standard">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

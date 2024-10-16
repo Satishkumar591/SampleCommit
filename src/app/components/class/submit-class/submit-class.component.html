@@ -1,0 +1,296 @@
+<div class="container-fluid">
+    <div class="row">
+        <h4 class="col-12 col-sm-4" *ngIf="this.listView == 'false'">Assign students</h4>
+        <h4 class="col-12 col-sm-4" *ngIf="this.listView == 'true'">Class Details</h4>
+        <div class="col-12 col-sm-8">
+            <button class="btn btn-primary pull-right ml-3" *ngIf="hideTableButton == true" (click)="submitClass(1)">Submit</button>
+            <button class="btn btn-primary pull-right ml-3" *ngIf="hideTableButton == false" [routerLink]="'/class/list-class'">Back</button>
+            <button class="btn btn-outline-primary pull-right" *ngIf="curriculumButton == true" (click)="viewAssign(2)">Curriculum</button>
+            <img class="pull-right deleteimg1 mr-3" *ngIf="this.listView == 'true' && hidedeleteButton == true" (click)="deleteAction()" title="Delete Class" src="assets/images/pdf-icons/Icon material-delete-1.png" alt="">
+            <button type="button" class="btn btn-outline-primary mr-3 pull-right" *ngIf="editButton == true" (click)="backAction()"><i class="fa fa-long-arrow-left fa-1x" aria-hidden="true"></i> Back</button>
+            <button type="button" class="btn btn-outline-primary pull-right mr-3" *ngIf="editButton == false && hideButton == true" (click)="editAction()"><i class="fa fa-long-arrow-left fa-1x" aria-hidden="true"></i> Back</button>
+        </div>
+    </div>
+    <hr>
+    <section class="row list-card mt-2">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-12 col-md-2">
+                            <figure *ngIf="this.choosedData[0].profile_url == ''">
+                                <img src="assets/images/ristaschool/Mask Group 35.png" class="w-100" alt="">
+                            </figure>
+                            <figure *ngIf="this.choosedData[0].profile_url != ''">
+                                <img [src]="sanitizer.bypassSecurityTrustResourceUrl(webhost + '/' + choosedData[0].profile_url)" class="w-100" alt="">
+                            </figure>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <h4 class="t-period"><span class="font-weight-bold">{{choosedData[0].class_name}} </span>&nbsp; &nbsp;<small>class code: <span class="contenttext font-weight-bold">{{choosedData[0].class_code}}</span></small></h4>
+                            <p><small class="font-weight-bold">Grade: </small> <span class="t-name capital font-weight-bold">{{choosedData[0].grade_name}}</span></p>
+                            <p><small>Subject: </small> <span class="contenttext font-weight-bold">{{choosedData[0].subject_name}}</span></p>
+                            <p><small>Start: </small> <span *ngIf="choosedData[0].start_date !='0000-00-00'" class="contenttext font-weight-bold">{{choosedData[0].start_date| customDateFormat}} {{choosedData[0].start_time}}</span> &nbsp; &nbsp;
+                                <small>End: </small> <span *ngIf="choosedData[0].end_date !='0000-00-00'" class="contenttext font-weight-bold">{{choosedData[0].end_date| customDateFormat}} {{choosedData[0].end_time}}</span>
+                            </p>
+                        </div>
+                        <div class="col-12 col-md-4">
+                            <div class="row mb-3">
+                                <div class="col-md-12"  *ngIf="this.listView == 'true'">
+                                    <small class="ml-3 pull-right">Assessment: <span class="t-name">{{choosedData[0].no_of_assessments}}</span></small>
+                                    <small class="ml-3 pull-right">Assignment: <span class="t-name">{{choosedData[0].no_of_assignments}} </span></small>
+                                    <small class="pull-right">Resources: <span class="t-name">{{choosedData[0].no_of_resources}} </span></small>
+                                </div>
+                            </div>
+                            <div class="row d-flex mb-3">
+                                <div class="col-md-12" *ngIf="this.listView == 'true'">
+                                    <small class="pull-right">No. of Students: <span class="t-name">{{choosedData[0].no_of_students}}</span></small>
+                                </div>
+                            </div>
+                            <!--<div class="row" *ngIf="editButton == false && this.hideButton == true">-->
+                                <!--<div class="col-md-12">-->
+                            <!--&lt;!&ndash;<button type="button" class="btn btn-primary pull-right" (click)="editAction()">Back</button>&ndash;&gt;-->
+                                    <!--<button type="button" class="btn btn-outline-primary pull-right" (click)="editAction()"><i class="fa fa-long-arrow-left fa-1x" aria-hidden="true"></i> Back</button>-->
+                                <!--</div>-->
+                            <!--</div>-->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <div class="row">
+        <h4 class="col-12 col-sm-4 contenttext">Students List</h4>
+        <div class="col-12 col-sm-8">
+            <button class="btn btn-primary pull-right ml-3" *ngIf="hideTableButton == true" (click)="modifylist()">Modify List</button>
+            <!--<button class="btn btn-primary pull-right ml-3" *ngIf="hideTableButton == true" (click)="showModal(selected)">Edit Validity</button>-->
+            <button class="btn btn-outline-primary pull-right" *ngIf="hideTableButton == true" (click)="removeAction(selected)">Remove</button>
+        </div>
+    </div>
+    <hr>
+    <div class="row">
+        <div *ngIf="modifyList == true" class="col-md-3 mt-1">
+            <div  class="col-md-12 form-group">
+                <ng-select [items]="gradeData"
+                           bindLabel="grade_name"
+                           bindValue="grade_id"
+                           placeholder="Select Grade"
+                           typeToSearchText=""
+                           multiple="true"
+                           [(ngModel)]="gradName"
+                           (change)="getGradeValue($event)"
+                >
+                </ng-select>
+            </div>
+            <div  class="col-md-12 form-group">
+                <input type="text" class="form-control" placeholder="Search Student Name/Email-id/Grade" (input)="updateFilter($event)" [(ngModel)]="searchedKeyword">
+            </div>
+            <div class="col-md-12" style="max-height: 400px; overflow: auto">
+                <div class="card my-2" *ngFor="let list of studentData |filter:searchedKeyword; let i = index">
+                    <div class="card-body card-list p-2">
+                        <div class="row" (click)="addGradeOutside(list, i, list.student_id,list.status)">
+                            <div class="card-detail col-md-9">
+                                <h6 class="cursor">{{list.name}}</h6>
+                                <small class="col-md-6 cursor">{{list.grade_name}}</small><br><small class="col-md-6 cursor"> Email: {{list.student_id}}</small>
+                            </div>
+                            <div class="col-md-3 d-flex justify-content-center align-items-center">
+                                <i class="fa fa-long-arrow-right fa-2x cursor" *ngIf="list.status == '0'" aria-hidden="true" style="color: #7F3486"></i>
+                                <i class="fa fa-times cursor fa-2x" *ngIf="list.status == '1'" aria-hidden="true" style="color: #7F3486"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-{{modifyList == true ? 9 : 12}}">
+            <ngx-datatable
+                #table
+                    class="bootstrap"
+                    [rows]="rows"
+                    [columnMode]="'force'"
+                    [loadingIndicator]="loadingIndicator"
+                    [headerHeight]="40"
+                    [footerHeight]="40"
+                    [limit]="10"
+                    [rowHeight]="'auto'"
+                    [selected]="selected"
+                    [selectionType]="'checkbox'"
+                    (activate)="onActivate($event)"
+                (select)="onSelect($event, 'direct')"
+                    >
+                <ngx-datatable-column
+                        [width]="30"
+                        [sortable]="false"
+                        [canAutoResize]="false"
+                        [draggable]="true"
+                        [resizeable]="false"
+                        >
+                <ng-template
+                        ngx-datatable-header-template
+                        let-value="value"
+                        let-allRowsSelected="allRowsSelected"
+                        let-selectFn="selectFn"
+                >
+                    <input type="checkbox" [checked]="allRowsSelected" (change)="selectFn(!allRowsSelected)" />
+                </ng-template>
+                <ng-template
+                        ngx-datatable-cell-template
+                        let-value="value"
+                        let-isSelected="isSelected"
+                        let-onCheckboxChangeFn="onCheckboxChangeFn"
+                >
+                    <input type="checkbox" [checked]="isSelected" (change)="onCheckboxChangeFn($event)" />
+                </ng-template>
+                </ngx-datatable-column>
+                <ngx-datatable-column class="contenttext" name="Name">
+                <ng-template ngx-datatable-cell-template let-row="row" let-rowIndex="rowIndex" let-value="value">
+                    <span class="ml-2"> {{row.first_name}} {{row.last_name}}</span>
+                </ng-template>
+                </ngx-datatable-column>
+                <ngx-datatable-column class="contenttext" name="Email" *ngIf="allowClass">
+                <ng-template ngx-datatable-cell-template let-row="row" let-rowIndex="rowIndex"  let-value="value">
+                    <span class="ml-3"> {{row.student_id}}</span>
+                </ng-template>
+            </ngx-datatable-column>
+                <ngx-datatable-column class="contenttext " name="Grade">
+                    <ng-template ngx-datatable-cell-template let-row="row"  let-rowIndex="rowIndex"  let-value="value">
+                      <span class="ml-2"> {{row.grade_name}}</span>
+                    </ng-template>
+                </ngx-datatable-column>
+                <ngx-datatable-column class="contenttext"
+                                      *ngIf="allowTransfer" name="Action">
+                    <ng-template ngx-datatable-cell-template
+                                 let-row="row"
+                                 let-rowIndex="rowIndex"
+                                 let-value="value">
+                            <img alt="" src="assets/images/shift-class.svg" title="Transfer Class"
+                               aria-hidden="true" (click)="classChange(row)">
+                    </ng-template>
+                </ngx-datatable-column>
+            </ngx-datatable>
+
+
+        </div>
+
+    </div>
+</div>
+<ng-template #validity let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h4 class="modal-title headerText" id="modal-basic-title">Edit Validity</h4>
+    </div>
+    <div class="modal-body">
+        <!-- Container-fluid starts-->
+<!--        {{validity | json}}-->
+        <div class="card"  >
+            <div class="card-body">
+                <div class="row mb-3" *ngFor="let list of valid">
+                    <div class="col-md-5 capital">
+<!--                        <input readonly class="form-control " formControlName="schoolId" id="validationCustom41"-->
+<!--                               type="text" placeholder="School Name" required="">-->
+                        {{list.first_name}} {{list.last_name}}
+                    </div>
+                    <div class="col-md-7">
+                        <div class="d-flex align-items-baseline">
+                                <input class="form-control" placeholder="mm-dd-yyyy" [(ngModel)]="list.validity1"
+                                       name="dp" angular-mydatepicker #dp="angular-mydatepicker" (click)="dp.toggleCalendar()"
+                                       [options]="myDpOptions" (dateChanged)="onDateChanged($event)" autocomplete="off">
+                            <div class="input-group-append">
+                                <button type="button" class="btn btn-primary" (click)="dp.toggleCalendar()">
+                                    <i class="fa fa-calendar-o"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Container-fluid Ends-->
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-primary" (click)="cancel()">Cancel</button>
+        <button type="button" class="btn btn-primary" (click)="update()">Update</button>
+    </div>
+</ng-template>
+<ng-template #class let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h4 class="modal-title headerText" id="modal-basic-title1">Delete Class</h4>
+    </div>
+    <div class="modal-body">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-12">
+                    <h5 class="text-center mt-3">Are you sure you want to delete {{classname}} Class</h5>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-primary" (click)="close()">Cancel</button>
+        <button type="button" class="btn btn-outline-primary" (click)="updateDelete()">OK </button>
+    </div>
+</ng-template>
+<ng-template #editvalidation let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h4 class="modal-title headerText" id="modal-basic-title2"><b>Edit Validity</b></h4>
+    </div>
+    <div class="modal-body">
+        <h5>Please select atleast one student for changing the validity</h5>
+    </div>
+    <div class="modal-footer" style="border-top: none">
+        <button type="button" class="btn btn-outline-primary" (click)="close()">Ok</button>
+    </div>
+</ng-template>
+
+<ng-template #studentChange let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h4 class="modal-title col-12 text-center">Transfer Class</h4>
+    </div>
+    <div class="modal-body">
+        <div class="container-fluid">
+            <form [formGroup]="studentClassChange">
+                <div class="form-group row">
+                    <label class="col-xl-4 col-md-5 align-self-center"><span class="text-danger">*</span>
+                        From Class</label>
+                    <div class="col-xl-8 col-md-7">
+                        <input class="form-control" readonly type="text" placeholder="Enter the Class Name" value="{{choosedData[0].class_name}}">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-xl-4 col-md-5 align-self-center"><span class="text-danger">*</span>
+                        To Class</label>
+                    <div class="col-xl-8 col-md-7">
+                        <ng-select [items]="allClassList"
+                                   bindLabel="fromClassLabel"
+                                   bindValue="class_id"
+                                   placeholder="Please Select"
+                                   typeToSearchText=""
+                                   formControlName="toClass"
+                                   (change)="selectedClass($event)"
+                                   required=""
+                        >
+                        </ng-select>
+                        <em class="error" *ngIf="!studentClassChange.get('toClass').valid && (studentClassChange.get('toClass').dirty || studentClassChange.get('toClass').touched)">Select the To Class</em>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-xl-4 col-md-5 align-self-center"><span class="text-danger">*</span>
+                        Effective Date</label>
+                    <div class="col-xl-8 col-md-7 form-group">
+                        <div class="d-flex align-items-baseline">
+                            <input class="form-control" placeholder="mm-dd-yyyy"
+                                   name="dp2"  formControlName="from_startdate" angular-mydatepicker #dp2="angular-mydatepicker"
+                                   [options]="myDpOptions1" (dateChanged)="onDateChanged($event)" autocomplete="off" required="">
+                            <div class="input-group-append">
+                                <button type="button" class="btn btn-primary" (click)="dp2.toggleCalendar()">
+                                    <i class="fa fa-calendar-o"></i></button>
+                            </div>
+                        </div>
+                        <em *ngIf="!studentClassChange.get('from_startdate').valid && (studentClassChange.get('from_startdate').dirty || studentClassChange.get('from_startdate').touched)" class="error">Please Enter Effective Date</em>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-outline-primary" (click)="close()">Close</button>
+        <button class="btn btn-primary" (click)="submitChangeClass()">Save</button>
+    </div>
+</ng-template>

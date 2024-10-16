@@ -1,0 +1,49 @@
+<!-- Container-fluid starts-->
+
+<ng-template #content let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">Delete subject details</h4>
+    </div>
+    <div class="modal-body">
+        <!-- Container-fluid starts-->
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-12">
+                    <h5 class="text-center mt-3">Are you sure you want to subject Books details '{{deleteUser.category_name}}'?</h5>
+                </div>
+            </div>
+        </div>
+
+        <!-- Container-fluid Ends-->
+
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-primary" (click)="onSave()">Cancel</button>
+    </div>
+</ng-template>
+<div class="container-fluid" *ngIf="schoolStatus.length != 0">
+    <div class="card">
+        <div class="card-header">
+            <h5>Subject Details</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-12">
+                    <div class="btn-popup pull-right">
+                        <a *ngIf="allowAdd" class="btn btn-primary" [routerLink]="'/subject/create-subject/add'">Add Subject</a>
+                    </div>
+                </div>
+            </div>
+            <div id="batchDelete" class="category-table custom-datatable transcation-datatable user-image">
+                <div class="table-responsive">
+                    <ng2-smart-table [settings]="settings" [source]="listData" (custom)="onCustomAction($event)"></ng2-smart-table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div *ngIf="schoolStatus.length == 0">
+    <app-emptyschool>
+    </app-emptyschool>
+</div>
+<!-- Container-fluid Ends-->

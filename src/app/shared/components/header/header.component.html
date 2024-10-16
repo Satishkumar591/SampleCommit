@@ -1,0 +1,150 @@
+<div class="page-main-header" [class.open]="open">
+    <div class="main-header-right row">
+        <div class="main-header-left d-lg-none">
+            <div class="logo-wrapper d-flex justify-content-center">
+                <img class="svg-icon d-flex justify-content-center"
+                     alt="" src="assets/images/{{this.logo}}" style="width: auto; height: 30px">
+            </div>
+        </div>
+        <div class="mobile-sidebar">
+            <div class="media-body text-right switch-sm">
+                <label class="switch">
+                    <a>
+                        <app-feather-icons id="sidebar-toggle" [icon]="'align-left'" (click)="collapseSidebar()">
+                        </app-feather-icons>
+                    </a>
+                </label>
+            </div>
+        </div>
+        <div class="nav-right col">
+            <ul style="justify-content: space-between" class="nav-menus" [ngClass]="{'open' : openNav}">
+                <div style="position: absolute" class="col-8" [ngStyle]="{'visibility': !showPaymentMessage() ? 'hidden' : ''}" >
+                    <div class="marquee">
+                        <div style="color: red"> Dear Customer, Your subscription is due for renewal. Kindly make the payment  <a class="payment-color" href="https://www.paypal.com/webapps/billing/plans/subscribe?plan_id=P-
+8YL46966WX816621MMWSYSKQ" target="_blank">here</a> before <span>{{showDate()}}</span> to continue with the service.</div>
+                    </div>
+
+                </div>
+                <div style="position: absolute; right: 0%"   class="d-flex align-items-center justify-content-end">
+                <!--<li>-->
+                    <!--<form class="form-inline search-form">-->
+                        <!--<div class="form-group">-->
+                            <!--<input class="form-control-plaintext" [class.open]="isOpenMobile" type="search"-->
+                                <!--placeholder="Search..">-->
+                            <!--<span class="d-sm-none mobile-search">-->
+                                <!--<app-feather-icons [icon]="'search'" (click)="isOpenMobile=!isOpenMobile">-->
+                                <!--</app-feather-icons>-->
+                            <!--</span>-->
+                        <!--</div>-->
+                    <!--</form>-->
+                <!--</li>-->
+                <li>
+                    <a href="javascript:void(0)" class="text-dark" toggleFullscreen>
+                        <app-feather-icons [icon]="'maximize-2'"></app-feather-icons>
+                    </a>
+                </li>
+                <!--<li class="onhover-dropdown"><a class="txt-dark" href="javascript:void(0)">-->
+                        <!--<h6>EN</h6>-->
+                    <!--</a>-->
+                    <!--<ul class="language-dropdown onhover-show-div p-20">-->
+                        <!--<li><a href="javascript:void(0)" data-lng="en"><i class="flag-icon flag-icon-is"></i>-->
+                                <!--English</a></li>-->
+                        <!--<li><a href="javascript:void(0)" data-lng="es"><i class="flag-icon flag-icon-um"></i>-->
+                                <!--Spanish</a></li>-->
+                        <!--<li><a href="javascript:void(0)" data-lng="pt"><i class="flag-icon flag-icon-uy"></i>-->
+                                <!--Portuguese</a></li>-->
+                        <!--<li><a href="javascript:void(0)" data-lng="fr"><i class="flag-icon flag-icon-nz"></i> French</a>-->
+                        <!--</li>-->
+                    <!--</ul>-->
+                <!--</li>-->
+<!--                <li class="onhover-dropdown">-->
+<!--                    &lt;!&ndash;<span class="badge badge-pill badge-primary pull-right notification-badge">3</span>&ndash;&gt;-->
+<!--                    <app-feather-icons [icon]="'bell'"></app-feather-icons><span class="dot"></span>-->
+<!--                    <ul class="notification-dropdown onhover-show-div">-->
+<!--                        <li>Notification </li>-->
+<!--                        &lt;!&ndash;<span class="badge badge-pill badge-primary pull-right">3</span>&ndash;&gt;-->
+<!--                        <li>-->
+<!--                            <div class="media">-->
+<!--                                <div class="media-body">-->
+<!--                                    <h6 class="mt-0"><span>-->
+<!--                                            <app-feather-icons class="shopping-color" [icon]="'shopping-bag'">-->
+<!--                                            </app-feather-icons>-->
+<!--                                        </span>Your order ready for Ship..!-->
+<!--                                    </h6>-->
+<!--                                    <p class="mb-0">Lorem ipsum dolor sit amet, consectetuer.</p>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </li>-->
+<!--                        <li>-->
+<!--                            <div class="media">-->
+<!--                                <div class="media-body">-->
+<!--                                    <h6 class="mt-0 txt-success"><span>-->
+<!--                                            <app-feather-icons class="download-color font-success" [icon]="'download'">-->
+<!--                                            </app-feather-icons>-->
+<!--                                        </span>Download Complete</h6>-->
+<!--                                    <p class="mb-0">Lorem ipsum dolor sit amet, consectetuer.</p>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </li>-->
+<!--                        <li>-->
+<!--                            <div class="media">-->
+<!--                                <div class="media-body">-->
+<!--                                    <h6 class="mt-0 txt-danger"><span>-->
+<!--                                            <app-feather-icons class="alert-color font-danger" [icon]="'alert-circle'">-->
+<!--                                            </app-feather-icons>-->
+<!--                                        </span>250 MB trash files</h6>-->
+<!--                                    <p class="mb-0">Lorem ipsum dolor sit amet, consectetuer.</p>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </li>-->
+<!--                        <li class="txt-dark"><a href="javascript:void(0)">All</a> notification</li>-->
+<!--                    </ul>-->
+<!--                </li>-->
+                <!--<li><a>-->
+                        <!--<app-feather-icons class="right_side_toggle" [icon]="'message-square'"-->
+                            <!--(click)="right_side_bar()">-->
+                        <!--</app-feather-icons><span class="dot"></span>-->
+                    <!--</a></li>-->
+                <li class="onhover-dropdown mx-3">
+                    <div class="media align-items-center">
+                        <img class="align-self-center pull-right img-30 rounded-circle" *ngIf="profile == '' || profile == null" src="assets/images/dashboard/default.png"  alt="">
+                        <img class="align-self-center pull-right img-30 rounded-circle" *ngIf="profile != '' && profile != null && !listCheck" style="height: 30px" src="{{imgUrl +'/'+ profile}}"  alt="">
+                        <img class="img-30 rounded-circle" *ngIf="profile != '' && listCheck" style="height: 30px" [src]="profile"  alt="">
+                        <!-- <div class="dotted-animation"><span class="animate-circle"></span><span
+                                class="main-circle"></span></div> -->
+                    </div>
+                    <ul class="profile-dropdown onhover-show-div p-20 profile-dropdown-hover">
+                        <li *ngIf="roleid == '2' || roleid == '3' || roleid == '4' || roleid == '6'"><a [routerLink]="'/settings/profile/view'">
+                                <app-feather-icons [icon]="'user'"></app-feather-icons>My Profile
+                            </a></li>
+                        <li *ngIf="roleid == '5'"><a [routerLink]="'/studentlogin/profile/view'">
+                            <app-feather-icons [icon]="'user'"></app-feather-icons>My Profile
+                        </a></li>
+                        <li><a [routerLink]="'/users/change-password'">
+                                <app-feather-icons [icon]="'mail'"></app-feather-icons>Change Password
+                            </a></li>
+                        <!--<li><a href="javascript:void(0)">-->
+                                <!--<app-feather-icons [icon]="'lock'"></app-feather-icons>Lock Screen-->
+                            <!--</a></li>-->
+                        <!--<li><a href="javascript:void(0)">-->
+                                <!--<app-feather-icons [icon]="'settings'"></app-feather-icons>Settings-->
+                            <!--</a></li>-->
+                        <li><a (click)="logout()">
+                                <app-feather-icons [icon]="'log-out'"></app-feather-icons>Logout
+                            </a></li>
+                    </ul>
+                </li>
+                <li>
+                    <h6 class="letter mt-2" *ngIf="roleid == '2'">Welcome {{name}}</h6>
+                    <h6 class="letter mt-2" *ngIf="roleid == '3'">Welcome {{name}}</h6>
+                    <h6 class="letter mt-2" *ngIf="roleid == '4'">Welcome {{name}}</h6>
+                    <h6 class="letter mt-2" *ngIf="roleid == '5'">Welcome {{name}}</h6>
+                </li>
+                </div>
+            </ul>
+<!--            <div class="d-lg-block mobile-toggle pull-right" (click)="openMobileNav()">-->
+<!--                <app-feather-icons [icon]="'more-horizontal'"></app-feather-icons>-->
+<!--            </div>-->
+        </div>
+    </div>
+</div>

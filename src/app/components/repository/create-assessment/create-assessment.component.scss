@@ -1,0 +1,131 @@
+//svg {
+//  cursor: crosshair;
+//  border: 1px solid #000000;
+//}
+//
+//rect {
+//  fill: none;
+//  stroke: #000000;
+//  stroke-width: 10;
+//}
+
+@keyframes blinkStroke {
+  100%,
+  0% {
+    stroke: #500;
+  }
+  30% {
+    stroke: deeppink;
+  }
+  60% {
+    stroke: yellow;
+  }
+  100% {
+    stroke: black;
+  }
+}
+
+@keyframes blinkFill {
+  100%,
+  0% {
+    fill: #500;
+  }
+  30% {
+    fill: deeppink;
+  }
+  60% {
+    fill: yellow;
+  }
+  100% {
+    fill: black;
+  }
+}
+
+.deleteIcon{
+  background: #e6baea !important;
+}
+
+
+
+.rectangle {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+  &.move-to {
+    background-color: red;
+  }
+}
+
+
+
+.header {
+  h2 {
+    padding: 10px;
+    color: #37474f;
+  }
+  .link {
+    border-bottom: 1px solid black;
+    padding: 10px;
+    font-size: 11px;
+    a {
+      color: #673ab7;
+    }
+  }
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  &-row {
+    padding: 10px;
+    border-bottom: 1px solid black;
+    cursor: pointer;
+    position: relative;
+    &:hover {
+      background-color: #d5d5d5;
+    }
+    .delete-btn {
+      position: absolute;
+      top: 0;
+      right: 0;
+      .icon {
+        font-size: 16px;
+      }
+    }
+    pre {
+      .pre-title {
+        text-align: left;
+      }
+    }
+    .page-number {
+      text-align: right;
+      font-size: 12px;
+    }
+  }
+}
+.selectColor{
+  background: purple;
+  color: #fff;
+}
+pdf-viewer {
+  /* define height */
+  height: 70vh;
+  /* or use flex for example */
+  flex: 1;
+}
+
+//@media screen {
+//  :host {
+//    display: block;
+//  }
+//}
+
+
+
+//.ck-editor__editable_inline {
+//  min-height: 400px;
+//}
+

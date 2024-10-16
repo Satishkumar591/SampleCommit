@@ -1,0 +1,164 @@
+<div class="container-fluid">
+    <div class="row mb-0">
+        <div class="col-12 col-sm-6 col-lg-3 form-group align-self-center">
+            <select (change)="selection();teacherStatus($event)" [(ngModel)]="teacherCorrectionStatus" class="custom-select col-md-12">
+                <option value="0">All</option>
+                <option value="1">Correction Pending</option>
+                <option value="2">Correction Completed</option>
+                <option value="3">Score Released</option>
+                <option value="4">Overdue</option>
+            </select>
+        </div>
+        <div class="col-12 col-sm-6 col-lg-3 form-group align-self-center">
+            <select (change)="selection();contentselect($event)" [(ngModel)]="contentType" class="custom-select col-md-12" id="content">
+                <option value="2">Assignment</option>
+                <option value="3">Assessment</option>
+            </select>
+        </div>
+        <div class="col-12 col-sm-6 col-lg-3 form-group align-self-center">
+            <ng-select (change)="selection();studentContentDetails()"
+                       [(ngModel)]="selectedClass"
+                       [items]="classesDetails"
+                       bindLabel="class_name"
+                       bindValue="class_id"
+                       placeholder="Select Class"
+                       typeToSearchText="">
+                <ng-template let-item="item" ng-option-tmp>
+                    <div [title]="item.class_name">{{item.class_name}}</div>
+                </ng-template>
+            </ng-select>
+        </div>
+        <div class="col-12 col-sm-6 col-lg-3 align-self-center">
+            <div class="btn-popup pull-right">
+                <div class="input-group">
+                    <input (input)="updateFilter(searchStudent)" [(ngModel)]="searchStudent" class="form-control" placeholder="Search Student" size="50" style="height:40px" type="text">
+                    <div class="input-group-append">
+                        <button class="btn btn-primary" type="submit"><i aria-hidden="true" class="fa fa-search"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12 col-sm-6 col-lg-3 form-group">
+            <ng-select (change)="selection();studentContentDetails()"
+                       [(ngModel)]="selectClassRoom"
+                       [items]="batchData"
+                       bindLabel="batch_name"
+                       bindValue="batch_id"
+                       placeholder="Select Content Folder"
+                       typeToSearchText="">
+            </ng-select>
+        </div>
+        <div *ngIf="auth.getRoleId() != '4'" class="col-md-3">
+            <ng-select (change)="selection();studentContentDetails()"
+                       [(ngModel)]="selectTeacher"
+                       [items]="teacherListData"
+                       bindLabel="teacher_name"
+                       bindValue="teacher_id"
+                       placeholder="Select Teacher"
+                       typeToSearchText=""
+            >
+            </ng-select>
+        </div>
+        <div class="col-md-12 col-sm-6 col-lg-6 ng-star-inserted px-5 pb-3">
+            <button (click)="notifyParent(choosedData, 1)" *ngIf="teacherCorrectionStatus == '4'" class="btn btn-primary pull-right">Notify All</button>
+            <button (click)="releaseAll()" *ngIf="teacherCorrectionStatus == '2'" class="btn btn-primary pull-right">Release Score For All</button>
+        </div>
+    </div>
+    <div *ngIf="choosedData ==''" class="row d-flex justify-content-center mt-5">
+        <div class="col-4">
+            <button class="nodataList">No Data Available!</button>
+        </div>
+    </div>
+
+    <section class="row list-card">
+        <div class="scrollPanel1">
+            <div (scrolled)="onScrollDown($event)"
+                 (scrolledUp)="onUp($event)"
+                 *ngIf="choosedData != ''"
+                 [fromRoot]="true"
+                 [infiniteScrollContainer]="selector"
+                 [infiniteScrollDistance]="2"
+                 [infiniteScrollThrottle]="50"
+                 class="search-results col-md-12"
+                 infiniteScroll
+            >
+                <div class="col-md-12">
+                    <div *ngFor="let list of choosedData; let i = index" class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-1 d-flex justify-content-center align-items-center">
+                                    <figure *ngIf="this.list.student_profile == ''">
+                                        <img alt="" class="rounded-circle img-50 border" src="assets/images/digital-product/student.png">
+                                    </figure>
+                                    <figure *ngIf="this.list.student_profile != ''">
+                                        <img [src]="sanitizer.bypassSecurityTrustResourceUrl(webhost + '/' + list.student_profile)" alt="" class="rounded-circle img-50">
+                                    </figure>
+                                </div>
+                                <div class="col-7">
+                                    <h4><small *ngIf="list.status == '3'" class="badge badge-primary">Score Released</small>
+                                        <small *ngIf="list.status == '4' || list.status == '6'" class="badge badge-info">Correction Pending</small>
+                                        <small *ngIf="list.status == '5'" class="badge badge-success">Correction Completed</small>
+                                        <small *ngIf="list.status == '1'" class="badge badge-secondary">Yet To Start</small>
+                                        <small *ngIf="list.status == '2'" class="badge badge-warning">In-Progress</small> &nbsp;
+                                        <span class="t-period font-weight-bold">{{list.student_name}}</span>
+                                    </h4>
+                                    <p><small class="font-weight-bold">Class Name: </small> <span class="t-name capital font-weight-bold">{{list.class_name}}</span>&nbsp;
+                                        &nbsp; <small class="font-weight-bold">Content Name: </small> <span class="t-name font-weight-bold">{{list.content_name}}</span>
+                                        <br/><span *ngIf="list.status > 2"><small class="font-weight-bold">Submitted Date: </small> <span class="t-name font-weight-bold">{{list.answer_completed_date}}</span></span>&nbsp;
+                                        <span *ngIf="list.status == '3'"><small class="font-weight-bold">Score Released Date: </small> <span class="t-name font-weight-bold">{{list.score_release_date}}</span></span></p>
+                                </div>
+                                <div class="col-4">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <small *ngIf="list.status == '3'" class="pull-right total-score mr-2">Total Score: <span class="t-name">{{list.total_score}}</span></small>
+                                            <!--                                            <small class="pull-right total-score" style="visibility: hidden" *ngIf="list.status != '3' && list.status != '2' && list.status != '1'">Total Score: <span class="t-name">{{list.total_score}}</span></small>-->
+                                            <small *ngIf="list.status == '1' || list.status == '2' && list.status != '3'"
+                                                   class="pull-right total-score mr-2">Overdue For:
+                                                <span *ngIf="list.overDue != '1'" class="over-due1">{{list.overDue}} (days)</span>
+                                                <span *ngIf="list.overDue == '1'" class="over-due1">{{list.overDue}} (day)</span>
+                                            </small>
+                                            <small *ngIf="list.status == '3'" class="pull-right total-score mr-2">Obtained Score: <span class="t-name">{{list.obtained_score}}</span></small>
+                                            <small *ngIf="list.status != '3'"
+                                                   class="pull-right total-score mr-2">End Date:
+                                                <span *ngIf="list.end_date != '0000-00-00'" class="over-due1">{{list.end_date | customDateFormat}}</span>
+                                                <!--                                                <span class="over-due1" *ngIf="list.end_date == '0000-00-00'" style="visibility: hidden">{{list.end_date |date:'MM-dd-yyyy'}}</span>-->
+                                            </small>
+                                        </div>
+                                    </div>
+                                    <div class="row d-flex align-self-end mt-2">
+                                        <div class="col-md-12">
+                                            <button *ngIf="list.status == '1'" [disabled]="list.status == 1" class="btn-sm-i btn-outline-primary pull-right ml-2 mt-2" type="button">Enter</button>
+                                            <button (click)="enterAction(list)" *ngIf="list.status != '1'" class="btn-sm-i btn-primary pull-right ml-2 mt-2" type="button">Enter</button>
+                                            <button (click)="releaseScore(list)" *ngIf="list.status == '5'" class="btn-sm-i btn-outline-primary pull-right mt-2" type="button">Release Score</button>
+                                            <button (click)="notifyParent(list, 2)" *ngIf="list.status == '1' || list.status == '2'" class="btn-sm-i btn-outline-primary pull-right mt-2" type="button">Notifiy Parent</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<ng-template #contentnow let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h4 class="modal-title col-12 text-center"><b>Notify Parent</b></h4>
+    </div>
+    <div class="modal-body">
+        <!-- Container-fluid starts-->
+        <div class="container-fluid">
+            <h5 *ngIf="notifyType == 1" class="text-center">Are You Sure want to notify all parents?</h5>
+            <h5 *ngIf="notifyType == 2" class="text-center">Are You Sure want to notify {{studentname[0].student_name}} parents?</h5>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button (click)="confirmStudentNotify(1)" *ngIf="this.notifyType == 1" class="btn btn-primary" type="button">Confirm</button>
+        <button (click)="confirmStudentNotify(2)" *ngIf="this.notifyType == 2" class="btn btn-primary" type="button">Confirm</button>
+        <button (click)="close()" class="btn btn-outline-primary" type="button">Cancel</button>
+    </div>
+</ng-template>

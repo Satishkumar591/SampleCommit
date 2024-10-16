@@ -1,0 +1,655 @@
+<!--=================================
+ preloader -->
+<div id="pre-loader" *ngIf="commondata.loader.value">
+    <img src="assets/images/pre-loader/loader-01.svg" alt="">
+</div>
+<div class="page-wrapper auth-bg">
+    <div class="authentication-box-web">
+<!--        <div class="container" *ngIf="type == undefined">-->
+<!--            <div class="row">-->
+<!--                <div class="col-12 p-0">-->
+<!--                    <div class="card tab2-card">-->
+<!--                        <div class="card-body">-->
+<!--                            <div class="row">-->
+<!--                                <div class="col-12 d-flex align-items-center justify-content-between">-->
+<!--                                    <h4 class="r-title">Login</h4>-->
+<!--                                    <img alt="" src="assets/images/{{this.logo}}" style="width: auto; height: 32px;">-->
+<!--                                </div>-->
+<!--                                <div class="col-12 col-md-3 hover14 mt-2">-->
+<!--                                    <div class="login-box" [routerLink]="'/auth/login/admin'">-->
+<!--                                        <figure class="justify-content-center align-items-center d-flex flex-column">-->
+<!--                                            <img src="assets/images/admin-icon.png" alt="">-->
+<!--                                            <figcaption class="mt-3"><h3>Admin</h3></figcaption>-->
+<!--                                        </figure>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                                <div class="col-12 col-md-3 mt-2">-->
+<!--                                    <div class="login-box hover14" [routerLink]="'/auth/login/content-creator'">-->
+<!--                                        <figure class="justify-content-center align-items-center d-flex flex-column">-->
+<!--                                            <img src="assets/images/content-icon.png" alt="">-->
+<!--                                            <figcaption class="mt-3"><h3>Content Creator</h3></figcaption>-->
+<!--                                        </figure>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                                <div class="col-12 col-md-3 mt-2">-->
+<!--                                    <div class="login-box hover14" [routerLink]="'/auth/login/school'">-->
+<!--                                        <figure class="justify-content-center align-items-center d-flex flex-column">-->
+<!--                                            <img src="assets/images/teacher-icon.png" alt="">-->
+<!--                                            <figcaption class="mt-3"><h3>Teacher</h3></figcaption>-->
+<!--                                        </figure>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                                <div class="col-12 col-md-3 hover14 mt-2" *ngIf="config.getStudentPermissoin()">-->
+<!--                                    <div class="login-box" [routerLink]="'/auth/login/student'">-->
+<!--                                        <figure class="justify-content-center align-items-center d-flex flex-column">-->
+<!--                                            <img src="assets/images/student-icon1.png" alt="">-->
+<!--                                            <figcaption class="mt-3"><h3>Student</h3></figcaption>-->
+<!--                                        </figure>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+
+
+<!--        <section class="container-fluid" >-->
+<!--            <div class="row justify-content-center">-->
+<!--                <div class="col-12 col-md-5 loginWith mt-2">-->
+<!--&lt;!&ndash;                    <h1>Admin</h1>&ndash;&gt;-->
+<!--                    <div class="card">-->
+<!--                        <div class="card-body">-->
+<!--                            <h3 class="mb-3">Login</h3>-->
+<!--                            <div class="form-horizontal auth-form1" novalidate="">-->
+<!--                                <form [formGroup]="adminForm">-->
+<!--                                    <div class="form-group">-->
+<!--                                        <input (keypress)="enterKey($event)" autofocus required="" name="login[username]" type="email"-->
+<!--                                               class="form-control" placeholder="User Name" formControlName="userName"-->
+<!--                                               autocomplete="off" id="exampleInputEmail1">-->
+<!--                                        <em class="error" *ngIf="!adminForm.get('userName').valid && (adminForm.get('userName').dirty || adminForm.get('userName').touched)">User name is required</em>-->
+<!--                                    </div>-->
+<!--                                    <div class="form-group">-->
+<!--                                        <div class="input-group">-->
+<!--                                            <input required="" (keypress)="enterKey($event)" name="login[password]" type="text" formControlName="password"-->
+<!--                                                   class="form-control" placeholder="Password" aria-label="Recipient's username" aria-describedby="basic-addon1"-->
+<!--                                                   autocomplete="off" [type]="conps ? 'password' : 'text'">-->
+<!--                                            <div class="input-group-append">-->
+<!--                                        <span class="input-group-text" id="basic-addon2">-->
+<!--                                            <i [class]="conps ? 'fa fa-eye-slash' : 'fa fa-eye'" aria-hidden="true" (click)="conps = !conps"></i>-->
+<!--                                        </span>-->
+<!--                                            </div>-->
+<!--                                        </div>-->
+<!--                                        <em class="error" *ngIf="!adminForm.get('password').valid && (adminForm.get('password').dirty || adminForm.get('password').touched)">Password is required</em>-->
+<!--                                    </div>-->
+<!--                                    <div class="form-terms">-->
+<!--                                        <div class="custom-control custom-checkbox mr-sm-2">-->
+<!--                                            <input type="checkbox" class="custom-control-input" formControlName="checkbox"-->
+<!--                                                   id="customControlAutosizing"  (click)="rememberList($event, '1')">-->
+<!--                                            <label class="custom-control-label"-->
+<!--                                                   for="customControlAutosizing">Remember me</label>-->
+<!--                                            <a [routerLink]="'/forgotPassword/admin'" class="btn btn-default forgot-pass">Forgot password</a>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                    <div class="form-button d-flex justify-content-between w-100">-->
+<!--&lt;!&ndash;                                        <button class="btn btn-outline-primary" (click)="backAction($event)">&ndash;&gt;-->
+<!--&lt;!&ndash;                                            <i class="fa fa-long-arrow-left fa-1x mr-2" aria-hidden="true"></i>Back</button>&ndash;&gt;-->
+<!--                                        <button (click)="loginAdmin()" class="btn btn-primary">Login<i class="ml-2 fa fa-long-arrow-right fa-1x" aria-hidden="true"></i></button>-->
+<!--                                    </div>-->
+<!--                                </form>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="col-12 col-md-5 mt-2 d-none d-md-block">-->
+<!--                    <img src="assets/images/teacher-login.png"class="w-100" alt="">-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </section>-->
+
+        <section class="container" style="display: block" *ngIf="type == undefined">
+            <div class="row">
+                <div class="col-12 col-md-5 p-0 card-left">
+                    <div class="card bg-primary mb-0">
+                        <div class="svg-icon d-flex justify-content-center" style="min-height: 15rem">
+                            <img alt="" class="my-2" src="assets/images/{{this.logo}}" style="height: auto; object-fit: fill">
+                        </div>
+                        <!-- <h3 class="my-3">{{owlcarousel[0].title}}</h3> -->
+                    </div>
+                </div>
+                <div class="col-12 col-md-7 p-0 mt-2 card-right">
+                    <div class="card tab2-card p-4">
+                        <div class="card-body">
+                            <ngb-tabset class="tab-coupon mb-0">
+                                <ngb-tab>
+                                    <ng-template ngbTabTitle><i class="icon-user mr-2"></i>Login</ng-template>
+                                    <ng-template ngbTabContent>
+                                        <div class="tab-pane fade active show" id="account" role="tabpanel"
+                                             aria-labelledby="account-tab">
+                                            <form [formGroup]="loginForm"
+                                                  class="form-horizontal auth-form1" novalidate="">
+                                                <div class="form-group">
+                                                    <input autofocus required="" formControlName="userName" name="login[username]" type="email"
+                                                           class="form-control" placeholder="Username"
+                                                           id="exampleInputEmail1">
+                                                    <em class="error" *ngIf="!loginForm.get('userName').valid && (loginForm.get('userName').dirty || loginForm.get('userName').touched)">User name is required</em>
+                                                </div>
+                                                <div class="form-group">
+                                                    <div class="input-group">
+                                                        <input required=""  name="login[password]" type="text" formControlName="password"
+                                                               class="form-control" placeholder="Password" aria-label="Recipient's username" aria-describedby="basic-addon1" [type]="conps ? 'password' : 'text'">
+                                                        <div class="input-group-append cursor">
+                                                        <span class="input-group-text" id="basic-addon3">
+                                                            <i [class]="conps ? 'fa fa-eye-slash' : 'fa fa-eye'" aria-hidden="true" (click)="conps = !conps"></i>
+                                                        </span>
+                                                        </div>
+                                                    </div>
+                                                    <em class="error" *ngIf="!loginForm.get('password').valid && (loginForm.get('password').dirty || loginForm.get('password').touched)">Password is required</em>
+                                                </div>
+                                                <div class="form-terms">
+                                                    <div class="custom-control custom-checkbox mr-sm-2">
+                                                        <input type="checkbox" class="custom-control-input cursor" formControlName="checkbox"
+                                                               id="customControlAutosizing" (change)="setRemeberMe($event.target.checked)">
+                                                        <label class="custom-control-label"
+                                                               for="customControlAutosizing">Remember me</label>
+                                                        <a [routerLink]="'/forgotPassword/content'"
+                                                           class="btn btn-default forgot-pass">Forgot
+                                                            password</a>
+                                                    </div>
+                                                </div>
+                                                <div class="form-button align-items-center justify-content-between d-flex mt-3">
+<!--                                                    <p class="cursor text-right mb-0" *ngIf="enrollCode != ''" (click)="goToRegister('studentRegister')" style="color: #8f008a;"><strong>New Register</strong></p>-->
+                                                    <button class="btn btn-primary mb-1" (click)="login()">Login<i class="ml-2 fa fa-long-arrow-right fa-1x" aria-hidden="true"></i></button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </ng-template>
+                                </ngb-tab>
+                            </ngb-tabset>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+<!--            <div class="row justify-content-center" *ngIf="!mobileView">-->
+<!--                <div class="col-12 col-md-5 loginWith mt-2">-->
+<!--&lt;!&ndash;                    <h1>Content Creator</h1>&ndash;&gt;-->
+<!--                    <div class="card">-->
+<!--                        <div class="card-body">-->
+<!--                            <h3 class="mb-3 text-center">Login Account</h3>-->
+<!--                            <div class="form-horizontal auth-form1" novalidate="">-->
+<!--                                <form [formGroup]="contentForm">-->
+<!--                                    <div class="form-group">-->
+<!--                                        <input (keypress)="enterKey($event)" autofocus required="" name="login[username]" type="email"-->
+<!--                                               class="form-control" placeholder="User Name" formControlName="userName"-->
+<!--                                               autocomplete="off" id="exampleInputEmail3">-->
+<!--                                        <em class="error" *ngIf="!contentForm.get('userName').valid && (contentForm.get('userName').dirty || contentForm.get('userName').touched)">User name is required</em>-->
+<!--                                    </div>-->
+<!--                                    <div class="form-group">-->
+<!--                                        <div class="input-group">-->
+<!--                                            <input (keypress)="enterKey($event)" required=""  name="login[password]" type="text" formControlName="password"-->
+<!--                                                   class="form-control" placeholder="Password" aria-label="Recipient's username" aria-describedby="basic-addon1"-->
+<!--                                                   autocomplete="off" [type]="conps ? 'password' : 'text'">-->
+<!--                                            <div class="input-group-append">-->
+<!--                                        <span class="input-group-text" id="basic-addon3">-->
+<!--                                            <i [class]="conps ? 'fa fa-eye-slash' : 'fa fa-eye'" aria-hidden="true" (click)="conps = !conps"></i>-->
+<!--                                        </span>-->
+<!--                                            </div>-->
+<!--                                        </div>-->
+<!--                                        <em class="error" *ngIf="!contentForm.get('password').valid && (contentForm.get('password').dirty || contentForm.get('password').touched)">Password is required</em>-->
+<!--                                    </div>-->
+<!--                                    <div class="form-terms">-->
+<!--                                        <div class="custom-control custom-checkbox mr-sm-2">-->
+<!--                                            <input type="checkbox" class="custom-control-input" formControlName="checkbox1"-->
+<!--                                                   id="customControlAutosizing2" (click)="rememberList($event, '2')">-->
+<!--                                            <label class="custom-control-label"-->
+<!--                                                   for="customControlAutosizing2">Remember me</label>-->
+<!--                                            <a [routerLink]="'/forgotPassword/content'" class="btn btn-default forgot-pass">Forgot password</a>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                    <div class="form-button d-flex justify-content-between w-100">-->
+<!--&lt;!&ndash;                                        <button class="btn btn-outline-primary" (click)="backAction($event)">&ndash;&gt;-->
+<!--&lt;!&ndash;                                            <i class="fa fa-long-arrow-left fa-1x mr-2" aria-hidden="true"></i>Back</button>&ndash;&gt;-->
+<!--                                        <button (click)="loginCreator()" class="btn btn-primary">Login<i class="ml-2 fa fa-long-arrow-right fa-1x" aria-hidden="true"></i></button>-->
+<!--                                    </div>-->
+<!--                                </form>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="col-12 col-md-5 mt-2 d-none d-md-block">-->
+<!--                    <img src="assets/images/content-creator.png"class="w-100" alt="">-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            <div class="row justify-content-center" *ngIf="mobileView">-->
+<!--                <div class="col-12 col-md-5 loginWith mt-2">-->
+<!--                    <h1>Content Creator</h1>-->
+<!--                    <div class="card">-->
+<!--                        <div class="card-body">-->
+<!--                            <h3 class="mb-3">Login</h3>-->
+<!--                            <div class="form-horizontal auth-form1" novalidate="">-->
+<!--                                <form [formGroup]="contentForm">-->
+<!--                                    <div class="form-group">-->
+<!--                                        <input (keypress)="enterKey($event)" autofocus required="" name="login[username]" type="email"-->
+<!--                                               class="form-control" placeholder="User Name" formControlName="userName"-->
+<!--                                               autocomplete="off" id="exampleInputEmail4">-->
+<!--                                        <em class="error" *ngIf="!contentForm.get('userName').valid && (contentForm.get('userName').dirty || contentForm.get('userName').touched)">User name is required</em>-->
+<!--                                    </div>-->
+<!--                                    <div class="form-group">-->
+<!--                                        <div class="input-group">-->
+<!--                                            <input (keypress)="enterKey($event)" required=""  name="login[password]" type="text" formControlName="password"-->
+<!--                                                   class="form-control" placeholder="Password" aria-label="Recipient's username" aria-describedby="basic-addon1"-->
+<!--                                                   autocomplete="off" [type]="conps ? 'password' : 'text'">-->
+<!--                                            <div class="input-group-append">-->
+<!--                                        <span class="input-group-text" id="basic-addon5">-->
+<!--                                            <i [class]="conps ? 'fa fa-eye-slash' : 'fa fa-eye'" aria-hidden="true" (click)="conps = !conps"></i>-->
+<!--                                        </span>-->
+<!--                                            </div>-->
+<!--                                        </div>-->
+<!--                                        <em class="error" *ngIf="!contentForm.get('password').valid && (contentForm.get('password').dirty || contentForm.get('password').touched)">Password is required</em>-->
+<!--                                    </div>-->
+<!--                                    <div class="form-terms">-->
+<!--                                        <div class="custom-control custom-checkbox mr-sm-2">-->
+<!--                                            <input type="checkbox" class="custom-control-input" formControlName="checkbox1"-->
+<!--                                                   id="customControlAutosizing3" (click)="rememberList($event, '2')">-->
+<!--                                            <label class="custom-control-label"-->
+<!--                                                   for="customControlAutosizing2">Remember me</label>-->
+<!--                                            <a [routerLink]="'/forgotPassword/content'" class="btn btn-default forgot-pass">Forgot password</a>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                    <div class="form-button d-flex justify-content-between w-100">-->
+<!--                                        <button class="btn btn-outline-primary" (click)="backAction($event)">-->
+<!--                                            <i class="fa fa-long-arrow-left fa-1x mr-2" aria-hidden="true"></i>Back</button>-->
+<!--                                        <button (click)="loginCreator()" class="btn btn-primary" >Login<i class="ml-2 fa fa-long-arrow-right fa-1x" aria-hidden="true"></i></button>-->
+<!--                                    </div>-->
+<!--                                </form>-->
+
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="col-12 col-md-5 mt-2 d-none d-md-block">-->
+<!--                    <img src="assets/images/content-creator.png"class="w-100" alt="">-->
+<!--                </div>-->
+<!--            </div>-->
+        </section>
+
+<!--        <section class="container-fluid" *ngIf="type == 'school'">-->
+<!--            <div class="row justify-content-center" *ngIf="!mobileView">-->
+<!--                <div class="col-12 col-md-5 loginWith mt-2">-->
+<!--                    <h1>Teacher</h1>-->
+<!--                    <div class="card">-->
+<!--                        <div class="card-body">-->
+<!--                            <h3 class="mb-3">Login</h3>-->
+<!--                            <div class="form-horizontal auth-form1" novalidate="">-->
+<!--                                <form [formGroup]="schoolForm">-->
+<!--                                    <div class="form-group">-->
+<!--                                        <input (keypress)="enterKey($event)" autofocus required="" name="login[username]" type="email"-->
+<!--                                               class="form-control" placeholder="User Name" formControlName="userName"-->
+<!--                                               id="exampleInputEmail2" autocomplete="off">-->
+<!--                                        <em class="error" *ngIf="!schoolForm.get('userName').valid && (schoolForm.get('userName').dirty || schoolForm.get('userName').touched)">User name is required</em>-->
+<!--                                    </div>-->
+<!--                                    <div class="form-group">-->
+<!--                                        <div class="input-group">-->
+<!--                                            <input (keypress)="enterKey($event)" required=""  name="login[password]" type="text" formControlName="password"-->
+<!--                                                   class="form-control" placeholder="Password" aria-label="Recipient's username" aria-describedby="basic-addon1" autocomplete="off" [type]="conps ? 'password' : 'text'">-->
+<!--                                            <div class="input-group-append">-->
+<!--                                        <span class="input-group-text" id="basic-addon4">-->
+<!--                                            <i [class]="conps ? 'fa fa-eye-slash' : 'fa fa-eye'" aria-hidden="true" (click)="conps = !conps"></i>-->
+<!--                                        </span>-->
+<!--                                            </div>-->
+<!--                                        </div>-->
+<!--                                        <em class="error" *ngIf="!schoolForm.get('password').valid && (schoolForm.get('password').dirty || schoolForm.get('password').touched)">Password is required</em>-->
+<!--                                    </div>-->
+<!--                                    <div class="form-terms">-->
+<!--                                        <div class="custom-control custom-checkbox mr-sm-2">-->
+<!--                                            <input type="checkbox" class="custom-control-input"-->
+<!--                                                   id="customControlAutosizing4" (click)="rememberList($event, '3')" formControlName="checkbox2">-->
+<!--                                            <label class="custom-control-label"-->
+<!--                                                   for="customControlAutosizing4">Remember me</label>-->
+<!--                                            <a [routerLink]="'/forgotPassword/teacher'" class="btn btn-default forgot-pass">Forgot password</a>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                    <div class="form-button d-flex justify-content-between w-100">-->
+<!--                                        <button (click)="backAction($event)" class="btn btn-outline-primary">-->
+<!--                                            <i class="fa fa-long-arrow-left fa-1x mr-2" aria-hidden="true"></i>Back</button>-->
+<!--                                        <button  class="btn btn-primary" (click)="loginSchool()">Login<i class="ml-2 fa fa-long-arrow-right fa-1x" aria-hidden="true"></i></button>-->
+<!--                                    </div>-->
+<!--                                </form>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="col-12 col-md-5 mt-2 d-none d-md-block">-->
+<!--                    <img src="assets/images/teacher-login.png"class="w-100" alt="">-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            <div class="row justify-content-center" *ngIf="mobileView">-->
+<!--                <div class="col-12 col-md-5 loginWith mt-2">-->
+<!--                    <h1>Teacher</h1>-->
+<!--                    <div class="card">-->
+<!--                        <div class="card-body">-->
+<!--                            <h3 class="mb-3">Login</h3>-->
+<!--                            <div class="form-horizontal auth-form1" novalidate="">-->
+<!--                                <form [formGroup]="schoolForm">-->
+<!--                                    <div class="form-group">-->
+<!--                                        <input (keypress)="enterKey($event)" autofocus required="" name="login[username]" type="email"-->
+<!--                                               class="form-control" placeholder="User Name" formControlName="userName"-->
+<!--                                               id="exampleInputEmail5" autocomplete="off">-->
+<!--                                        <em class="error" *ngIf="!schoolForm.get('userName').valid && (schoolForm.get('userName').dirty || schoolForm.get('userName').touched)">User name is required</em>-->
+<!--                                    </div>-->
+<!--                                    <div class="form-group">-->
+<!--                                        <div class="input-group">-->
+<!--                                            <input (keypress)="enterKey($event)" required=""  name="login[password]" type="text" formControlName="password"-->
+<!--                                                   class="form-control" placeholder="Password" aria-label="Recipient's username" aria-describedby="basic-addon1" autocomplete="off" [type]="conps ? 'password' : 'text'">-->
+<!--                                            <div class="input-group-append">-->
+<!--                                        <span class="input-group-text" id="basic-addon6">-->
+<!--                                            <i [class]="conps ? 'fa fa-eye-slash' : 'fa fa-eye'" aria-hidden="true" (click)="conps = !conps"></i>-->
+<!--                                        </span>-->
+<!--                                            </div>-->
+<!--                                        </div>-->
+<!--                                        <em class="error" *ngIf="!schoolForm.get('password').valid && (schoolForm.get('password').dirty || schoolForm.get('password').touched)">Password is required</em>-->
+<!--                                    </div>-->
+<!--                                    <div class="form-terms">-->
+<!--                                        <div class="custom-control custom-checkbox mr-sm-2">-->
+<!--                                            <input type="checkbox" class="custom-control-input"-->
+<!--                                                   id="customControlAutosizing6" (click)="rememberList($event, '3')" formControlName="checkbox2">-->
+<!--                                            <label class="custom-control-label"-->
+<!--                                                   for="customControlAutosizing4">Remember me</label>-->
+<!--                                            <a [routerLink]="'/forgotPassword/teacher'" class="btn btn-default forgot-pass">Forgot password</a>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                    <div class="form-button d-flex justify-content-between w-100">-->
+<!--                                        <button (click)="backAction($event)" class="btn btn-outline-primary">-->
+<!--                                            <i class="fa fa-long-arrow-left fa-1x mr-2" aria-hidden="true"></i>Back</button>-->
+<!--                                        <button  class="btn btn-primary" (click)="loginSchool()">Login<i class="ml-2 fa fa-long-arrow-right fa-1x" aria-hidden="true"></i></button>-->
+<!--                                    </div>-->
+<!--                                </form>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="col-12 col-md-5 mt-2 d-none d-md-block">-->
+<!--                    <img src="assets/images/teacher-login.png"class="w-100" alt="">-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </section>-->
+        <section class="container-fluid" *ngIf="type == 'student'">
+            <div class="row justify-content-center">
+                <div class="col-12 col-md-5 loginWith mt-2">
+                    <h2>Student</h2>
+                    <div class="card">
+                        <div class="card-body">
+                            <h3 class="mb-3">Login</h3>
+                            <div class="form-horizontal auth-form1" novalidate="">
+                                <form [formGroup]="studentForm">
+                                    <div class="form-group">
+                                        <input (keypress)="enterKey($event)" autofocus required="" name="login[username]" type="email"
+                                               class="form-control" placeholder="User Name" formControlName="userName"
+                                               id="exampleInputEmail21" autocomplete="off">
+                                        <em class="error" *ngIf="!studentForm.get('userName').valid && (studentForm.get('userName').dirty || studentForm.get('userName').touched)">User name is required</em>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="input-group">
+                                            <input (keypress)="enterKey($event)" required=""  name="login[password]" type="text" formControlName="password"
+                                                   class="form-control" placeholder="Password" aria-label="Recipient's username" aria-describedby="basic-addon1" autocomplete="off" [type]="conps ? 'password' : 'text'">
+                                            <div class="input-group-append">
+                                        <span class="input-group-text" id="basic-addon41">
+                                            <i [class]="conps ? 'fa fa-eye-slash' : 'fa fa-eye'" aria-hidden="true" (click)="conps = !conps"></i>
+                                        </span>
+                                            </div>
+                                        </div>
+                                        <em class="error" *ngIf="!studentForm.get('password').valid && (studentForm.get('password').dirty || studentForm.get('password').touched)">Password is required</em>
+                                    </div>
+                                    <div class="form-terms">
+                                        <div class="custom-control custom-checkbox mr-sm-2">
+                                            <input type="checkbox" class="custom-control-input"
+                                                   id="customControlAutosizing44" (click)="rememberList($event, '4')" formControlName="checkbox3">
+                                            <label class="custom-control-label"
+                                                   for="customControlAutosizing44">Remember me</label>
+                                            <a [routerLink]="'/forgotPassword/student'" class="btn btn-default forgot-pass">Forgot password</a>
+                                        </div>
+                                    </div>
+                                    <div class="form-button d-flex justify-content-between w-100">
+<!--                                        <button class="btn btn-outline-primary">-->
+<!--                                            <i class="fa fa-long-arrow-left fa-1x mr-2" aria-hidden="true"></i>Back</button>-->
+                                        <button (click)="login()"  class="btn btn-primary">Login<i class="ml-2 fa fa-long-arrow-right fa-1x" aria-hidden="true"></i></button>
+                                    </div>
+<!--                                    <div class="col-12 p-0 mt-2" *ngIf="enrollCode != ''">-->
+<!--                                        <p class="cursor text-right" (click)="goToRegister('studentRegister')" style="color: #8f008a;"><strong>New Register</strong></p>-->
+<!--                                    </div>-->
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-5 mt-2 d-none d-md-block">
+                    <img src="assets/images/student-login2.png" style="width: 550px; height: 500px" alt="">
+                </div>
+            </div>
+        </section>
+        <section class="container-fluid" *ngIf="type == 'studentRegister'">
+            <div class="row justify-content-center">
+                <div class="col-12 col-md-5 loginWith mt-2">
+                    <h2>Student Register</h2>
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="form-horizontal auth-form1">
+                                <form [formGroup]="registerForm">
+                                    <div class="form-group">
+                                        <input class="form-control" autofocus formControlName="first_name" id="validationCustom0" type="text" placeholder="First Name*" required="">
+                                        <em class="error" *ngIf="!registerForm.get('first_name').valid && (registerForm.get('first_name').dirty || registerForm.get('first_name').touched)">First name is required</em>
+                                    </div>
+                                    <div class="form-group">
+                                        <input class="form-control " formControlName="last_name" id="validationCustom1" type="text" placeholder="Last Name" required="">
+                                        <em class="error" *ngIf="!registerForm.get('last_name').valid && (registerForm.get('last_name').dirty || registerForm.get('last_name').touched)">Last name is required</em>
+                                    </div>
+                                    <div class="form-group">
+                                        <select class="form-control" formControlName="gender" id="validationCustom07">
+                                                <option value="" selected>Select Gender*</option>
+                                                <option value="male">Male</option>
+                                                <option value="female">Female</option>
+                                                <option value="n/a">Do not want to disclose</option>
+                                        </select>
+                                        <em class="error" *ngIf="!registerForm.get('gender').valid && (registerForm.get('gender').dirty || registerForm.get('gender').touched)">Gender is required</em>
+                                    </div>
+                                    <div class="form-group">
+                                        <input class="form-control" formControlName="email_id" id="validationCustom5"
+                                               type="email" placeholder="Email*" autocomplete="off" required="">
+                                        <em class="error"
+                                            *ngIf="!registerForm.get('email_id').valid && (registerForm.get('email_id').dirty || registerForm.get('email_id').touched)">Email
+                                            is required</em>
+                                    </div>
+                                    <div class="form-group">
+                                        <input class="form-control" formControlName="mobile" id="validationCustom10" type="text" maxlength="10" placeholder="Mobile Number" (keypress)="numberValidate($event)">
+<!--                                        <em class="error" *ngIf="!registerForm.get('mobile').valid && (registerForm.get('mobile').dirty || registerForm.get('mobile').touched)">Mobile is required</em>-->
+                                    </div>
+                                    <div class="form-group">
+                                        <ng-select class="login-select"
+                                                    [items]="gradeList"
+                                                    bindLabel="grade_name"
+                                                    bindValue="grade_id"
+                                                    formControlName="grade_id"
+                                                    placeholder="Select Grade"
+                                                    typeToSearchText=""
+                                        >
+                                        </ng-select>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="input-group">
+                                            <input type="text" formControlName="password" class="form-control"
+                                                   placeholder="Password*" autocomplete="new-password"
+                                                   [type]="conps ? 'password' : 'text'">
+                                            <div class="input-group-append">
+                                    <span class="input-group-text" id="basic-addon7">
+                                        <i [class]="conps ? 'fa fa-eye-slash' : 'fa fa-eye'" aria-hidden="true"
+                                           (click)="conps = !conps"></i>
+                                    </span>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex">
+                                            <em class="error"
+                                                *ngIf="!registerForm.get('password').valid && (registerForm.get('password').dirty || registerForm.get('password').touched)">Password
+                                                is required</em>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="input-group">
+                                            <input required="" type="text" formControlName="confirmpassword"
+                                                   class="form-control" placeholder="Confirm Password"
+                                                   aria-label="Recipient's username" aria-describedby="basic-addon1"
+                                                   [type]="conps1 ? 'password' : 'text'">
+                                            <div class="input-group-append">
+                           <span class="input-group-text" id="basic-addon10">
+                               <i [class]="conps1 ? 'fa fa-eye-slash' : 'fa fa-eye'" style="color: #7F3486"
+                                  aria-hidden="true" (click)="conps1 = !conps1"></i>
+                           </span>
+                                            </div>
+                                        </div>
+                                        <div  class="d-flex" *ngIf="checkPasswords()">
+                                            <em class="error help-block">
+                                                Enter same password as above
+                                            </em>
+                                        </div>
+                                    </div>
+                                    <div class="form-button d-flex justify-content-end w-100">
+<!--                                        <button (click)="goToRegister('student')" class="btn btn-outline-primary py-1 px-3">-->
+<!--                                            <i class="fa fa-long-arrow-left fa-1x mr-2" aria-hidden="true"></i>Back</button>-->
+                                        <button class="btn btn-primary" (click)="submitRegisterForm()">Submit<i class="ml-2 fa fa-long-arrow-right fa-1x" aria-hidden="true"></i></button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-5 mt-2 d-none d-md-block">
+                    <img src="assets/images/student-login2.png" style="width: 550px; height: 500px" alt="">
+                </div>
+            </div>
+        </section>
+<!--        <section class="container-fluid" *ngIf="type == 'corporate'">-->
+<!--            <div class="row justify-content-center">-->
+<!--                <div class="col-12 col-md-5 loginWith mt-2">-->
+<!--                    <h1>Corporates</h1>-->
+<!--                    <div class="card">-->
+<!--                        <div class="card-body">-->
+<!--                            <h3 class="mb-3">Login</h3>-->
+<!--                            <div class="form-horizontal auth-form1" novalidate="">-->
+<!--                                <form [formGroup]="corporatesForm">-->
+<!--                                    <div class="form-group">-->
+<!--                                        <input (keypress)="enterKey($event)" autofocus required="" name="login[username]" type="email"-->
+<!--                                               class="form-control" placeholder="username" formControlName="userName"-->
+<!--                                               id="exampleInputEmail22" autocomplete="off">-->
+<!--&lt;!&ndash;                                        <em class="error" *ngIf="!studentForm.get('userName').valid && (studentForm.get('userName').dirty || studentForm.get('userName').touched)">User name is required</em>&ndash;&gt;-->
+<!--                                    </div>-->
+<!--                                    <div class="form-group">-->
+<!--                                        <div class="input-group">-->
+<!--                                            <input (keypress)="enterKey($event)" required=""  name="login[password]" type="text" formControlName="password"-->
+<!--                                                   class="form-control" placeholder="Password" aria-label="Recipient's username" aria-describedby="basic-addon1" autocomplete="off" [type]="conps ? 'password' : 'text'">-->
+<!--                                            <div class="input-group-append">-->
+<!--                                        <span class="input-group-text" id="basic-addon42">-->
+<!--                                            <i [class]="conps ? 'fa fa-eye-slash' : 'fa fa-eye'" aria-hidden="true" (click)="conps = !conps"></i>-->
+<!--                                        </span>-->
+<!--                                            </div>-->
+<!--                                        </div>-->
+<!--&lt;!&ndash;                                        <em class="error" *ngIf="!studentForm.get('password').valid && (studentForm.get('password').dirty || studentForm.get('password').touched)">Password is required</em>&ndash;&gt;-->
+<!--                                    </div>-->
+<!--                                    <div class="form-terms">-->
+<!--                                        <div class="custom-control custom-checkbox mr-sm-2">-->
+<!--                                            <input type="checkbox" class="custom-control-input"-->
+<!--                                                   id="customControlAutosizing45" (click)="rememberList($event, '5')" formControlName="checkbox4">-->
+<!--                                            <label class="custom-control-label"-->
+<!--                                                   for="customControlAutosizing45">Remember me</label>-->
+<!--                                            <a [routerLink]="'/forgotPassword/corporate'" class="btn btn-default forgot-pass">Forgot password</a>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                    <div class="form-button d-flex justify-content-between w-100">-->
+<!--&lt;!&ndash;                                        <button (click)="backAction($event)" class="btn btn-outline-primary">&ndash;&gt;-->
+<!--&lt;!&ndash;                                            <i class="fa fa-long-arrow-left fa-1x mr-2" aria-hidden="true"></i>Back</button>&ndash;&gt;-->
+<!--                                        <button  class="btn btn-primary" (click)="loginCorporates()">Login <i class="ml-2 fa fa-long-arrow-right fa-1x" aria-hidden="true"></i></button>-->
+<!--                                    </div>-->
+<!--                                </form>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="col-12 col-md-5 mt-2 d-none d-md-block">-->
+<!--                    <img src="assets/images/student-login2.png" style="width: 550px; height: 500px" alt="">-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </section>-->
+<!--        <section class="container-fluid" *ngIf="type == 'grader'">-->
+<!--            <div class="row justify-content-center">-->
+<!--                <div class="col-12 col-md-5 loginWith mt-2">-->
+<!--                    <h1>Grader</h1>-->
+<!--                    <div class="card">-->
+<!--                        <div class="card-body">-->
+<!--                            <h3 class="mb-3">Login</h3>-->
+<!--                            <div class="form-horizontal auth-form1" novalidate="">-->
+<!--                                <form [formGroup]="graderForm">-->
+<!--                                    <div class="form-group">-->
+<!--                                        <input (keypress)="enterKey($event)" autofocus required="" name="login[username]" type="email"-->
+<!--                                               class="form-control" placeholder="username" formControlName="userName"-->
+<!--                                               id="exampleInputEmail23" autocomplete="off">-->
+<!--&lt;!&ndash;                                        <em class="error" *ngIf="!studentForm.get('userName').valid && (studentForm.get('userName').dirty || studentForm.get('userName').touched)">User name is required</em>&ndash;&gt;-->
+<!--                                    </div>-->
+<!--                                    <div class="form-group">-->
+<!--                                        <div class="input-group">-->
+<!--                                            <input (keypress)="enterKey($event)" required=""  name="login[password]" type="text" formControlName="password"-->
+<!--                                                   class="form-control" placeholder="Password" aria-label="Recipient's username" aria-describedby="basic-addon1" autocomplete="off" [type]="conps ? 'password' : 'text'">-->
+<!--                                            <div class="input-group-append">-->
+<!--                                        <span class="input-group-text" id="basic-addon43">-->
+<!--                                            <i [class]="conps ? 'fa fa-eye-slash' : 'fa fa-eye'" aria-hidden="true" (click)="conps = !conps"></i>-->
+<!--                                        </span>-->
+<!--                                            </div>-->
+<!--                                        </div>-->
+<!--&lt;!&ndash;                                        <em class="error" *ngIf="!studentForm.get('password').valid && (studentForm.get('password').dirty || studentForm.get('password').touched)">Password is required</em>&ndash;&gt;-->
+<!--                                    </div>-->
+<!--                                    <div class="form-terms">-->
+<!--                                        <div class="custom-control custom-checkbox mr-sm-2">-->
+<!--                                            <input type="checkbox" class="custom-control-input"-->
+<!--                                                   id="customControlAutosizing46" (click)="rememberList($event, '7')" formControlName="checkbox7">-->
+<!--                                            <label class="custom-control-label"-->
+<!--                                                   for="customControlAutosizing46">Remember me</label>-->
+<!--                                            <a [routerLink]="'/forgotPassword/grader'" class="btn btn-default forgot-pass">Forgot password</a>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                    <div class="form-button d-flex justify-content-between w-100">-->
+<!--&lt;!&ndash;                                        <button (click)="backAction($event)" class="btn btn-outline-primary">&ndash;&gt;-->
+<!--&lt;!&ndash;                                            <i class="fa fa-long-arrow-left fa-1x mr-2" aria-hidden="true"></i>Back</button>&ndash;&gt;-->
+<!--                                        <button  class="btn btn-primary" (click)="loginGrader()">Login <i class="ml-2 fa fa-long-arrow-right fa-1x" aria-hidden="true"></i></button>-->
+<!--                                    </div>-->
+<!--                                </form>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="col-12 col-md-5 mt-2 d-none d-md-block">-->
+<!--                    <img src="assets/images/student-login2.png" style="width: 550px; height: 500px" alt="">-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </section>-->
+    </div>
+</div>
+<ng-template #tcupdate let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">Terms & Conditions and Privacy Policy</h4>
+    </div>
+    <div class="modal-body">
+        <!-- Container-fluid starts-->
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <input type="checkbox" class="form-check-input text-center" [(ngModel)]="checkterms" ><span>I accept </span><a href="https://edquill.com/terms_and_conditions.html" target="_blank"><span style="font-style: italic; text-decoration: underline;">Terms & Conditions</span></a> <span> and </span> <a href="https://edquill.com/privacy_policy.html" target="_blank" style="font-style: italic; text-decoration: underline;">Privacy Policy</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Container-fluid Ends-->
+
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-primary" (click)="confirmtermDetails()" [disabled]="checkterms == undefined || !checkterms">Submit</button>
+    </div>
+</ng-template>

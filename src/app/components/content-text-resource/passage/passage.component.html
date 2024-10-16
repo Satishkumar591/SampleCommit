@@ -1,0 +1,148 @@
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-12 my-4">
+                    <div class="btn-popup pull-right">
+                        <button class="btn cancel mr-3" [routerLink]="'/repository/content-home'">Content Library</button>
+                        <button class="btn btn-primary" *ngIf="addORUpdate" (click)="addOrEditPassage('add', '')">Add Passage</button>
+                    </div>
+                </div>
+
+                <div class="col-12">
+                    <ngx-datatable #table class="bootstrap" [columnMode]="'force'" [rows]="listPassageDetails"
+                                   [loadingIndicator]="true"  [headerHeight]="40" [footerHeight]="40" [limit]="10"
+                                   [rowHeight]="'auto'">
+
+                        <ngx-datatable-column class="contenttext" name="Passage Title">
+                            <ng-template ngx-datatable-cell-template let-row="row" let-value="passageData"
+                                         let-i="index">{{row?.title}}
+                            </ng-template>
+                        </ngx-datatable-column>
+
+                        <ngx-datatable-column class="contenttext" name="Created By">
+                            <ng-template ngx-datatable-cell-template let-row="row" let-value="passageData"
+                                         let-i="index">{{row?.created_by_name}}
+                            </ng-template>
+                        </ngx-datatable-column>
+
+                        <ngx-datatable-column class="contenttext" name="Created Date">
+                            <ng-template ngx-datatable-cell-template let-row="row" let-value="passageData"
+                                         let-i="index">{{row.created_date | customDateFormat}}
+                            </ng-template>
+                        </ngx-datatable-column>
+
+                        <ngx-datatable-column class="contenttext" name="Action">
+                            <ng-template ngx-datatable-cell-template let-value="passageData" let-row="row"
+                                         let-i="index">
+                                    <i class="fa fa-eye text-warning cursor mr-3" title="View Passage" (click)="openModel(row, 'view')" aria-hidden="true"
+                                       style="font-size: 20px"></i>
+                                    <i class="fa fa-pencil text-primary cursor mr-3" aria-hidden="true" (click)="addOrEditPassage('edit', row)" style="font-size: 20px"
+                                       title="Edit Passage" *ngIf="addORUpdate"></i>
+                                    <i class="fa fa-trash text-danger cursor mr-2" title="Delete Passage"
+                                       aria-hidden="true" style="font-size: 20px" *ngIf="addORUpdate" (click)="openModel(row, 'delete')"></i>
+
+                            </ng-template>
+                        </ngx-datatable-column>
+
+                    </ngx-datatable>
+                </div>
+
+            </div>
+        </div>
+
+
+    </div>
+</div>
+
+<ng-template #deletePassageConfirmation let-c="close" let-d="dismiss" let-data>
+    <div class="modal-header">
+        <h4 class="modal-title w-100 letter" id="modal-basic-title20">Delete Passage</h4>
+        <i class="fa fa-close fa-lg mt-1 cursor color-primary" aria-hidden="true" style="float: right;" 
+            title="Close" (click)="close()"></i>
+    </div>
+    <div class="modal-body">
+        <h5>Are you sure want to delete the <span class="color-primary font-weight-bold">{{passageDetails?.title}}</span> passage?</h5>
+    </div>
+    <div class="modal-footer">
+        <div class="col-12 d-flex justify-content-end">
+            <button class="btn cancel"  (click)="close()" type="button">No</button>
+            <button class="btn btn-primary ml-2" type="button" (click)="passageCREDService('delete')" >Yes</button>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #passageAddOrEdit let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h4 class="modal-title w-100 letter" id="modal-basic-title202"><b class="text-capitalize">{{type}} Passage</b>
+        </h4>
+        <i class="fa fa-close fa-lg mt-1 cursor color-primary" aria-hidden="true"
+            title="Close" style="float: right;" (click)="close()"></i>
+    </div>
+
+    <div class="modal-body">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-12 mt-5">
+                    <form [formGroup]="passageForm">
+                        <div class="form-group row">
+                            <label for="validationCustom0" class="col-xl-2 col-md-3 ml-4 mt-2"
+                                   style="font-size:15px"><span style="color:red;">*</span>
+                                Passage Title</label>
+                            <div class="col-xl-9 col-md-10">
+                                <input class="form-control" formControlName="title" id="validationCustom0" type="text"
+                                       placeholder="Title" required="">
+                                <em class="error"
+                                    *ngIf="!passageForm.get('title').valid && (passageForm.get('title').dirty || passageForm.get('title').touched)">Title
+                                    is required</em>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="validationCustom1" class="col-xl-2 col-md-3 ml-4 mt-2"
+                                   style="font-size:15px"><span style="color:red;">*</span>
+                                Passage</label>
+                            <div class="col-xl-9 col-md-10">
+                                <app-tiny-mice (emitEditorValue)="getEditorValue($event)"
+                                               [editorPatchValue]="type == 'add' ? false : passageDetails?.passage"
+                                               [height]="300" [readonly]="false"
+                                               [id]="'passageId'" [showDropBtn]="false" [showInputBtn]="false">
+                                </app-tiny-mice>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <div class="col-12 d-flex justify-content-end">
+            <button class="btn cancel" (click)="formSetValue()" type="button">Reset</button>
+            <button class="btn btn-primary ml-2" (click)="passageCREDService(type)" type="button">{{type == 'add' ? 'Submit' : 'Update'}}</button>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #viewPassage let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h4 class="modal-title w-100 letter" id="modal-basic-view"><b>Preview Passage</b></h4>
+        <i class="fa fa-close fa-lg mt-1 cursor color-primary" aria-hidden="true"  title="Close" 
+            style="float: right;" (click)="close()"></i>
+    </div>
+    <div class="modal-body">
+        <div class="container-fluid">
+            <div class="col-12 text-center">
+                <label style="font-size: 20px;"><b>{{passageDetails?.title}}</b></label>
+                <hr>
+            </div>
+            <div class="col-12">
+                <div class="innerImages6 scrollPanel2 mt-3" [innerHTML]="passageDetails?.passage">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <div class="col-12 d-flex justify-content-end">
+            <button class="btn cancel" (click)="close()" type="button">Close</button>
+        </div>
+    </div>
+</ng-template>

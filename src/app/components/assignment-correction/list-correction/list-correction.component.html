@@ -1,0 +1,235 @@
+<!-- Container-fluid starts-->
+<div class="container-fluid" *ngIf="schoolStatus.length != 0">
+    <div id="custom-pdf-loader-editor" *ngIf="showLoader">
+        <img src="assets/images/pre-loader/loader-01.svg" alt="">
+    </div>
+        <div class="row">
+             <div class="group-btn col-md-9 classDisable">
+                 <button (click)="setSearch_Filter(2, sortType);assignmentList(2, sortType)" [disabled]="!buttonSelect" [ngClass]="{'active1': filterType == 2}" class="btn btn-outline-primary" type="button">In progress</button>
+                 <button (click)="setSearch_Filter(1, sortType);assignmentList(1, sortType)" [disabled]="!buttonSelect" [ngClass]="{'active1': filterType == 1}" class="btn btn-outline-primary" type="button">Upcoming</button>
+                 <button (click)="setSearch_Filter(3, sortType);assignmentList(3, sortType)" [disabled]="!buttonSelect" [ngClass]="{'active1': filterType == 3}" class="btn btn-outline-primary" type="button">Completed</button>
+                 <button (click)="setSearch_Filter(0, sortType);assignmentList(0, sortType)" [disabled]="!buttonSelect" [ngClass]="{'active1': filterType == 0}" class="btn btn-outline-primary" type="button">All</button>
+                 <button aria-expanded="false" aria-haspopup="true" class="btn btn-outline-primary dropdown-toggle" [disabled]="!buttonSelect" data-toggle="dropdown" type="button">{{sortButton}}</button>
+                     <div aria-labelledby="dropdownMenuButton" class="dropdown-menu">
+                         <a (click)="setSearch_Filter(filterType, 1);classSort(1)" class="dropdown-item dropdown-link">Recent</a>
+                         <a (click)="setSearch_Filter(filterType, 4);classSort(4)" class="dropdown-item dropdown-link">Oldest</a>
+                         <a (click)="setSearch_Filter(filterType, 2);classSort(2)" class="dropdown-item dropdown-link">Name A-Z</a>
+                         <a (click)="setSearch_Filter(filterType, 3);classSort(3)" class="dropdown-item dropdown-link">Name Z-A</a>
+                     </div>
+             </div>
+            <div class="col-md-3 btn-popup pull-right mb-0">
+                <div class="input-group">
+                    <input (input)="updateFilter(searchStudent)" [(ngModel)]="searchStudent" class="form-control" placeholder="Search by Student name" size="50" style="height:40px" type="text" >
+                    <div class="input-group-append">
+                        <button class="btn btn-primary" type="submit"><i aria-hidden="true" class="fa fa-search"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-md-3">
+                <ng-select [items]="batchData"
+                           bindLabel="batch_name"
+                           bindValue="batch_id"
+                           [(ngModel)]="selectClassRoom"
+                           placeholder="Select Content Folder"
+                           typeToSearchText=""
+                           (change)="setSearch_Filter(filterType, sortType);assignmentList(filterType, sortType)">
+                </ng-select>
+            </div>
+            <div class="col-md-3" *ngIf="auth.getRoleId() != '4'">
+                <ng-select [items]="teacherListData"
+                           bindLabel="teacher_name"
+                           bindValue="teacher_id"
+                           [(ngModel)]="selectTeacher"
+                           placeholder="Select Teacher"
+                           typeToSearchText=""
+                           (change)="setSearch_Filter(filterType, sortType);assignmentList(filterType, sortType); classList()"
+                           >
+                </ng-select>
+            </div>
+            <div class="col-md-3 btn-popup pull-right mb-0">
+                <div class="input-group">
+                    <input type="text" class="form-control" style="height:40px" size="50" placeholder="Search by Class name" [(ngModel)]="searchClass" (input)="updateFilter(searchClass)" >
+                    <div class="input-group-append">
+                        <button class="btn btn-primary" type="submit"><i class="fa fa-search" aria-hidden="true"></i></button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 btn-popup pull-right mb-0">
+                <div class="input-group">
+                    <input type="text" class="form-control" style="height:40px" size="50" placeholder="Search by Assignment name" [(ngModel)]="searchAssignment" (input)="updateFilter(searchAssignment)" >
+                    <div class="input-group-append">
+                        <button class="btn btn-primary" type="submit"><i class="fa fa-search" aria-hidden="true"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <div class="row d-flex justify-content-center list-card mt-1" *ngIf="listData ==''">
+        <div class="col-4">
+            <button class="nodataList">No Data Available!</button>
+        </div>
+    </div>
+        <section class="row list-card mt-3" *ngIf="listData != ''">
+                <div class="col-md-12">
+                        <div *ngFor="let list of listData" class="card class-card class-hover" (click)="previewPage(list)">
+                                <div class="card-body">
+                                        <div class="row">
+                                                <div class="col-md-1 d-flex justify-content-center align-items-center">
+                                                        <figure (click)="listDetails(list)" title="Preview" class="cursor">
+                                                                <img *ngIf="list.profile_url == ''" alt="" class="img-50 rounded-circle" src="assets/images/ristaschool/option-writing-checkbox-concepts-survey.png">
+                                                                <img *ngIf="list.profile_url != ''" class="img-50 rounded-circle" [src]="sanitizer.bypassSecurityTrustResourceUrl(webhost + '/' + list.profile_url)" alt="">
+                                                        </figure>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <h4 class="t-period"><small *ngIf="list.status == 1" class="card-flag" style="background-color: #9ddfd3">Not started</small>
+                                                        <small *ngIf="list.status == 2" class="card-flag" style="background-color: #ffc478">In progress</small>
+                                                        <small *ngIf="list.status == 3" class="card-flag" style="background-color: #184d47">Completed</small> &nbsp;
+                                                        <span class="font-weight-bold">{{list.content_name}}</span> &nbsp;<small> with <span class="t-name font-weight-bold">&nbsp; {{list.teacher_name}}</span></small> </h4>
+                                                    <div class="d-flex">
+                                                        <p><span>Subject: </span> <span class="t-name font-weight-bold">{{list.subject_name}}</span> &nbsp; &nbsp;
+                                                            <span>Class: </span> <span class="t-name font-weight-bold">{{list.class_name}}</span>
+                                                        </p>
+                                                    </div>
+
+<!--                                                    <h4 class="t-period"><span class="font-weight-bold">{{list.content_name}}</span> &nbsp;<small> with <span class="t-name font-weight-bold">&nbsp; {{list.teacher_name}}</span></small> </h4>-->
+<!--                                                    <div class="d-flex">-->
+<!--                                                        <p><small>Subject: </small> <span class="t-name font-weight-bold">{{list.subject_name}}</span></p>-->
+<!--                                                        <p class="ml-4"><small>Class: </small> <span class="t-name font-weight-bold">{{list.class_name}}</span></p>-->
+<!--                                                    </div>-->
+<!--                                                    <p><small>End Date: </small> <span *ngIf="list.end_date != '0000-00-00'" class="t-name font-weight-bold">{{list.end_date|date:'MM-dd-yyyy'}}, {{list.end_time}}</span></p>-->
+<!--                                                    <h5 *ngIf="list.status == 1" class="card-flag" style="background-color: #9ddfd3">Not started</h5>-->
+<!--                                                    <h5 *ngIf="list.status == 2" class="card-flag" style="background-color: #ffc478">In progress</h5>-->
+<!--                                                    <h5 *ngIf="list.status == 3" class="card-flag" style="background-color: #184d47">Completed</h5>-->
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <div class="row">
+                                                        <div class="col-12 d-flex justify-content-end">
+                                                            <small>End Date: </small> <span *ngIf="list.end_date != '0000-00-00'" class="t-name font-weight-bold">{{list.end_date| customDateFormat}}</span>
+                                                            <small *ngIf="list.over_due_days != '0'" class="pull-right over-due1">Overdue For:
+                                                                <span *ngIf="list.over_due_days != '1'" class="over-due1">{{list.over_due_days}} (days)</span>
+                                                                <span *ngIf="list.over_due_days == '1'" class="over-due1">{{list.over_due_days}} (day)</span>
+                                                            </small>
+<!--                                                            <small *ngIf="list.over_due_days == '0'" class="pull-right" style="visibility: hidden">OverDue:</small>-->
+                                                        </div>
+                                                    </div>
+                                                    <div class="row align-self-end">
+                                                        <div class="col-12 mt-2 d-flex justify-content-end">
+                                                            <div class="dropdown">
+                                                                <button class="btn-sm-i btn-outline-primary">Action <i class="fa fa-sort-desc float-right ml-2" aria-hidden="true"></i></button>
+                                                                <div class="dropdown-content cursor" style="right: 1px">
+                                                                    <a (click)="reportDetails('Assignment', list)"><i class="fa fa-file-text-o" aria-hidden="true"></i> Reports</a>
+                                                                    <a (click)="itemsReportDetails(list)"><i class="fa fa-file-archive-o" aria-hidden="true"></i> Itemized Reports</a>
+                                                                    <a (click)="showInformation(list)"><i class="fa fa-info" aria-hidden="true"></i> Information</a>
+                                                                </div>
+                                                            </div>
+<!--                                                            <button (click)="previewPage(list)" [disabled]="list.status == 1" class="btn-sm-i btn-outline-primary pull-right" type="button">Enter</button>-->
+<!--                                                            <button (click)="reportDetails('Assignment', list)" class="btn-outline-primary btn-sm-view mr-1 mt-1 pull-right" title="Reports"><i class="fa fa-file-text-o" aria-hidden="true"></i></button>-->
+<!--                                                            <button (click)="itemsReportDetails(list)" class="btn-outline-primary btn-sm-view mr-1 mt-1 pull-right" title="Itemized Reports"><i class="fa fa-file-archive-o" aria-hidden="true"></i></button>-->
+<!--                                                            <button (click)="showInformation(list)" class="btn-outline-primary btn-sm-view mr-1 mt-1 pull-right" title="Information"><i class="fa fa-info pl-1 pr-1" aria-hidden="true"></i></button>-->
+                                                        </div>
+                                                    </div>
+<!--                                                    <div class="row mb-3">-->
+<!--                                                        <div class="col-md-12">-->
+<!--                                                            <small class="pull-right">Total No. of Students: <span class="t-name">{{list.total_students}}</span></small>-->
+<!--                                                        </div>-->
+<!--                                                    </div>-->
+<!--                                                    <div class="row mb-3">-->
+<!--                                                        <div class="col-md-12">-->
+<!--                                                            <small class="pull-right">No. of Students Completed: <span class="t-name">{{list.completed_students}}</span></small>-->
+<!--                                                        </div>-->
+<!--                                                    </div>-->
+<!--                                                    <div class="row mb-3">-->
+<!--                                                        <div class="col-md-12">-->
+<!--                                                            <small *ngIf="list.over_due_days != '0'" class="pull-right over-due1">Overdue For:-->
+<!--                                                                <span *ngIf="list.over_due_days != '1'" class="over-due1">{{list.over_due_days}} (days)</span>-->
+<!--                                                                <span *ngIf="list.over_due_days == '1'" class="over-due1">{{list.over_due_days}} (day)</span>-->
+<!--                                                            </small>-->
+<!--                                                            <small *ngIf="list.over_due_days == '0'" class="pull-right" style="visibility: hidden">OverDue:</small>-->
+<!--                                                        </div>-->
+<!--                                                    </div>-->
+<!--                                                    <div class="row align-self-end mt-4">-->
+<!--                                                        <div class="col-md-12">-->
+<!--                                                            <button (click)="previewPage(list)" [disabled]="list.status == 1" class="btn-sm-i btn-outline-primary pull-right" type="button">Enter</button>-->
+<!--                                                            <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 13.891 14" class="cursor float-right mt-2 mr-2" (click)="reportDetails('Assignment', list)">-->
+<!--                                                                <title>Reports</title>-->
+<!--                                                                <g id="noun_business_report_2032971" data-name="noun_business report_2032971" transform="translate(-51.3 -36.152)">-->
+<!--                                                                    <g id="Group_17426" data-name="Group 17426" transform="translate(51.3 36.152)">-->
+<!--                                                                        <path id="Path_3284" data-name="Path 3284" d="M12.194,54.1h-.022a.372.372,0,1,0,0,.744h.022a.372.372,0,1,0,0-.744Z" transform="translate(-9.503 -42.484)" fill="#7F3486"/>-->
+<!--                                                                        <path id="Path_3285" data-name="Path 3285" d="M12.4,42.959h.481l-.241-.459Z" transform="translate(-9.972 -33.422)" fill="#7F3486"/>-->
+<!--                                                                        <path id="Path_3286" data-name="Path 3286" d="M5.037,1.6,1.8,4.859H5.037Z" transform="translate(-1.691 -1.469)" fill="#7F3486"/>-->
+<!--                                                                        <rect id="Rectangle_907" data-name="Rectangle 907" width="0.766" height="0.722" transform="translate(2.297 6.016)" fill="#7F3486"/>-->
+<!--                                                                        <path id="Path_3287" data-name="Path 3287" d="M8.278,13.206H6.353a.219.219,0,1,1,0-.437H8.278c.262,0-.044.044-.044-1.006a3.7,3.7,0,0,1,4.834-3.5V1.656A.658.658,0,0,0,12.412,1H5.084V4.609a.235.235,0,0,1-.219.219H1.3v9.516A.645.645,0,0,0,1.956,15H10.2A8.789,8.789,0,0,1,8.278,13.206ZM6.331,2.444h4.747a.219.219,0,0,1,0,.438H6.331a.207.207,0,0,1-.219-.219A.235.235,0,0,1,6.331,2.444Zm0,1.794h4.747a.219.219,0,0,1,.219.219.235.235,0,0,1-.219.219H6.331a.219.219,0,0,1-.219-.219A.235.235,0,0,1,6.331,4.237Zm0,2.909h4.878a.235.235,0,0,1,.219.219.219.219,0,0,1-.219.219H6.331a.207.207,0,0,1-.219-.219A.235.235,0,0,1,6.331,7.147Zm0,2.822H8.256a.219.219,0,1,1,0,.438H6.331a.219.219,0,0,1-.219-.219A.235.235,0,0,1,6.331,9.969ZM3.159,6.8a.219.219,0,0,1,.219-.219h1.2A.219.219,0,0,1,4.8,6.8V7.978a.235.235,0,0,1-.219.219h-1.2a.235.235,0,0,1-.219-.219V6.8Zm.831,6.978H3.947a.809.809,0,0,1,0-1.619h.044a.809.809,0,1,1,0,1.619Zm.766-2.887a.23.23,0,0,1-.2.109h-1.2a.23.23,0,0,1-.2-.109.2.2,0,0,1,0-.219l.613-1.181a.226.226,0,0,1,.394,0l.591,1.181A.2.2,0,0,1,4.756,10.888Z" transform="translate(-1.3 -1)" fill="#7F3486"/>-->
+<!--                                                                        <path id="Path_3288" data-name="Path 3288" d="M36.006,40.878l2.034-2.406V35.3a3.238,3.238,0,0,0-2.034,5.578Z" transform="translate(-27.628 -27.797)" fill="#7F3486"/>-->
+<!--                                                                        <path id="Path_3289" data-name="Path 3289" d="M50.9,38.266l2.538-1.356A3.251,3.251,0,0,0,50.9,35.4Z" transform="translate(-40.05 -27.875)" fill="#7F3486"/>-->
+<!--                                                                        <path id="Path_3290" data-name="Path 3290" d="M45.978,44l-2.822,1.509L41.1,47.959a3.254,3.254,0,0,0,5.184-2.625A3.841,3.841,0,0,0,45.978,44Z" transform="translate(-32.394 -34.594)" fill="#7F3486"/>-->
+<!--                                                                    </g>-->
+<!--                                                                </g>-->
+<!--                                                            </svg>-->
+<!--                                                            <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 14.777 19.703" class="cursor float-right mt-2 mr-2" (click)="itemsReportDetails(list)">-->
+<!--                                                                <title>Itemized Reports</title>-->
+<!--                                                                <g id="noun_User_Graph_Report_327481" data-name="noun_User Graph Report_327481" transform="translate(-56 -12)">-->
+<!--                                                                    <g id="Group_17460" data-name="Group 17460" transform="translate(56 12)">-->
+<!--                                                                        <g id="Group_17459" data-name="Group 17459" transform="translate(0)">-->
+<!--                                                                            <circle id="Ellipse_70" data-name="Ellipse 70" cx="0.717" cy="0.717" r="0.717" transform="translate(3.837 3.328)" fill="#7F3486"/>-->
+<!--                                                                            <path id="Path_3302" data-name="Path 3302" d="M17.112,19.251a.6.6,0,0,0-.475.614v.887H17.8Z" transform="translate(-13.978 -13.324)" fill="#7F3486"/>-->
+<!--                                                                            <path id="Path_3303" data-name="Path 3303" d="M26.325,20.75v-.887a.6.6,0,0,0-.474-.616l-.693,1.5Z" transform="translate(-19.875 -13.322)" fill="#7F3486"/>-->
+<!--                                                                            <path id="Path_3304" data-name="Path 3304" d="M8,0V19.7H20.52l2.258-2.258V0ZM20.1,6.062h.431v1.8H20.1Zm-.869-1.6h.431v3.4h-.431ZM18.357,2.9h.431V7.86h-.431Zm-.869,1.672h.431V7.859h-.431Zm-.869,2.3h.431v.99h-.431ZM14.88,6.541V7.859H12.608l1.109-2.4S14.88,5.471,14.88,6.541Zm-2.326.565-.692-1.532h1.384Zm0-4.209a1.148,1.148,0,1,1-1.148,1.148A1.148,1.148,0,0,1,12.554,2.9ZM10.228,6.541c0-1.07,1.163-1.086,1.163-1.086l1.109,2.4H10.228Zm1.316,4.209v1.316H12.86a1.316,1.316,0,1,1-1.316-1.316Zm0,6.055a1.316,1.316,0,0,1,0-2.632v1.316H12.86A1.316,1.316,0,0,1,11.544,16.805Zm.35-1.666V13.823a1.316,1.316,0,0,1,1.316,1.316Zm0-3.422V10.4a1.316,1.316,0,0,1,1.316,1.316Zm8.656,4.4H14.119v-.431H20.55Zm0-1.08H14.119V14.6H20.55Zm0-2.217H14.119v-.431H20.55Zm0-1.08H14.119V11.3H20.55Zm.035,7.292V17.511H22.1Z" transform="translate(-8)" fill="#7F3486"/>-->
+<!--                                                                        </g>-->
+<!--                                                                    </g>-->
+<!--                                                                </g>-->
+<!--                                                            </svg>-->
+<!--                                                        </div>-->
+<!--                                                    </div>-->
+                                                </div>
+                                        </div>
+                                </div>
+                        </div>
+                </div>
+        </section>
+</div>
+<div *ngIf="schoolStatus.length == 0">
+    <app-emptyschool>
+    </app-emptyschool>
+</div>
+<!-- Container-fluid Ends-->
+<ng-template #reports>
+    <div class="modal-header">
+        <h4 class="modal-title">Report</h4>
+        <i class="fa fa-close cursor" (click)="onSave()" ></i>
+    </div>
+    <div class="modal-body">
+        <app-missed-work-report
+                [classShow] = "true"
+                [showContent]= "selectContent"
+                [studentView]= "false"
+                [contentNameValue]= "contentNameValue"
+                [timeView]= "false">
+        </app-missed-work-report>
+    </div>
+
+</ng-template>
+<ng-template #itemsReports>
+    <div class="modal-header">
+        <h4 class="modal-title">{{reportData.content_name | titlecase}} - Report</h4>        <i class="fa fa-close cursor" (click)="onSave()" ></i>
+    </div>
+    <div class="modal-body">
+        <app-items-report
+                [showContent]= "'other'"
+                [studentView]= "false"
+                [timeView]= "true">
+        </app-items-report>
+    </div>
+
+</ng-template>
+<ng-template #showInform>
+    <div class="modal-header">
+        <h4 class="modal-title">Info</h4>
+        <i class="fa fa-close cursor" (click)="onSave()" ></i>
+    </div>
+    <div class="modal-body">
+        <p class="p-0"><small>Total No. of Students: <span class="letter">{{classInfo.total_students}}</span></small></p>
+        <p class="p-0"><small>No. of Students Completed: <span class="letter">{{classInfo.completed_students}}</span></small></p>
+    </div>
+
+</ng-template>

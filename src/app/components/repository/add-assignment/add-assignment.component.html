@@ -1,0 +1,220 @@
+<!-- Container-fluid starts-->
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card tab2-card">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5 class="text-capitalize" *ngIf="type == 'add'">Add Assignment</h5>
+                            <h5 class="text-capitalize" *ngIf="type == 'edit'">Edit Assignment</h5>
+                            <label class="text-muted">All fields marked with <span class="text-danger">*</span> are required</label>
+                        </div>
+                        <div class="pdf-assign-btn col-md-6">
+                            <button class="btn btn-primary pull-right ml-3" *ngIf="type == 'add'" (click)="assign('add')">Publish</button>
+                            <button class="btn btn-primary pull-right ml-3" *ngIf="type == 'edit'" (click)="assign('edit')">Update</button>
+                            <img (click)="draft('add')" *ngIf="type == 'add'" class="pull-right ml-3" src="assets/images/pdf-icons/floppy-disk.png" alt="">
+                            <img (click)="draft('edit')" *ngIf="type == 'edit'" class="pull-right ml-3" src="assets/images/pdf-icons/floppy-disk.png" alt="">
+                            <button class="btn btn-primary pull-right ml-3">Add Question</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body tab2-card">
+                    <form [formGroup]="assignmentForm" class="needs-validation user-add">
+                        <div class="container col-md-12 d-flex mb-4">
+                            <div class="col-sm-12 col-md-4 px-0">
+                                <div class="image-container-left">
+                                    <img *ngIf="!imagepath" src="assets/images/ristaschool/assignment.png" class="w-100" alt="">
+                                    <img  *ngIf="imagepath"  [src]="sanitizer.bypassSecurityTrustResourceUrl(webhost + '/' + imagepath)" alt="">
+                                    <i *ngIf="imagepath" class="fa fa-times close-button" title="close" (click)="deleteImg()"></i>
+                                    <div class="profileUrl">
+                                        <input style="display: none" type="file" class="custom-upload-input" (change)="encodeImageFileAsURL($event)" #addAssignment accept=".png, .jpeg, .jpg">
+                                        <button typw="button" class="btn btn-light btn-circle border-rista" title="upload Image" (click)="addAssignment.click()"> <i class="fa fa-upload fa-2x mb-3" aria-hidden="true"></i> </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="container col-sm-12 col-md-8">
+                                <h5>Created By</h5>
+                                <div class="row">
+                                    <div class="col-md-4 form-group">
+                                        <input class="form-control" formControlName="created" id="validationCustom1"
+                                               type="text" placeholder="Created" required="" readonly>
+                                    </div>
+                                    <div class="col-md-8 form-group">
+                                        <input class="form-control" formControlName="resourceName" id="validationCustom12"
+                                               type="text" placeholder="Resource Name" required="" [readOnly]="type == 'edit'">
+                                        <em class="error" *ngIf="!assignmentForm.get('resourceName').valid && (assignmentForm.get('resourceName').dirty || assignmentForm.get('resourceName').touched)">resource Name is required</em>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div  class="col-md-4 form-group">
+                                        <ng-select [items]="gradeData"
+                                                   bindLabel="grade_name"
+                                                   bindValue="grade_id"
+                                                   formControlName="grade"
+                                                   placeholder="Select Grade"
+                                                   typeToSearchText=""
+                                                   multiple="true"
+                                        >
+                                        </ng-select>
+                                        <em class="error" *ngIf="!assignmentForm.get('grade').valid && (assignmentForm.get('grade').dirty || assignmentForm.get('grade').touched)">Grade is required</em>
+                                    </div>
+                                    <div class="col-md-4 form-group">
+                                        <ng-select [items]="subjectData"
+                                                   bindLabel="subject_name"
+                                                   bindValue="subject_id"
+                                                   formControlName="subject"
+                                                   placeholder="Select Subject"
+                                                   typeToSearchText=""
+                                                   multiple="true"
+                                        >
+                                        </ng-select>
+                                        <em class="error" *ngIf="!assignmentForm.get('subject').valid && (assignmentForm.get('subject').dirty || assignmentForm.get('subject').touched)">Subject is required</em>
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <select class="form-control" formControlName="access">
+                                            <option value="1">Public</option>
+                                            <option value="2">Private</option>
+                                        </select>
+                                        <em class="error" *ngIf="!assignmentForm.get('access').valid && (assignmentForm.get('access').dirty || assignmentForm.get('access').touched)">access is required</em>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group col-md-12">
+                                        <textarea name="" id="" placeholder="Enter Description" formControlName="description" style="width: 100%; height: 100px; padding: 4px"></textarea>
+                                        <em class="error" *ngIf="!assignmentForm.get('description').valid && (assignmentForm.get('description').dirty || assignmentForm.get('description').touched)">Description is required</em>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <tag-input
+                                                formControlName="tag"
+                                                [secondaryPlaceholder]="'Enter tags'"
+                                                [placeholder]="'Add tags'"
+                                                [editable]='true'
+                                                [clearOnBlur]="true"
+                                                [addOnPaste]="true"
+                                                [addOnBlur]="true"
+                                                theme='bootstrap'
+                                                (keyup)="tagList()"
+                                        ></tag-input>
+                                    </div>
+                                    <div *ngFor="let list of tagData" class="chip mr-1 mb-1">{{list.tag_name}}<span class="closebtn" onclick="this.parentElement.style.display='none'">&times;</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mt-5">
+                                <h4 style="color: black; font-weight: bold">Assignment Files</h4>
+                            </div>
+                            <div class="col-md-6 mt-5">
+                                <button (click)="showModal()" class="btn btn-secondary pull-right">Add More</button>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="col-md-12">
+                            <div class="row d-flex">
+                                <div class="form-group col-md-3" *ngFor="let file of pdfpath; let i= index" [hidden]="pdfpath == ''">
+                                    <div class="delete-icon">
+                                        <img *ngIf="pdfpath != ''" src="assets/images/ristaschool/pdfimage.png" alt="">
+                                        <i *ngIf="pdfpath != ''" class="fa fa-times close-button" title="close" (click)="deletePdf(i)"></i>
+                                    </div>
+                                </div>
+                                <div class="form-group col-md-3" *ngFor="let file of pdflinks; let i= index" [hidden]="pdflinks == ''">
+                                    <div class="delete-icon">
+                                        <img *ngIf="pdflinks != ''" src="assets/images/ristaschool/link.png" alt="">
+                                        <i *ngIf="pdflinks != ''" class="fa fa-times close-button" title="close" (click)="deleteLink(i)"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<ng-template #pdf let-c="close" let-d="dismiss">
+    <div class="modal-body mb-5">
+        <div class="row">
+            <h3 class="col-md-11 px-3 py-2">Add Assignment</h3>
+            <div class="col-md-1 pull-right">
+                <i class="fa fa-close pull-right" aria-hidden="true" style="cursor:pointer" (click)="onsave()"></i>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div style="min-height: 120px">
+                    <h4 style="text-align: center;margin-top: 2rem; font-weight: bold">Upload</h4>
+                    <p style="text-align: center">Upload resources as a Image, Video, Voice or PDF Format and proceed to assign it to your Students.</p>
+                </div>
+                <div *ngIf="pdflinks == ''" class="d-flex justify-content-center">
+                    <input accept=".pdf" style="display: none" type="file" multiple (change)="encodePdfFileAsURL($event)" #hiddenfileinput>
+                    <button class="btn btn-primary" type="file" aria-describedby="inputGroupFileAddon01"
+                            (click)="hiddenfileinput.click()">Upload PDF</button>
+                </div>
+                <div *ngIf="pdfpath == ''" class="d-flex justify-content-center">
+                    <button type="button" data-toggle="modal" data-target="#myModal" data-dismiss="bulkmodal"  (click)="onsave()" class="btn btn-primary mt-3">Link</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--    </div>-->
+    <!-- Container-fluid Ends-->
+</ng-template>
+<div id="myModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Add Link</h4>
+                <i class="fa fa-close" style="cursor: pointer" data-dismiss="modal"></i>
+            </div>
+            <form [formGroup]="assignmentForm">
+                <div class="modal-body" formArrayName="repeatlink" *ngFor="let list of assignmentForm.get('repeatlink')['controls']; let i=index">
+                    <div [formGroupName]="i">
+                        <div class="input-group">
+                            <input type="link" formControlName="link" class="form-control" aria-label="Recipient's username" placeholder="Add Link here" aria-describedby="basic-addon2">
+                            <div class="input-group-append">
+                                <span class="input-group-text" id="basic-addon2">
+                                    <i  class="fa fa-plus"  (click)="addarray()"></i>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="submitlink()">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<ng-template #assignContentToClass let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h5 class="contenttext text-center mb-0">Assign Content</h5>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-md-12">
+                <h5>
+                    <span>Do you want to assign this content to the Class {{contentCreatedForm != 'class' ? 'or Content Folder' : ''}}</span>?</h5>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn cancel" (click)="dontAssign()">No</button>
+        <button class="btn btn-primary" type="submit" (click)="assignContent()"
+        >Yes</button>
+    </div>
+</ng-template>
+
+<ng-template #assignTemplate let-c="close" let-d="dismiss">
+    <app-confirm-content-assign
+            [classData]="classDetails"
+            [contentDetails]="assignData"
+            (closePopUp)="closeAssignPopUp()"
+    >
+    </app-confirm-content-assign>
+</ng-template>

@@ -1,0 +1,180 @@
+<div class="ipadViewNavBar">
+    <div class="page-main-header">
+        <div class="main-header-right row justify-content-between">
+            <div>
+                <div class="media-body text-right switch-sm">
+                    <label class="mb-0">
+                        <a>
+                            <img alt="" class="svg-icon" src="assets/images/{{this.logo}}" style="width: auto; height: 30px;">
+                        </a>
+                    </label>
+                </div>
+            </div>
+            <div class="d-flex align-items-center" (click)="schoolListCount > 1 ? router.navigate(['/auth/select']) : ''">
+                <img src="assets/images/ristaschool/school-default.png" alt="" width="35"  style="border-radius: 0">
+                <span class="color-primary font-weight-bold mt-1 ml-1" style="font-size: 16px">{{auth.getSchoolName()}}</span>
+            </div>
+            <div class="d-lg-block mobile-toggle pull-right pt-0" (click)="openMobileNav()">
+                <ul class="nav-menus d-flex align-items-end">
+                    <li>
+                        <a href="javascript:void(0)" class="text-dark mr-3" toggleFullscreen>
+                            <app-feather-icons [icon]="'maximize-2'"></app-feather-icons>
+                        </a>
+                    </li>
+                    <li class="onhover-dropdown pb-1">
+                        <div class="media align-items-center">
+                            <img class="align-self-center pull-right img-30 rounded-circle" *ngIf="profile == '' || profile == null" src="assets/images/dashboard/default.png"  alt="">
+                            <img class="align-self-center pull-right img-30 rounded-circle" *ngIf="profile != '' && profile != null && !listCheck" style="width: 30px; height: auto;" src="{{imgUrl +'/'+ profile}}"  alt="">
+                            <img class="img-30 rounded-circle" *ngIf="profile != '' && listCheck" style="height: 30px" [src]="profile"  alt="">
+                        </div>
+                        <ul class="profile-dropdown onhover-show-div p-20 profile-dropdown-hover">
+                            <li class="my-1"><a class="d-flex align-items-center" [routerLink]="auth.getRoleId() == '5' ? '/studentlogin/profile/view' : '/settings/profile/view'">
+                                <app-feather-icons class="mr-2" [icon]="'user'"></app-feather-icons>My Profile
+                            </a></li>
+                            <li class="my-1"><a class="d-flex align-items-center" [routerLink]="'/users/change-password'">
+                                <app-feather-icons class="mr-2" [icon]="'mail'"></app-feather-icons>Change Password
+                            </a></li>
+                            <li class="my-1"><a class="d-flex align-items-center" (click)="logout()">
+                                <app-feather-icons class="mr-2" [icon]="'log-out'"></app-feather-icons>Logout
+                            </a></li>
+                        </ul>
+                    </li>
+                </ul>
+                <!--                    <app-feather-icons [icon]="'more-horizontal'"></app-feather-icons>-->
+            </div>
+        </div>
+    </div>
+</div>
+<div id="mySidenav" class="sidenav">
+    <div class="row d-flex align-items-center">
+        <div class="col-8 px-3">
+            <a [routerLink]=" role == 5 ? '/studentlogin/list-home' :'/dashboard/default'">
+                <img alt="" class="svg-icon" src="assets/images/{{this.logo}}" style="width: auto; height: 30px;">
+            </a>
+        </div>
+        <div class="col-3 px-2">
+            <a href="javascript:void(0)" class="closebtn" (click)="closeNav()">&times;</a>
+        </div>
+    </div>
+    <ul class="sidebar-menu-nav">
+        <li *ngFor="let menuItem of menuItems" [ngClass]="{active: menuItem.active}">
+            <!-- Sub -->
+            <a href="javascript:void(0)" class="sidebar-header" *ngIf="menuItem.type === 'sub'"
+               (click)="toggletNavActive(menuItem)">
+                <app-feather-icons [icon]="menuItem.icon"></app-feather-icons><span class="pl-2">{{menuItem.title}}</span>
+                <i class="fa fa-angle-right pull-right" *ngIf="menuItem.children"></i>
+            </a>
+            <!-- Link -->
+            <a [routerLink]="!menuItem.type ? null : [menuItem.path]" routerLinkActive="active" class="my-2 sidebar-header d-flex align-items-center"
+               *ngIf="menuItem.type === 'link'">
+                <div style="width: 25%;text-align: -webkit-center;">
+                    <img width="{{menuItem.title == 'Class' || menuItem.title == 'Report Card' ? '45' : '50'}}"
+                            src="{{menuItem.imgePath | lowercase}}" title="{{menuItem.title}}">
+                </div>
+                <div style="width: 75%">
+                    <h4 class="mb-0">{{menuItem.title}}</h4>
+                </div>
+            </a>
+            <!-- External Link -->
+            <a href="{{ !menuItem.type ? null : menuItem.path }}" class="sidebar-header" *ngIf="menuItem.type === 'extLink'">
+                <app-feather-icons [icon]="menuItem.icon"></app-feather-icons>
+                <!--                <span>{{menuItem.title}}<span-->
+                <!--                    class="badge badge-{{menuItem.badgeType}} ml-3"-->
+                <!--                    *ngIf="menuItem.badgeType">{{menuItem.badgeValue}}</span></span>-->
+                <i class="fa fa-angle-right pull-right" *ngIf="menuItem.children"></i>
+            </a>
+            <!-- External Tab Link -->
+            <a href="{{ !menuItem.type ? null : menuItem.path }}" target="_blank" class="sidebar-header"
+               *ngIf="menuItem.type === 'extTabLink'">
+                <app-feather-icons [icon]="menuItem.icon"></app-feather-icons>
+                <!--                <span>{{menuItem.title}}<span-->
+                <!--                    class="badge badge-{{menuItem.badgeType}} ml-3"-->
+                <!--                    *ngIf="menuItem.badgeType">{{menuItem.badgeValue}}</span></span>-->
+                <i class="fa fa-angle-right pull-right" *ngIf="menuItem.children"></i>
+            </a>
+
+            <!-- 2nd Level Menu -->
+            <ul class="sidebar-submenu" [ngClass]="{'menu-open': menuItem.active, 'menu-close': !menuItem.active }"
+                *ngIf="menuItem.children">
+                <li *ngFor="let childrenItem of menuItem.children" [ngClass]="{active: childrenItem.active}">
+                    <!-- Sub -->
+                    <a href="javascript:void(0)" *ngIf="childrenItem.type === 'sub'" (click)="toggletNavActive(childrenItem)">
+                        <img src="{{childrenItem.imgePath | lowercase}}" title="{{childrenItem.title}}">{{childrenItem.title}}
+<!--                        <i class="fa fa-circle"></i>-->
+                        <!--                        <span> {{childrenItem.title}} <span-->
+                        <!--                            class="badge badge-{{childrenItem.badgeType}} pull-right"-->
+                        <!--                            *ngIf="childrenItem.badgeType">{{childrenItem.badgeValue}}</span> </span>-->
+                        <i class="fa fa-angle-down pull-right" *ngIf="childrenItem.children"></i>
+                    </a>
+                    <!-- Link -->
+                    <a [routerLink]="!childrenItem.type ? null : [childrenItem.path]" *ngIf="childrenItem.type === 'link'"
+                       routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+                        <img src="{{childrenItem.imgePath | lowercase}}" title="{{childrenItem.title}}">{{childrenItem.title}}
+<!--                        <i class="fa fa-circle"></i>-->
+                        <!--                        <span>{{childrenItem.title}} <span-->
+                        <!--                            class="badge badge-{{childrenItem.badgeType}} pull-right"-->
+                        <!--                            *ngIf="childrenItem.badgeType">{{childrenItem.badgeValue}}</span></span>-->
+                        <i class="fa fa-angle-down pull-right" *ngIf="childrenItem.children"></i>
+                    </a>
+                    <!-- External Link -->
+                    <a href="{{ !childrenItem.type ? null : childrenItem.path }}" *ngIf="childrenItem.type === 'extLink'"
+                       routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+                        <img src="{{childrenItem.imgePath | lowercase}}" title="{{childrenItem.title}}">{{childrenItem.title}}
+<!--                        <i class="fa fa-circle"></i>-->
+                        <!--                        <span>{{childrenItem.title}} <span-->
+                        <!--                            class="badge badge-{{childrenItem.badgeType}} pull-right"-->
+                        <!--                            *ngIf="childrenItem.badgeType">{{childrenItem.badgeValue}}</span></span>-->
+                        <i class="fa fa-angle-down pull-right" *ngIf="childrenItem.children"></i>
+                    </a>
+                    <!-- External Tab Link -->
+                    <a href="{{ !childrenItem.type ? null : childrenItem.path }}" target="_blank"
+                       *ngIf="childrenItem.type === 'extTabLink'">
+                        <img src="{{childrenItem.imgePath | lowercase}}" title="{{childrenItem.title}}">{{childrenItem.title}}
+<!--                        <i class="fa fa-circle"></i>-->
+                        <!--                        <span>{{childrenItem.title}} <span-->
+                        <!--                            class="badge badge-{{childrenItem.badgeType}} pull-right"-->
+                        <!--                            *ngIf="childrenItem.badgeType">{{childrenItem.badgeValue}}</span></span>-->
+                        <i class="fa fa-angle-down pull-right" *ngIf="childrenItem.children"></i>
+                    </a>
+                    <!-- 3rd Level Menu -->
+                    <ul class="sidebar-submenu" *ngIf="childrenItem.children">
+                        <li *ngFor="let childrenSubItem of childrenItem.children">
+                            <!-- Link -->
+                            <a [routerLink]="!childrenSubItem.type ? null : [childrenSubItem.path]"
+                               *ngIf="childrenSubItem.type === 'link'" routerLinkActive="active"
+                               [routerLinkActiveOptions]="{exact: true}">
+                                <img src="{{childrenSubItem.imgePath | lowercase}}" title="{{childrenSubItem.title}}">{{childrenSubItem.title}}
+<!--                                <i class="fa fa-circle"></i>-->
+                                <!--                                <span> {{childrenSubItem.title}} <span-->
+                                <!--                                    class="badge badge-{{childrenSubItem.badgeType}} pull-right"-->
+                                <!--                                    *ngIf="childrenSubItem.badgeType">{{childrenSubItem.badgeValue}}</span> </span>-->
+                            </a>
+                            <!-- External Link -->
+                            <a href="{{ !childrenSubItem.type ? null : childrenSubItem.path }}"
+                               *ngIf="childrenSubItem.type === 'extLink'" routerLinkActive="active"
+                               [routerLinkActiveOptions]="{exact: true}">
+                                <img src="{{childrenSubItem.imgePath | lowercase}}" title="{{childrenSubItem.title}}">{{childrenSubItem.title}}
+<!--                                <i class="fa fa-circle"></i>-->
+                                <!--                                <span>{{childrenSubItem.title}} <span-->
+                                <!--                                    class="badge badge-{{childrenSubItem.badgeType}} pull-right"-->
+                                <!--                                    *ngIf="childrenSubItem.badgeType">{{childrenSubItem.badgeValue}}</span></span>-->
+                            </a>
+                            <!-- External Tab Link -->
+                            <a href="{{ !childrenSubItem.type ? null : childrenSubItem.path }}" target="_blank"
+                               *ngIf="childrenSubItem.type === 'extTabLink'">
+                                <img src="{{childrenSubItem.imgePath | lowercase}}" title="{{childrenSubItem.title}}">{{childrenSubItem.title}}
+<!--                                <i class="fa fa-circle"></i>-->
+                                <!--                                <span>{{childrenSubItem.title}} <span-->
+                                <!--                                    class="badge badge-{{childrenSubItem.badgeType}} pull-right"-->
+                                <!--                                    *ngIf="childrenSubItem.badgeType">{{childrenSubItem.badgeValue}}</span></span>-->
+                            </a>
+                        </li>
+
+
+
+                    </ul>
+                </li>
+            </ul>
+        </li>
+    </ul>
+</div>

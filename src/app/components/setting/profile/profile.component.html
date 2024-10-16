@@ -1,0 +1,305 @@
+<!-- Container-fluid starts-->
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xl-4">
+            <div class="card">
+                <div class="card-body">
+                    <div class="profile-details text-center">
+                        <div class="avatar-upload">
+                            <div class="avatar-edit">
+                                <input type='file' id="imageUpload" (change)="encodeImageFileAsURL($event)" accept=".png, .jpg, .jpeg" />
+                                <label for="imageUpload"></label>
+                            </div>
+                            <div class="avatar-preview">
+                                <div class="blur-up lazyloaded" *ngIf="profile == ''" id="imagePreview" style="background-image: url(assets/images/dashboard/default.png)"></div>
+                                <img class="blur-up lazyloaded" *ngIf="listCheck && profile != ''" id="imagePreview2" [src]="profile" width="100%">
+                                <div class="blur-up lazyloaded" *ngIf="!listCheck && profile != ''"  width="100%" id="imagePreview1" [style.background-image]="'url('+imgUrl+ '/' + profile +')'"></div>
+                            </div>
+                        </div>
+
+                        <h5 class="f-w-600 mb-0">{{firstname}} {{lastname}}</h5>
+                        <span>{{email}}</span>
+
+                        <div class="row mt-3">
+                            <div class="col-md-3" *ngFor="let imgIdx of imageObject; let i = index" style="cursor: pointer">
+                                <img [src]="imgIdx.thumbImage" (click)="getImage(i, imgIdx)"   width="50">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-8">
+            <div class="card tab2-card">
+                <div class="card-body">
+                    <h4 class="position-relative border-bottom pb-2 letter">
+                        <app-feather-icons [icon]="'user'"></app-feather-icons>Personal Details
+                        <app-feather-icons [icon]="'edit'" class="cursor" style="float: right; position: absolute; left: 40rem" (click)="editPage()"></app-feather-icons>
+                    </h4>
+                                <div class="tab-pane fade show active" id="top-profile" role="tabpanel"
+                                     aria-labelledby="top-profile-tab">
+                                    <div *ngIf="type == 'view' && !editView" class="table-responsive profile-table">
+                                        <table class="table table-responsive">
+                                            <tbody>
+                                            <tr>
+                                                <td>First Name:</td>
+                                                <td>{{firstname | titlecase}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Last Name:</td>
+                                                <td>{{lastname | titlecase}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Email:</td>
+                                                <td>{{email}}</td>
+                                            </tr>
+                                            <tr *ngIf="userVerification != 'corporates'">
+                                                <td>Gender:</td>
+                                                <td class="capital">{{gender | titlecase}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Mobile Number:</td>
+                                                <td>{{mobile}}</td>
+                                            </tr>
+                                            <tr *ngIf="userVerification == 'corporates'">
+                                                <td>Corporate Name:</td>
+                                                <td>{{corporateName}}</td>
+                                            </tr>
+                                            <tr *ngIf="userVerification != 'corporates'">
+                                                <td>DOB:</td>
+                                                <td>{{birthday | customDateFormat}}</td>
+                                            </tr>
+                                            <tr *ngIf="userVerification !='admin' && userVerification != 'corporates'">
+                                                <td>Address1:</td>
+                                                <td>{{address1 |titlecase}}</td>
+                                            </tr>
+                                            <tr *ngIf="address2 != '' && (userVerification !='admin' && userVerification != 'corporates')">
+                                                <td>Address2:</td>
+                                                <td>{{address2}}</td>
+                                            </tr>
+                                            <tr *ngIf="userVerification !='admin' && userVerification != 'corporates'">
+                                                <td>City:</td>
+                                                <td>{{city | titlecase}}</td>
+                                            </tr>
+                                            <tr *ngIf="userVerification !='admin' && userVerification != 'corporates'">
+                                                <td>State: </td>
+                                                <td><span *ngIf="state != 'null' && stateId != 0 && countryId != 0 && countryId != null && stateId != null">
+                                                    {{state | titlecase}}</span></td>
+                                            </tr>
+                                            <tr *ngIf="userVerification !='admin' && userVerification != 'corporates'">
+                                                <td>Country:</td>
+                                                <td><span *ngIf="state != 'null' && country != 'null' && countryId != 0 && stateId != 0 &&  countryId != null && stateId != null">
+                                                    {{country | titlecase}}</span></td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                        <h4 class="position-relative border-bottom pb-2 letter" *ngIf="type == 'view' && !editView && userVerification !='admin' && userVerification != 'corporates'" >
+                                            <app-feather-icons [icon]="'user'"></app-feather-icons>Professional Details
+                                        </h4>
+                                        <table class="table table-responsive" *ngIf="userVerification !='admin' && userVerification != 'corporates'" >
+                                            <tbody>
+                                            <tr>
+                                                <td>Institution Name:</td>
+                                                <td>{{schoolname | titlecase}}</td>
+                                            </tr>
+                                            <tr *ngIf="userVerification =='teacher' && normalTeacher == true">
+                                                <td>Teacher ID:</td>
+                                                <td>{{teacherid | titlecase}}</td>
+                                            </tr>
+                                            <tr *ngIf="userVerification == 'student'">
+                                                <td>Designation:</td>
+                                                <td>{{designation | titlecase}}</td>
+                                            </tr>
+                                            <tr *ngIf="normalTeacher == true">
+                                                <td>Designation:</td>
+                                                <td>{{designation | titlecase}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Status:</td>
+                                                <td>{{status}}</td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    <form  *ngIf="type == 'edit' || editView" [formGroup]="accountForm" class="needs-validation user-add" novalida>
+                                        <div class="form-group row">
+                                            <label for="validationCustom0" class="col-xl-3 col-md-4"><span>*</span>
+                                                First Name</label>
+                                            <div class="col-xl-8 col-md-7">
+                                                <input class="form-control " formControlName="fname" id="validationCustom0"
+                                                       type="text" required="">
+                                                <em class="error" *ngIf="!accountForm.get('fname').valid && (accountForm.get('fname').dirty || accountForm.get('fname').touched)">First name is required</em>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label for="validationCustom1" class="col-xl-3 col-md-4"><span>*</span> Last
+                                                Name</label>
+                                            <div class="col-xl-8 col-md-7">
+                                                <input class="form-control" formControlName="lname" id="validationCustom1"
+                                                       type="text" required="">
+                                                <em class="error" *ngIf="!accountForm.get('lname').valid && (accountForm.get('lname').dirty || accountForm.get('lname').touched)">Last name is required</em>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row" *ngIf="userVerification != 'corporates'">
+                                            <label for="validationCustom6" class="col-xl-3 col-md-4"><span style="visibility: hidden">*</span>
+                                                Gender</label>
+                                            <div class="col-xl-8 col-md-7">
+                                                <select class="form-control" formControlName="gender" id="validationCustom6">
+                                                    <option value="">--Select Gender--</option>
+                                                    <option value="male">Male</option>
+                                                    <option value="female">Female</option>
+                                                    <option value="n/a">Do not want to disclose</option>
+                                                </select>
+<!--                                                <em class="error" *ngIf="!accountForm.get('gender').valid && (accountForm.get('gender').dirty || accountForm.get('gender').touched)">Gender is required</em>-->
+                                            </div>
+                                        </div>
+                                        <div class="form-group row" *ngIf="userVerification != 'corporates'">
+                                            <label class="col-xl-3 col-md-4"><span style="visibility: hidden">*</span>
+                                                Date Of Birth</label>
+                                            <div class="col-xl-8 col-md-7 form-group">
+                                                <div class="d-flex align-items-baseline">
+                                                    <input class="form-control" placeholder="mm-dd-yyyy"
+                                                           name="dp"  formControlName="dob" angular-mydatepicker #dp="angular-mydatepicker"
+                                                           [options]="myDpOptions" (dateChanged)="onDateChanged($event)" />
+                                                    <div class="input-group-append">
+                                                        <button type="button" class="btn btn-primary" (click)="dp.toggleCalendar()">
+                                                            <i class="fa fa-calendar-o"></i></button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label for="validationCustom1" class="col-xl-3 col-md-4"><span>*</span>
+                                                Mobile</label>
+                                            <div class="col-xl-8 col-md-7">
+                                                <input class="form-control" formControlName="mobile" id="validationCustom3" (keypress)="numberPattern($event)" maxlength="15" minlength="10"
+                                                       type="text" required="">
+                                                <em class="error" *ngIf="!accountForm.get('mobile').valid && (accountForm.get('mobile').dirty || accountForm.get('mobile').touched)">Mobile is required</em>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label for="validationCustom2" class="col-xl-3 col-md-4"><span>*</span>
+                                                Email</label>
+                                            <div class="col-xl-8 col-md-7">
+                                                <input class="form-control" formControlName="email" id="validationCustom2"
+                                                       type="text" required="" readonly>
+                                                <em class="error" *ngIf="!accountForm.get('email').valid && (accountForm.get('email').dirty || accountForm.get('email').touched)">Email is required</em>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row" *ngIf="userVerification == 'corporates'">
+                                            <label for="validationCustom22" class="col-xl-3 col-md-4"><span>*</span>
+                                                Corporate Name</label>
+                                            <div class="col-xl-8 col-md-7">
+                                                <input class="form-control" formControlName="corporate" id="validationCustom22"
+                                                       type="text" readonly>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row" *ngIf="userVerification !='admin' && userVerification !='corporates'">
+                                            <label for="validationCustom7" class="col-xl-3 col-md-4"><span style="visibility: hidden">*</span>
+                                                Address1</label>
+                                            <div class="col-xl-8 col-md-7">
+                                                <input class="form-control" formControlName="address1" id="validationCustom7"
+                                                       type="text" placeholder="Enter the address1">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row" *ngIf="userVerification !='admin' && userVerification !='corporates'">
+                                            <label for="validationCustom8" class="col-xl-3 col-md-4"><span style="visibility: hidden">*</span>
+                                                Address2</label>
+                                            <div class="col-xl-8 col-md-7">
+                                                <input class="form-control" formControlName="address2" id="validationCustom8"
+                                                       type="text" placeholder="Enter the address2">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row" *ngIf="userVerification !='admin' && userVerification !='corporates'">
+                                            <label for="validationCustom9" class="col-xl-3 col-md-4"><span style="visibility: hidden">*</span>
+                                                City</label>
+                                            <div class="col-xl-8 col-md-7">
+                                                <input class="form-control" formControlName="city" id="validationCustom9"
+                                                       type="text" placeholder="Enter the city">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row" *ngIf="userVerification !='admin' && userVerification !='corporates'">
+                                            <label class="col-xl-3 col-md-4"><span style="visibility: hidden">*</span>
+                                                State</label>
+                                            <div class="col-xl-8 col-md-7">
+                                                <ng-select [items]="stateListData"
+                                                bindLabel="name"
+                                                bindValue="state_id"
+                                                formControlName="state"
+                                                placeholder="Please Select">
+                                                </ng-select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row" *ngIf="userVerification !='admin' && userVerification !='corporates'">
+                                            <label class="col-xl-3 col-md-4"><span style="visibility: hidden">*</span>
+                                                Country</label>
+                                            <div class="col-xl-8 col-md-7">
+                                                <ng-select [items]="countryListData"
+                                                           bindLabel="name"
+                                                           bindValue="country_id"
+                                                           formControlName="country"
+                                                           placeholder="Please Select"
+                                                           (change)="stateList($event.country_id)"
+                                                >
+                                                </ng-select>
+                                            </div>
+                                        </div>
+                                        <div *ngIf="userVerification !='admin' && userVerification !='corporates'">
+                                        <div class="card-header"  style="position: relative; right: 22px">
+                                            <h5>Professional Details</h5>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <hr>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-xl-3 col-md-4"><span style="visibility: hidden">*</span>
+                                                Institution Name</label>
+                                            <div class="col-xl-8 col-md-7">
+                                                <input readonly class="form-control" formControlName="schoolId" id="validationCustom11"
+                                                       type="text" placeholder="Institution Name">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row" *ngIf="userVerification =='teacher' && normalTeacher == true">
+                                            <label for="validationCustom4" class="col-xl-3 col-md-4"><span style="visibility: hidden">*</span>
+                                                Teacher ID</label>
+                                            <div class="col-xl-8 col-md-7">
+                                                <input readonly class="form-control" formControlName="teacherId" id="validationCustom4"
+                                                       type="text" placeholder="Teacher ID" >
+                                            </div>
+                                        </div>
+                                        <div class="form-group row" *ngIf="normalTeacher == true">
+                                            <label for="validationCustom12" class="col-xl-3 col-md-4"><span style="visibility: hidden">*</span>
+                                                Designation</label>
+                                            <div class="col-xl-8 col-md-7" *ngIf="rolId != '3'">
+                                                <input readonly class="form-control" formControlName="designation" id="validationCustom12"
+                                                       type="text" placeholder="Designation" >
+                                            </div>
+                                            <div class="col-xl-8 col-md-7" *ngIf="rolId == '3'">
+                                                <input class="form-control" formControlName="designation" id="validationCustom14"
+                                                       type="text" placeholder="Designation" >
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label  class="col-xl-3 col-md-4"><span style="visibility: hidden">*</span>
+                                                Status</label>
+                                            <div class="col-xl-8 col-md-7">
+                                                <input readonly class="form-control" formControlName="status" id="validationCustom13"
+                                                       type="text" placeholder="status">
+                                                <em class="error" *ngIf="!accountForm.get('status').valid && (accountForm.get('status').dirty || accountForm.get('status').touched)">status is required</em>
+                                        </div>
+                                      </div>
+                                        </div>
+                                    </form>
+                                    <div class="pull-right mt-3" *ngIf="type == 'edit' || editView">
+                                        <button type="button" *ngIf="userVerification != 'admin'" class="btn btn-primary" (click)="saveProfile()">Save</button>
+                                        <button type="button"  *ngIf="userVerification == 'admin'" class="btn btn-primary" (click)="adminProfile()">Save</button>
+                                    </div>
+                                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+

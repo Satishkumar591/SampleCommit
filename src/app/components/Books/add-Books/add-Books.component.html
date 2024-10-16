@@ -1,0 +1,579 @@
+<!-- Container-fluid starts-->
+<div class="container-fluid" *ngIf="showPage">
+    <div class="row">
+        <div class="col-12">
+            <div class="card tab2-card">
+                <div class="card-header pb-0">
+                    <h5 class="text-capitalize" *ngIf="type == 'add'">Add Content</h5>
+                    <h5 class="text-capitalize" *ngIf="type == 'edit'">Edit Content</h5>
+                    <label class="text-muted">All fields marked with <span class="text-danger">*</span> are required</label>
+                    <!-- <ul class="nav nav-tabs mb-0 color-primary">
+                        <li class="nav-item cursor">
+                            <a (click)="uploadType = 'single'; resetForm()" aria-current="page" class="nav-link {{uploadType == 'single' ? 'active' : ''}}"><b>Single Upload</b></a>
+                        </li>
+                        <li class="nav-item cursor">
+                            <a (click)="uploadType = 'multi'; resetForm()" class="nav-link {{uploadType == 'multi' ? 'active' : ''}}"><b>Multi Upload</b></a>
+                        </li>
+                    </ul> -->
+                </div>
+                <div class="card-body tab2-card">
+                    <!-- <form *ngIf="uploadType == 'single'" [formGroup]="booksform" class="needs-validation user-add"> -->
+                        <!-- <div class="form-group row">
+                            <label for="validationCustom1" class="col-12 col-md-4 col-xl-3"><span>*</span>
+                                Book Name</label>
+                            <div class="col-12 col-md-7 col-xl-8">
+                                <input class="form-control " formControlName="name" id="validationCustom1"
+                                       type="text" placeholder="Name" required="">
+                                <em class="error" *ngIf="!booksform.get('name').valid && (booksform.get('name').dirty || booksform.get('name').touched)">Name is required</em>
+                            </div>
+                        </div> -->
+                        <!-- <div class="form-group row">
+                            <label for="validationCustom0" class="col-12 col-md-4 col-xl-3"><span style="visibility: hidden">*</span>
+                                Publication Code</label>
+                            <div class="col-12 col-md-7 col-xl-8">
+                                <input class="form-control " formControlName="publicationCode" id="validationCustom0" type="text" placeholder="Publication Code">
+                                <em class="error" *ngIf="!booksform.get('publicationCode').valid && (booksform.get('publicationCode').dirty || booksform.get('publicationCode').touched)">Publication Code is required</em>
+                            </div>
+                        </div> -->
+                        <!-- <div class="form-group row">
+                            <label for="validationCustom2" class="col-12 col-md-4 col-xl-3"><span style="visibility: hidden">*</span>
+                                Description</label>
+                            <div class="col-12 col-md-7 col-xl-8">
+                                <textarea class="form-control " rows="3" formControlName="description" id="validationCustom2"
+                                          type="email" placeholder="Description"></textarea>
+                            </div>
+                        </div> -->
+                        <!-- <div class="form-group row">
+                            <label for="validationCustom5" class="col-xl-3 col-md-4"><span>*</span>
+                                Book Type</label>
+                            <div class="col-xl-8 col-md-7">
+                                <select class="form-control" formControlName="bookType" (change)="typeSelection($event)" >
+                                    <option selected disabled>&#45;&#45;Select&#45;&#45;</option>
+                                    <option value="1">Resource</option>
+                                    <option value="3">Assessment</option>
+                                    <option value="2">Assignment</option>
+                                </select>
+                                <em class="error" *ngIf="!booksform.get('bookType').valid && (booksform.get('bookType').dirty || booksform.get('bookType').touched)">Book type is required</em>
+                            </div>
+                        </div> -->
+                        <!-- <div class="form-group row">
+                            <label for="validationCustom5" class="col-xl-3 col-md-4"><span style="visibility: hidden">*</span>
+                                Access Type</label>
+                            <div class="col-xl-8 col-md-7">
+                                <select class="form-control" formControlName="access">
+                                    <option value="" selected disabled>&#45;&#45;Select&#45;&#45;</option>
+                                    <option *ngIf="roleid != '6'" value="1">Private (Within Institution)</option>
+                                    <option *ngIf="roleid != '6'" value="2">Private (Only You)</option> -->
+                                    <!-- <option *ngIf="roleid != '6'" value="3">Public</option> -->
+                                    <!-- <option *ngIf="roleid == '6'" value="4">Private (Within Corporate)</option>
+                                </select>
+                            </div>
+                        </div> -->
+                        <!-- <div class="form-group row">
+                            <label for="validationCustom5" class="col-12 col-md-4 col-xl-3"><span>*</span>
+                                Status</label>
+                            <div class="col-12 col-md-7 col-xl-8">
+                                <select class="form-control" formControlName="status" id="validationCustom5">
+                                    <option selected disabled>&#45;&#45;Select&#45;&#45;</option>
+                                    <option value="1">Active</option>
+                                    <option value="2">In-Active</option>
+                                    <option *ngIf="type =='edit'" value="3">Suspended</option>
+                                    <option *ngIf="type =='edit'" value="4">Deleted</option>
+                                </select>
+                                    <em class="error" *ngIf="!booksform.get('status').valid && (booksform.get('status').dirty || booksform.get('status').touched)">Status is required</em>
+                            </div>
+                        </div> -->
+                        <!-- <div class="form-group row" *ngIf="roleid == '6'">
+                            <label class="col-12 col-md-4 col-xl-3"><span>*</span>
+                                Institution Name</label>
+                            <div class="col-12 col-md-7 col-xl-8">
+                                <input readonly class="form-control" formControlName="schoolId" id="validationCustom8"
+                                       type="text" placeholder="Institution Name" required="">
+                            </div>
+                        </div> -->
+                        <!-- <div class="form-group row">
+                            <label class="col-12 col-md-4 col-xl-3"><span style="visibility: hidden">*</span>
+                                Subject Name</label>
+                            <div class="col-12 col-md-7 col-xl-8">
+                                <ng-select [items]="subjectData"
+                                           bindLabel="subject_name"
+                                           bindValue="subject_id"
+                                           formControlName="subject"
+                                           placeholder="Select Subject"
+                                           typeToSearchText=""
+                                           multiple="true"
+                                >
+                                </ng-select>
+                                <em class="error" *ngIf="!booksform.get('subject').valid && (booksform.get('subject').dirty || booksform.get('subject').touched)">Subject is required</em>
+                            </div>
+                        </div> -->
+                        <!-- <div class="form-group row">
+                            <label class="col-12 col-md-4 col-xl-3"><span style="visibility: hidden">*</span>
+                                Grade Name</label>
+                            <div  class="col-12 col-md-7 col-xl-8">
+                                <ng-select  [items]="gradeData"
+                                            bindLabel="grade_name"
+                                            bindValue="grade_id"
+                                            formControlName="grade"
+                                            placeholder="Select Grade"
+                                            typeToSearchText=""
+                                            multiple="true">
+                                </ng-select>
+                                <em class="error" *ngIf="!booksform.get('grade').valid && (booksform.get('grade').dirty || booksform.get('grade').touched)">Grade is required</em>
+                            </div>
+                        </div> -->
+                        <!-- <div class="form-group row">
+                            <label class="col-12 col-md-4 col-xl-3"><span style="visibility: hidden">*</span>
+                                Resources Link</label>
+                            <div  class="col-12 col-md-7 col-xl-8">
+                            <tag-input formControlName="resourcesLink"
+                                       [secondaryPlaceholder]="'Enter Resources'"
+                                       [placeholder]="'Add Resources'"
+                                       [editable]='true'
+                                       [clearOnBlur]="true"
+                                       [addOnPaste]="true"
+                                       [addOnBlur]="true"
+                                       [pasteSplitPattern]="' '"
+                                       theme='bootstrap'>
+                            </tag-input>
+                            </div>
+                        </div> -->
+                        <!-- <div class="form-group row">
+                            <label class="col-12 col-md-4 col-xl-3"><span style="visibility: hidden">*</span>
+                                Download Content</label>
+                            <div class="col-12 col-md-7 col-xl-8">
+                                <div class="col-12" style="position: relative; font-size: 15px; left: 0.4rem">
+                                    <input type="checkbox" class="form-check-input cursor" id="download" formControlName="downloadContent"><label for="download">Allow</label>
+                                </div>
+                            </div>
+                        </div> -->
+                        <!-- <div class="form-group row">
+                            <div class="col-md-6">
+                                <label class="col-12 col-md-6 col-xl-6"><span>*</span>
+                                    Upload Files</label>
+                                <input accept=".pdf" style="display: none" type="file" #attachments (change)="encodePdfFileAsURL($event, 1)" #hiddenfileinput>
+                                <button class="btn btn-primary mt-2 ml-2" type="file" aria-describedby="inputGroupFileAddon01"
+                                        (click)="hiddenfileinput.click()"><i class="fa fa-upload"></i> Upload PDF</button>
+                            </div>
+                            <div class="col-md-6" *ngIf="showAnswerPdf">
+                                <label class="col-12 col-md-6 col-xl-6"><span style="visibility: hidden">*</span>
+                                    Answer Key Upload</label>
+                                <input accept=".pdf" style="display: none" type="file" #attachments1 (change)="encodePdfFileAsURL($event, 2)" #hiddenfileinput1>
+                                <button class="btn btn-primary mt-2" type="file" aria-describedby="inputGroupFileAddon11"
+                                        (click)="hiddenfileinput1.click()"><i class="fa fa-upload"></i> Upload PDF</button>
+                            </div>
+                        </div> -->
+                        <!-- <div class="form-group row">
+                            <div class="col-md-6">
+                                <div class="col-12 col-md-4 col-xl-4">
+                                    <div class="form-group card-resource ml-4" *ngFor="let file of pdfpath; let i= index">
+                                        <div class="delete-icon w-100" *ngIf="pdfpath.length > 0">
+                                            <img class="cursor img-path" src="assets/images/ristaschool/books.png" title="{{file.image}}" alt="" (click)="viewDetail(file)">
+                                            <br/>
+                                            <img *ngIf="pdfpath != ''" class="img-icon mt-2 float-right" (click)="deletePdf(i, 1)" src="assets/images/pdf-icons/Icon material-delete@2x.png"  alt="">
+                                            <h6 class="mt-2 cursor classresource" (click)="viewDetail(file)">{{file.image}}</h6>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6" *ngIf="showAnswerPdf">
+                                <div class="col-12 col-md-4 col-xl-4">
+                                    <div class="form-group card-resource ml-4" *ngFor="let file of answerpdfpath; let i= index">
+                                        <div class="delete-icon w-100" *ngIf="answerpdfpath.length > 0">
+                                            <img class="cursor img-path" src="assets/images/ristaschool/answerkey.jpg" title="{{file.image}}" alt="" (click)="viewDetail(file)">
+                                            <br/>
+                                            <img *ngIf="answerpdfpath != ''" class="img-icon mt-2 float-right" (click)="deletePdf(i,2)" src="assets/images/pdf-icons/Icon material-delete@2x.png"  alt="">
+                                            <h6 class="mt-2 cursor classresource" (click)="viewDetail(file)">{{file.image}}</h6>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div> -->
+                    <!-- </form> -->
+                    <form *ngIf="uploadType == 'multi'" [formGroup]="booksform" class="needs-validation user-add">
+                        <div class="form-group col-12 flex-wrap d-flex justify-content-center my-3 dragNDrop">
+                            <div class="form-group col-md-12 flex-wrap dragNDrop">
+                                <div style="padding: 15px;">
+                                    <div class="col-md-12 d-flex px-0">
+                                        <div class="col-md-4 text-center">
+                                            <div class="col-md-12 content-book-layout">
+                                                <h4 style="color: #ca9be2">Assignment</h4>
+                                                <label for="file1" (filesChangeEmiter)="onFileChange($event, '2')" appFileDragNDrop class="dropzone drop-layout">
+                                                    <div class="text-wrapper">
+                                                        <div class="centered">
+                                                            <input type="file" name="file1" id="file1" accept=".pdf" (change)="uploadFile($event, '2')" multiple><label for="file1">Drag and drop<br> or <br>browse your PDF</label>
+                                                        </div>
+                                                    </div>
+                                                </label>
+                                                <label class="dropzone link-layout" (click)="openLinkPage('4', '2')">
+                                                    <div class="text-wrapper">
+                                                        <div class="centered">
+                                                            <label>Click here to add Link<br> to create content<br> <small>(PPT, Word, Audio, Video)</small></label>
+                                                        </div>
+                                                    </div>
+                                                </label>
+                                            </div>
+                                            <!-- <button class="btn btn-block btn-assignment my-2" (click)="openLinkPage('4', '2')">Add Link</button> -->
+                                            <div class="col-12 px-0 d-flex flex-wrap">
+                                                <div class="col-12 px-0" *ngFor="let item of commonLinks; let i = index">
+                                                    <div class="card link-card border-0 p-2 mb-2" *ngIf="item.resource_type == '2'">
+                                                        <div class="d-flex justify-content-between mb-2">
+                                                            <div class="d-flex">
+                                                                <span class="badge badge-dark flex-center mr-2">{{item.type}}</span>
+                                                                <small class="badge flex-center" style="background-color: #ca9be2; color: whitesmoke">Assignment</small>
+                                                            </div>
+                                                            <i class="fa fa-trash-o f-20px ml-1" (click)="deleteCommonLink(i)"></i>
+                                                        </div>
+                                                        <span class="color-primary text-left text-underline cursor my-2">{{item.link}}</span>
+                                                        <input type="text" class="form-control" [ngModelOptions]="{standalone: true}" [(ngModel)]="item.name" placeholder="Enter Content Name">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 text-center">
+                                            <div class="col-md-12 content-book-layout">
+                                                <h4 style="color: cadetblue">Assessment</h4>
+                                                <label for="file2" (filesChangeEmiter)="onFileChange($event, '3')" appFileDragNDrop class="dropzone drop-layout">
+                                                    <div class="text-wrapper">
+                                                        <div class="centered">
+                                                            <input type="file" name="file2" id="file2" accept=".pdf" (change)="uploadFile($event, '3')" multiple>
+                                                            <label for="file2">Drag and drop<br> or <br>browse your PDF</label>
+                                                        </div>
+                                                    </div>
+                                                </label>
+                                                <label class="dropzone link-layout" (click)="openLinkPage('4', '3')">
+                                                    <div class="text-wrapper">
+                                                        <div class="centered">
+                                                            <label>Click here to add Link<br> to create content<br> <small>(PPT, Word, Audio, Video)</small></label>
+                                                        </div>
+                                                    </div>
+                                                </label>
+                                            </div>
+                                            <!-- <button class="btn btn-block btn-assessment my-2" (click)="openLinkPage('4', '3')">Add Link</button> -->
+                                            <div class="col-12 px-0 d-flex flex-wrap">
+                                                <div class="col-12 px-0" *ngFor="let item of commonLinks; let i = index">
+                                                    <div class="card link-card border-0 p-2 mb-2" *ngIf="item.resource_type == '3'">
+                                                        <div class="d-flex justify-content-between mb-2">
+                                                            <div class="d-flex">
+                                                                <span class="badge badge-dark flex-center mr-2">{{item.type}}</span>
+                                                                <small class="badge flex-center" style="background-color: cadetblue; color: whitesmoke">Assessment</small>
+                                                            </div>
+                                                            <i class="fa fa-trash-o f-20px ml-1" (click)="deleteCommonLink(i)"></i>
+                                                        </div>
+                                                        <span class="color-primary text-left text-underline cursor my-2">{{item.link}}</span>
+                                                        <input type="text" class="form-control" [ngModelOptions]="{standalone: true}" [(ngModel)]="item.name" placeholder="Enter Content Name">
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 text-center">
+                                            <div class="col-md-12 content-book-layout">
+                                                <h4 class="text-center" style="color: #3693b7">Resource</h4>
+                                                <label for="file" (filesChangeEmiter)="onFileChange($event, '1')" appFileDragNDrop class="dropzone drop-layout">
+                                                    <div class="text-wrapper">
+                                                        <div class="centered">
+                                                            <input type="file" name="file" id="file" accept=".pdf" (change)="uploadFile($event, '1')" multiple>
+                                                            <label for="file">Drag and drop<br> or <br>browse your PDF</label>
+                                                        </div>
+                                                    </div>
+                                                </label>
+                                                <label class="dropzone link-layout" (click)="openLinkPage('4', '1')">
+                                                    <div class="text-wrapper">
+                                                        <div class="centered">
+                                                            <label>Click here to add Link<br> to create content<br> <small>(PPT, Word, Audio, Video)</small></label>
+                                                        </div>
+                                                    </div>
+                                                </label>
+                                            </div>
+                                            <!-- <button class="btn btn-block btn-resource my-2" (click)="openLinkPage('4', '1')">Add Link</button> -->
+                                            <div class="col-12 px-0 d-flex flex-wrap">
+                                                <div class="col-12 px-0" *ngFor="let item of commonLinks; let i = index">
+                                                    <div class="card link-card border-0 p-2 mb-2" *ngIf="item.resource_type == '1'">
+                                                        <div class="d-flex justify-content-between mb-2">
+                                                            <div class="d-flex">
+                                                                <span class="badge badge-dark flex-center mr-2">{{item.type | titlecase}}</span>
+                                                                <small class="badge flex-center" style="background-color: #3693b7; color: whitesmoke">Resource</small>
+                                                            </div>
+                                                            <i class="fa fa-trash-o f-22px ml-1" (click)="deleteCommonLink(i)"></i>
+                                                        </div>
+                                                        <span class="color-primary text-left text-underline cursor my-2">{{item.link}}</span>
+                                                        <input type="text" class="form-control" [ngModelOptions]="{standalone: true}" [(ngModel)]="item.name" placeholder="Enter Content Name">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <hr>
+                                    <h3 *ngIf="pdfpath.length >0">Files</h3>
+                                    <div class="w-100 d-flex flex-wrap">
+                                        <div *ngFor="let f of pdfpath; let ind = index" class="fileItem-input col-3 mb-4" title="{{f.image}}">
+                                            <div class="fileItem" style="width: 100%; display: block;">
+                                                <div class="col-md-12 px-0 d-flex justify-content-between">
+                                                    <!-- <div class="col-md-2">
+                                                        <i class="fa fa-file-pdf-o fa-1x" aria-hidden="true" style="cursor:pointer" ></i>
+                                                    </div> -->
+                                                    <div class="col-md-6 px-0">
+                                                        <small *ngIf="f.resource_type == '1'" class="badge mb-2" style="background-color: #3693b7; color: whitesmoke">Resource</small>
+                                                        <small *ngIf="f.resource_type == '2'" class="badge mb-2" style="background-color: #ca9be2; color: whitesmoke">Assignment</small>
+                                                        <small *ngIf="f.resource_type == '3'" class="badge mb-2" style="background-color: cadetblue; color: whitesmoke">Assessment</small>
+                                                    </div>
+                                                    <div class="col-md-6 px-0 d-flex justify-content-end">
+                                                        <i class="fa fa-link f-22px" (click)="openLinkPage(f.resource_type, ind)"></i>
+                                                        <i class="fa fa-trash-o f-22px ml-2" (click)="openConfirmDialog(ind, 'pdf')"></i>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-12 px-0">
+                                                    <h5 class="d-inline">{{f.image + '.pdf'}}</h5>
+                                                </div>
+                                                <div class="col-sm-12  ml-1" *ngIf="f.links.length != 0">
+                                                    <div class="col-12 px-0" *ngFor="let list of f.links; let j = index">
+                                                        <label><a href="{{list.link}}" target="_blank">{{list.type}}</a></label>
+                                                        <i class="fa fa-external-link fa-1x ml-2" (click)="editLink(ind, j, list)"></i>
+                                                        <i class="fa fa-trash-o fa-1x ml-1" (click)="openConfirmDialog({pdfIndex: ind, linkIndex: j}, 'link')"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="w-100 mt-2">
+                                                <input type="text" class="form-control mx-1" [ngModelOptions]="{standalone: true}" [(ngModel)]="f.image" />
+                                            </div>
+                                        </div>
+
+                                        <div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+<!--                        <input #hiddenfileinput1 type="file" accept=".pdf" style="display: none" (change)="encodePdfFileAsURL($event, 3)" multiple>-->
+<!--                        <div class="form-group row">-->
+<!--                            <label class="col-xl-3 col-md-4" for="validationCustom5"><span>*</span>-->
+<!--                                Book Type</label>-->
+<!--                            <div class="col-xl-8 col-md-7">-->
+<!--                                <select (change)="typeSelection($event)" class="form-control" formControlName="bookType" >-->
+<!--                                    <option disabled selected>&#45;&#45;Select&#45;&#45;</option>-->
+<!--                                    <option value="1">Resource</option>-->
+<!--                                    <option value="3">Assessment</option>-->
+<!--                                    <option value="2">Assignment</option>-->
+<!--                                </select>-->
+<!--                                <em *ngIf="!booksform.get('bookType').valid && (booksform.get('bookType').dirty || booksform.get('bookType').touched)" class="error">Book type is required</em>-->
+<!--                            </div>-->
+<!--                        </div>-->
+                        <div class="form-group row">
+                            <label class="col-12 col-md-4 col-xl-3"><span style="visibility: hidden">*</span>
+                                Subject Name</label>
+                            <div class="col-12 col-md-7 col-xl-8">
+                                <ng-select [items]="subjectData"
+                                           bindLabel="subject_name"
+                                           bindValue="subject_id"
+                                           formControlName="subject"
+                                           multiple="true"
+                                           placeholder="Select Subject"
+                                           typeToSearchText=""
+                                >
+                                </ng-select>
+<!--                                <em class="error" *ngIf="!booksform.get('subject').valid && (booksform.get('subject').dirty || booksform.get('subject').touched)">Subject is required</em>-->
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-12 col-md-4 col-xl-3"><span style="visibility: hidden">*</span>
+                                Grade Name</label>
+                            <div  class="col-12 col-md-7 col-xl-8">
+                                <ng-select  [items]="gradeData"
+                                            bindLabel="grade_name"
+                                            bindValue="grade_id"
+                                            formControlName="grade"
+                                            multiple="true"
+                                            placeholder="Select Grade"
+                                            typeToSearchText="">
+                                </ng-select>
+<!--                                <em class="error" *ngIf="!booksform.get('grade').valid && (booksform.get('grade').dirty || booksform.get('grade').touched)">Grade is required</em>-->
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-xl-3 col-md-4"><span style="visibility: hidden">*</span>
+                                Access Type</label>
+                            <div class="col-xl-8 col-md-7">
+                                <select class="form-control" formControlName="access">
+                                    <option disabled selected value="">&#45;&#45;Select&#45;&#45;</option>
+                                    <option *ngIf="roleid != '6'" value="1">Private (Within Institution)</option>
+                                    <option *ngIf="roleid != '6'" value="2">Private (Only You)</option>
+                                    <!-- <option *ngIf="roleid != '6'" value="3">Public</option> -->
+                                    <option *ngIf="roleid == '6'" value="4">Private (Within Corporate)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-xl-3 col-md-4"><span style="visibility: hidden">*</span>
+                                Content Folder</label>
+                            <div class="col-xl-8 col-md-7">
+                                <div class="row d-flex align-items-center">
+                                    <app-treeview-contentfolder
+                                        [type]="type" [selectedbatch]="batchid"></app-treeview-contentfolder>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-12 col-md-4 col-xl-3"><span>*</span>
+                                Status</label>
+                            <div class="col-12 col-md-7 col-xl-8">
+                                <select class="form-control" formControlName="status">
+                                    <option disabled selected>&#45;&#45;Select&#45;&#45;</option>
+                                    <option value="1">Active</option>
+                                    <option value="2">In-Active</option>
+                                    <option *ngIf="type =='edit'" value="3">Suspended</option>
+                                    <option *ngIf="type =='edit'" value="4">Deleted</option>
+                                </select>
+                                    <em *ngIf="!booksform.get('status').valid && (booksform.get('status').dirty || booksform.get('status').touched)" class="error">Status is required</em>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-12 col-md-4 col-xl-3"><span style="visibility: hidden">*</span>
+                                Download Content</label>
+                            <div class="col-12 col-md-7 col-xl-8">
+                                <div class="col-12" style="position: relative; font-size: 15px; left: 0.4rem">
+                                    <input class="form-check-input cursor" formControlName="downloadContent" type="checkbox"><label for="download">Allow</label>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer">
+                    <div class="pull-right">
+                        <button type="button" *ngIf="type == 'add'" (click)="addbooks('add')"  class="btn btn-primary">Save</button>
+                        <button type="button" *ngIf="type == 'edit'" (click)="addbooks('edit')"  class="btn btn-primary">Update</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<!--    <div class="row mt-4" *ngIf="!allowAdd">-->
+<!--        <div class="col-md-12">-->
+<!--            <button class="btn btn-outline-primary pull-right" (click)="backAction()"><i class="fa fa-long-arrow-left fa-1x" aria-hidden="true"></i> Back</button>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--    <div class="row d-flex justify-content-center list-card mt-5" *ngIf="!allowAdd">-->
+<!--        <div class="col-8">-->
+<!--            <button class="nodataList">You Don't Have Permission to add Books for {{schoolName}}</button>-->
+<!--        </div>-->
+<!--    </div>-->
+</div>
+<ng-template #viewPdf let-c="close" let-d="dismiss">
+    <div class="modal-body">
+        <!-- Container-fluid starts-->
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12 modal-header">
+                    <h4 class="modal-title">{{pdfName}}</h4>
+                    <p class="text-right">
+                        <i class="fa fa-close fa-2x" aria-hidden="true" style="cursor:pointer" (click)="close()"></i>
+                    </p>
+                </div>
+                <div class="col-md-12">
+                    <pdf-viewer  [src]="pdfTemplate" style="display: block;"></pdf-viewer>
+                </div>
+            </div>
+        </div>
+        <!-- Container-fluid Ends-->
+    </div>
+</ng-template>
+<!-- Container-fluid Ends-->
+<ng-template #deleteDialog let-c="close" let-d="dismiss">
+    <div class="modal-body">
+        <!-- Container-fluid starts-->
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12 my-3">
+                    <h5 class="mb-0">Are sure to delete this {{isDeleteLink ? 'Link' : 'PDF'}}?</h5>
+                </div>
+            </div>
+        </div>
+        <!-- Container-fluid Ends-->
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-primary" (click)="close()">Cancel</button>
+        <button type="button" class="btn btn-primary" (click)="isDeleteLink ? this.deleteLink() : this.deleteFromArray(this.selectedDeletePdf.index)">Confirm</button>
+    </div>
+</ng-template>
+
+
+<ng-template #assignContentToClass let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h5 class="contenttext text-center mb-0">Assign Content</h5>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-md-12">
+                <h5>
+                    <span>Do you want to assign this content to the Class {{contentCreatedForm != 'class' ? 'or Content Folder' : ''}}</span>?</h5>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn cancel" (click)="dontAssign()">No</button>
+        <button class="btn btn-primary" type="submit" (click)="assignContent()"
+        >Yes</button>
+    </div>
+</ng-template>
+
+<ng-template #assignTemplate let-c="close" let-d="dismiss">
+    <app-confirm-content-assign
+            [classData]="classDetails"
+            [contentDetails]="assignData"
+            (closePopUp)="closeAssignPopUp()"
+    >
+    </app-confirm-content-assign>
+</ng-template>
+
+<!--// link //-->
+
+<ng-template #getLinkRedirection let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h3 class="modal-title"><span *ngIf="resourceLinkList == '1'">Resource</span>
+            <span *ngIf="resourceLinkList == '2'">Assignment</span>
+            <span *ngIf="resourceLinkList == '3'">Assessment</span>
+            <span *ngIf="resourceLinkList == '4'">Add Link</span></h3>
+        <p class="text-right">
+            <i class="fa fa-close fa-2x" aria-hidden="true" style="cursor:pointer" (click)="close()"></i>
+        </p>
+    </div>
+    <div class="modal-body">
+        <!-- Container-fluid starts-->
+        <div class="container-fluid">
+            <div class="row">
+                <div  class="col-md-12 my-3 container-fluid" [formGroup]="booksform">
+                        <div  formArrayName="resourceLink" *ngFor="let list of booksform.get('resourceLink')['controls']; let i=index; let first = first">
+                            <div class="row text-center mt-1" [formGroupName]="i">
+                                <div class="w-100 col-md-3">
+                                    <select class="form-control" formControlName="type">
+                                        <option [value]="null" disabled selected>Select Link Type</option>
+                                        <option [value]="list" *ngFor="let list of linksType">{{list == 'ppt' ? (list | uppercase) : (list | titlecase)}}</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3 w-100" *ngIf="resourceLinkList != '4'">
+                                    <input class="form-control" formControlName="name" type="text" placeholder="Enter Link Name">
+                                </div>
+                                <div class="w-100" [ngClass]="resourceLinkList != '4' && isEditLink ? 'col-md-6' : (resourceLinkList != '4' && !isEditLink) ?  'col-md-5' : isEditLink ? 'col-md-9' : 'col-md-8'">
+                                    <input class="form-control" formControlName="link"
+                                           type="text" placeholder="Link">
+                                </div>
+                                <div class="col-md-1 px-0 d-flex align-items-center w-100" *ngIf="!isEditLink">
+                                    <i  class="fas fa-plus-circle color-primary fa-2x cursor" *ngIf="first" (click)="addarray('1')"></i>
+                                    <i  class="fas fa-minus-circle color-primary fa-2x cursor" *ngIf="!first" (click)="removeArray(i)"></i>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+
+            </div>
+        </div>
+        <!-- Container-fluid Ends-->
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-primary" (click)="close()">Cancel</button>
+        <button type="button" class="btn btn-primary" *ngIf="!isEditLink" (click)="getLinkDetails(booksform.value)">Confirm</button>
+        <button type="button" class="btn btn-primary" *ngIf="isEditLink" (click)="updateLink(booksform.value)">Update</button>
+    </div>
+</ng-template>
+

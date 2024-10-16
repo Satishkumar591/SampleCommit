@@ -1,0 +1,283 @@
+<!-- Container-fluid starts-->
+<div class="container-fluid">
+        <section class="row list-card" *ngIf="schoolStatus.length != 0">
+                <div class="col-12 col-md-6 col-lg-4 mt-2">
+                        <div class="row">
+                                <div class="col-12 mb-2">
+                                        <div class="card">
+                                                <div class="card-body small-screen-group-btn p-3">
+                                                        <div class="row d-flex justify-content-between list-title">
+                                                                <div class="col-7 col-xl-6 pt-2">
+                                                                        <h4>Classes</h4>
+                                                                </div>
+                                                                <div class="col-5 col-xl-6 d-flex justify-content-end">
+                                                                        <button *ngIf="allowClass" type="button"  class="btn btn-primary mr-3" [routerLink]="'/class/create-class/add'"><i class="fa fa-plus-circle fa-hide" aria-hidden="true"></i> Add</button>
+                                                                        <i class="fa fa-ellipsis-v fa-2x mt-1" aria-hidden="true"></i>
+                                                                </div>
+                                                        </div>
+                                                        <div class="row group-btn">
+                                                                <div class="btn-group dropup">
+                                                                        <button class="col-12 btn btn-primary dropdown-toggle" data-toggle="dropdown"><i class="fa fa-check-circle-o" aria-hidden="true"></i> {{classbutton}} </button>
+                                                                            <div class="dropdown-menu">
+                                                                                    <a class="dropdown-item dropdown-link" (click)="classFilter('1')">Upcoming Classes</a>
+                                                                                    <a class="dropdown-item dropdown-link" (click)="classFilter('2')">In Progress Classes</a>
+                                                                                    <a class="dropdown-item dropdown-link" (click)="classFilter('3')">Completed Classes</a>
+                                                                                    <a class="dropdown-item dropdown-link" (click)="classFilter('0')">All Classes</a>
+                                                                                </div>
+                                                                </div>
+                                                                <div class="btn-group dropup">
+                                                                        <button type="button" class="col-12 btn btn-outline-primary dropdown-toggle" id="dropdownMenuButton" aria-haspopup="true" aria-expanded="false" data-toggle="dropdown">{{sortButton}}</button>
+                                                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                                                                <a class="dropdown-item dropdown-link" (click)="classSort('1')">Earliest First</a>
+                                                                                <a class="dropdown-item dropdown-link" (click)="classSort('2')">Name A-Z</a>
+                                                                                <a class="dropdown-item dropdown-link" (click)="classSort('3')">Name Z-A</a>
+                                                                        </div>
+                                                                </div>
+                                                        </div>
+                                                </div>
+                                        </div>
+                                </div>
+                                <div class="col-12 home-sec-scroll">
+                                        <div class="row d-flex justify-content-center list-card mt-5" *ngIf="classesDetails==''">
+                                                <div class="col-8">
+                                                        <button class="nodataList">No Data Available!</button>
+                                                </div>
+                                        </div>
+                                        <div class="row">
+                                                <div class="col-12 mt-1" *ngFor="let class of classesDetails ; let i = index">
+                                                        <div class="card">
+                                                                <div class="card-body p-3">
+                                                                        <div class="row">
+                                                                                <div class="col-12 mb-3 school-img school-card-img" title="Enter Class" (click)="enterList(i)" >
+                                                                                        <figure *ngIf="class.profile_url == ''">
+                                                                                                <img src="assets/images/ristaschool/Mask Group 35.png" class="w-100" alt="">
+                                                                                        </figure>
+                                                                                        <figure *ngIf="class.profile_url != ''">
+                                                                                                <img [src]="sanitizer.bypassSecurityTrustResourceUrl(webhost + '/' + class.profile_url)" class="w-100" alt="">
+                                                                                        </figure>
+                                                                                </div>
+                                                                                <div class="col-12">
+                                                                                        <h4 class="t-period"><span class="font-weight-bold">{{class.class_name}} </span><br><small>Created By <span class="t-name font-weight-bold">{{class.teacher_name}}</span></small> </h4>
+                                                                                        <p><small>Subject: </small> <span class="t-name font-weight-bold">{{class.subject_name}}</span></p>
+                                                                                        <p><small>Start: </small> <span class="t-name font-weight-bold" *ngIf="class.start_date != '0000-00-00'">{{class.start_date|date:'MM-dd-yyyy'}}</span> &nbsp; &nbsp;
+                                                                                                <small>End: </small> <span class="t-name font-weight-bold" *ngIf="class.end_date != '0000-00-00'">{{class.end_date|date:'MM-dd-yyyy'}}</span>
+                                                                                        </p>
+                                                                                </div>
+                                                                        </div>
+                                                                </div>
+                                                        </div>
+                                                </div>
+                                        </div>
+                                </div>
+                        </div>
+                </div>
+                <div class="col-12 col-md-6 col-lg-4 mt-2">
+                        <div class="row">
+                                <div class="col-12 mb-2">
+                                        <div class="card">
+                                                <div class="card-body small-screen-group-btn p-3">
+                                                        <div class="row d-flex justify-content-between list-title">
+                                                                <div class="col-7 col-xl-6 pt-2">
+                                                                        <h4>Assignments</h4>
+                                                                </div>
+                                                                <div class="col-5 col-xl-6 d-flex justify-content-end">
+                                                                        <button *ngIf="allowAdd" type="button" class="btn btn-primary mr-3" (click)="upload()"><i class="fa fa-plus-circle fa-hide" aria-hidden="true"></i> Add</button>
+                                                                        <i class="fa fa-ellipsis-v fa-2x mt-1" aria-hidden="true"></i>
+                                                                </div>
+                                                        </div>
+                                        <div class="row group-btn">
+                                                <div class="btn-group dropup">
+                                                        <button class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><i class="fa fa-check-circle-o" aria-hidden="true"></i> {{assignButton}} </button>
+                                                        <div class="dropdown-menu">
+                                                                <a class="dropdown-item dropdown-link" (click)="assignmentFilter('1')">Upcoming Assignments</a>
+                                                                <a class="dropdown-item dropdown-link" (click)="assignmentFilter('2')">In Progress Assignments</a>
+                                                                <a class="dropdown-item dropdown-link" (click)="assignmentFilter('3')">Completed Assignments</a>
+                                                                <a class="dropdown-item dropdown-link" (click)="assignmentFilter('0')">All Assignments</a>
+                                                        </div>
+                                                </div>
+                                            <div class="btn-group dropup">
+                                                <button type="button" class="btn btn-outline-primary dropdown-toggle" id="dropdownMenuButton1" aria-haspopup="true" aria-expanded="false" data-toggle="dropdown">{{assignSortButton}}</button>
+                                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                                    <a class="dropdown-item dropdown-link" (click)="assignmentSort('1')">Earliest First</a>
+                                                    <a class="dropdown-item dropdown-link" (click)="assignmentSort('2')">Name A-Z</a>
+                                                    <a class="dropdown-item dropdown-link" (click)="assignmentSort('3')">Name Z-A</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                                </div>
+                                        </div>
+                                </div>
+                                <div class="col-12 home-sec-scroll">
+                                        <div class="row d-flex justify-content-center list-card mt-5" *ngIf="assignmentsDetails==''">
+                                                <div class="col-8">
+                                                        <button class="nodataList">No Data Available!</button>
+                                                </div>
+                                        </div>
+                                        <div class="row">
+                                                <div class="col-12 mt-1" *ngFor="let assign of assignmentsDetails">
+                                                        <div class="card">
+                                                                <div class="card-body p-3 ">
+                                                                        <div class="row">
+                                                                                <div class="col-12 mb-3 school-img school-card-img" title="View Assignment" (click)="Preview(assign, assign.content_type)">
+                                                                                        <figure *ngIf="assign.profile_url == ''">
+                                                                                                <img src="assets/images/ristaschool/option-writing-checkbox-concepts-survey.png" class="w-100" alt="">
+                                                                                        </figure>
+                                                                                        <figure *ngIf="assign.profile_url != ''">
+                                                                                                <img [src]="sanitizer.bypassSecurityTrustResourceUrl(webhost + '/' + assign.profile_url)" class="w-100" alt="">
+                                                                                        </figure>
+                                                                                </div>
+                                                                                <div class="col-12">
+                                                                                        <h4 class="t-period"><span class="font-weight-bold">{{assign.content_name}} </span><b class="contenttext">
+                                                                                                <small *ngIf="assign.content_format == 1">(PDF)</small>
+                                                                                                <small *ngIf="assign.content_format == 3">(TEXT)</small></b><br><small>Assigned By <span class="t-name font-weight-bold">{{assign.teacher_name}}</span></small> </h4>
+                                                                                        <p><small>Assigned To : </small> <span class="t-name font-weight-bold">{{assign.class_name}}</span></p>
+                                                                                        <p><small>Subject: </small> <span class="t-name font-weight-bold">{{assign.subject_name}}</span></p>
+                                                                                        <p><small>Start: </small> <span class="t-name font-weight-bold" *ngIf="assign.start_date != '0000-00-00'">{{assign.start_date|date:'MM-dd-yyyy'}}</span> &nbsp; &nbsp;
+                                                                                                <small>End: </small> <span class="t-name font-weight-bold" *ngIf="assign.end_date != '0000-00-00'">{{assign.end_date|date:'MM-dd-yyyy'}}</span>
+                                                                                        </p>
+
+                                                                                </div>
+                                                                        </div>
+                                                                </div>
+                                                        </div>
+                                                </div>
+                                        </div>
+
+                                </div>
+                        </div>
+                </div>
+                <div class="col-12 col-md-6 col-lg-4 mt-2">
+                        <div class="row">
+                                <div class="col-12 mb-2">
+                                        <div class="card">
+                                                <div class="card-body small-screen-group-btn p-3">
+                                                        <div class="row d-flex justify-content-between list-title">
+                                                                <div class="col-7 col-xl-6 pt-2">
+                                                                        <h4>Assessments</h4>
+                                                                </div>
+                                                                <div class="col-5 col-xl-6 d-flex justify-content-end">
+                                                                        <button *ngIf="allowAdd" type="button" class="btn btn-primary mr-3" (click)="showAddAsset()"><i class="fa fa-plus-circle mr-2 fa-hide" aria-hidden="true"></i> Add</button>
+                                                                        <i class="fa fa-ellipsis-v fa-2x mt-1" aria-hidden="true"></i>
+                                                                </div>
+                                                        </div>
+                                                        <div class="row group-btn">
+                                                                <div class="btn-group dropup">
+                                                                        <button class="col-12 btn btn-primary dropdown-toggle" data-toggle="dropdown"><i class="fa fa-check-circle-o" aria-hidden="true"></i> {{assessButton}} </button>
+                                                                        <div class="dropdown-menu">
+                                                                                <a class="dropdown-item dropdown-link" (click)="assessmentFilter('1')">Upcoming Assessments</a>
+                                                                                <a class="dropdown-item dropdown-link" (click)="assessmentFilter('2')">In Progress Assessments</a>
+                                                                                <a class="dropdown-item dropdown-link" (click)="assessmentFilter('3')">Completed Assessments</a>
+                                                                                <a class="dropdown-item dropdown-link" (click)="assessmentFilter('0')">All Assessments</a>
+                                                                        </div>
+                                                                </div>
+                                                            <div class="btn-group dropup">
+                                                                <button type="button" class="col-12 btn btn-outline-primary dropdown-toggle" id="dropdownMenuButton2" aria-haspopup="true" aria-expanded="false" data-toggle="dropdown">{{assessSortButton}}</button>
+                                                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton2">
+                                                                    <a class="dropdown-item dropdown-link" (click)="assessmentSort('1')">Earliest First</a>
+                                                                    <a class="dropdown-item dropdown-link" (click)="assessmentSort('2')">Name A-Z</a>
+                                                                    <a class="dropdown-item dropdown-link" (click)="assessmentSort('3')">Name Z-A</a>
+                                                                </div>
+                                                            </div>
+                                                            </div>
+                                                </div>
+                                        </div>
+                                </div>
+                                <div class="col-12 home-sec-scroll">
+                                        <div class="row d-flex justify-content-center list-card mt-5" *ngIf="assessmentDetails==''">
+                                                <div class="col-8">
+                                                        <button class="nodataList">No Data Available!</button>
+                                                </div>
+                                        </div>
+                                        <div class="col-12 mt-1" *ngFor="let assess of assessmentDetails">
+                                                <div class="card">
+                                                        <div class="card-body p-3 ">
+                                                                <div class="row">
+                                                                        <div class="col-12 mb-3 school-img school-card-img" title="View Assessment" (click)="Preview(assess, assess.content_type)">
+                                                                                <figure *ngIf="assess.profile_url == ''">
+                                                                                        <img src="assets/images/ristaschool/assessment.png" class="w-100" alt="">
+                                                                                </figure>
+                                                                                <figure *ngIf="assess.profile_url != ''">
+                                                                                        <img [src]="sanitizer.bypassSecurityTrustResourceUrl(webhost + '/' + assess.profile_url)" class="w-100" alt="">
+                                                                                </figure>
+                                                                        </div>
+                                                                        <div class="col-12">
+                                                                                <h4 class="t-period"><span class="font-weight-bold">{{assess.content_name}} </span><b class="contenttext">
+                                                                                        <small *ngIf="assess.content_format == 1">(PDF)</small>
+                                                                                        <small *ngIf="assess.content_format == 3">(TEXT)</small></b><br><small>Assigned By  <span class="t-name font-weight-bold">{{assess.teacher_name}}</span></small> </h4>
+                                                                                <p><small>Assigned To : </small> <span class="t-name font-weight-bold">{{assess.class_name}}</span></p>
+                                                                                <p><small>Subject: </small> <span class="t-name font-weight-bold">{{assess.subject_name}}</span></p>
+                                                                                <p><small>Start: </small> <span class="t-name font-weight-bold" *ngIf="assess.start_date != '0000-00-00'">{{assess.start_date|date:'MM-dd-yyyy'}}</span> &nbsp; &nbsp;
+                                                                                        <small>End: </small> <span class="t-name font-weight-bold" *ngIf="assess.end_date != '0000-00-00'">{{assess.end_date|date:'MM-dd-yyyy'}}</span>
+                                                                                </p>
+                                                                        </div>
+                                                                </div>
+                                                        </div>
+                                                </div>
+                                        </div>
+                                </div>
+                        </div>
+                </div>
+        </section>
+</div>
+<div *ngIf="schoolStatus.length == 0">
+        <app-emptyschool>
+        </app-emptyschool>
+</div>
+<!-- Container-fluid Ends-->
+
+
+<ng-template #addAssetModal let-c="close" let-d="dismiss">
+        <div class="modal-header">
+                <h4 class="modal-title col-12 text-center"><b>Add Assessment</b></h4>
+                <i class="fa fa-close" style="cursor: pointer" (click)="close()"></i>
+        </div>
+        <div class="modal-body">
+                <div class="row">
+                        <div class="col-6 text-center" style="border-right: 1px solid #c4c4c4;">
+                                <img src="assets/images/pdf-icons/Icon ionic-md-cloud-upload.png">
+                                <h4 class="mt-3">Create From PDF</h4>
+                                <h5 class="mt-3">Upload Assessment as a PDF format and proceed to assign it to your students</h5>
+                                <div class="d-flex align-items-baseline">
+                                        <input accept=".pdf" style="display: none" type="file" (change)="encodePdfFileAsURL($event, 'assessment')" #hiddenfileinput5>
+                                        <button class="btn btn-primary w-100 mt-4" type="file" aria-describedby="inputGroupFileAddon01"
+                                                (click)="hiddenfileinput5.click()">Browse</button>
+                                </div>
+                        </div>
+                        <div class="col-6 text-center">
+                                <img src="assets/images/pdf-icons/Icon material-library-books.png">
+                                <h4 class="mt-3">Create From Scratch</h4>
+                                <h5 class="mt-3">Write your assessment content and proceed to assign it to your student</h5>
+                                <button type="button"  (click)="openText('assessment')" class="btn btn-primary w-100 mt-4">Create Content</button>
+                        </div>
+                </div>
+        </div>
+</ng-template>
+<ng-template #assignment let-c="close" let-d="dismiss">
+        <div class="modal-header">
+                <h4 class="modal-title col-12 text-center"><b>Add Assignment</b></h4>
+                <i class="fa fa-close" style="cursor: pointer" (click)="close()"></i>
+        </div>
+        <div class="modal-body">
+                <div class="row ">
+                        <div class="col-6 text-center" style="border-right: 1px solid #c4c4c4;">
+                                <img src="assets/images/pdf-icons/Icon ionic-md-cloud-upload.png">
+                                <h4 class="mt-3">Create From PDF</h4>
+                                <h5 class="mt-3">Upload Assignment as a PDF format and proceed to assign it to your students</h5>
+                                <div class="d-flex align-items-baseline">
+                                        <input accept=".pdf" style="display: none" type="file" (change)="encodePdfFileAsURL($event, 'assignment')" #hiddenfileinput>
+                                        <button class="btn btn-primary mt-4 w-100" type="file" aria-describedby="inputGroupFileAddon01"
+                                                (click)="hiddenfileinput.click()">Browse</button>
+                                </div>
+                        </div>
+                        <div class="col-6 text-center">
+                                <img src="assets/images/pdf-icons/Icon material-library-books.png">
+                                <h4 class="mt-3">Create From Scratch</h4>
+                                <h5 class="mt-3">Write your assignment content and proceed to assign it to your student</h5>
+                                <div class="d-flex align-items-baseline">
+                                        <button type="button"  class="btn btn-primary w-100 mt-4" (click)="openText('assignment')">Create Content</button>
+                                </div>
+                        </div>
+                </div>
+        </div>
+</ng-template>
+

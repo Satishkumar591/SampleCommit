@@ -1,0 +1,128 @@
+<div class="container-fluid">
+    <div class="col-12 px-0 card">
+        <div class="card-header d-flex p-0" style="background: #8F008A">
+            <div class="col-3 py-2 d-flex justify-content-between dropleft" style="border-right: 1px solid white" *ngIf="!toggleNav">
+                <input type="text" class="search-input col-10" placeholder="Search mail">
+                <i class="fa fa-ellipsis-v cursor" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color: white; font-size: 20px; align-self: center"></i>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    <a class="dropdown-item" (click)="mailList('all')" href="#">All</a>
+                    <a class="dropdown-item" (click)="mailList('starred')" href="#">Starred</a>
+                    <a class="dropdown-item" (click)="mailList('sent')" href="#">Sent</a>
+                    <a class="dropdown-item" (click)="mailList('drafts')" href="#">Drafts</a>
+                    <a class="dropdown-item" (click)="mailList('trash')" href="#">Trash</a>
+                </div>
+            </div>
+            <div class="col-{{toggleNav ? '12' : '9'}} py-2 d-flex justify-content-between">
+                <div class="d-flex dropleft">
+                    <i class="fa fa-bars cursor mr-3" (click)="toggleNav = !toggleNav" style="color: white; font-size: 20px; align-self: center"></i>
+                    <i *ngIf="selectedMail != undefined" class="fa fa-reply cursor mr-3" title="Reply" style="color: white; font-size: 20px; align-self: center"></i>
+                    <i *ngIf="selectedMail != undefined && selectedMail?.is_starred == '0'" (click)="updateMail('starred', '1')" class="fa fa-star-o cursor mr-3" title="Mark as Important" style="color: white; font-size: 20px; align-self: center"></i>
+                    <i *ngIf="selectedMail != undefined && selectedMail?.is_starred == '1'" (click)="updateMail('starred', '0')" class="fa fa-star cursor mr-3" title="Mark as Unimportant" style="color: white; font-size: 20px; align-self: center"></i>
+                    <i *ngIf="selectedMail != undefined" (click)="updateMail('trash', '1')" class="fa fa-trash cursor mr-3" title="Move to Trash" style="color: white; font-size: 20px; align-self: center"></i>
+                    <i *ngIf="selectedMail != undefined" class="fa fa-ellipsis-v cursor mr-3 pt-1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color: white; font-size: 20px; align-self: center"></i>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMessage">
+                        <a class="dropdown-item" (click)="updateMail('seen', '1')" href="#">Mark as read</a>
+                        <a class="dropdown-item" (click)="updateMail('seen', '0')" href="#">Mark as unread</a>
+                        <a class="dropdown-item" (click)="updateMail('trash', '1')" href="#">Delete</a>
+                    </div>
+                </div>
+                <button class="btn-outline outline-no-border" (click)="composeMail = true">Compose</button>
+            </div>
+        </div>
+        <div class="card-body p-0 d-flex" style="min-height: 70vh">
+            <div class="col-3 p-0" style="box-shadow: 2px 0 2px lightgrey; max-height: 70vh; overflow: scroll" *ngIf="!toggleNav">
+                <div class="col-12 p-3 d-flex align-items-center cursor" (click)="selectMailToView(list, i)" style="box-shadow: 0 1px 1px lightgrey" *ngFor="let list of mailBoxList; let i = index">
+                    <div class="col-2 px-0">
+                        <img src="../../../../assets/images/Avatar1.png" alt="" class="rounded-circle" style="object-fit: contain; width: 32px; height: 32px; align-self: center">
+                    </div>
+                    <div class="col-10 px-0">
+                        <div class="row px-3 d-flex justify-content-between">
+                            <h6 class="mb-0 color-black" [class.font-weight-bold]="list.is_read == '0'">{{list.from_name}}</h6>
+                            <p class="mb-0 align-self-center color-black" style="font-size: 12px" [class.font-weight-bold]="list.is_read == '0'">{{this.getMessageTime(list.created_date)}}</p>
+                        </div>
+                        <small>{{list.subject}}</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-{{toggleNav ? '12' : '9'}} px-0" style="background: #fdfdfda8" *ngIf="!composeMail && selectedMail == undefined">
+                <div class="col-12 d-flex flex-wrap justify-content-center align-content-center" style="min-height: 70vh">
+                    <i class="fa fa-envelope-o cursor" style="font-size: 10.3rem; color: grey"></i>
+                    <div class="col-12 mt-1 d-flex justify-content-center">
+                        <span class="color-grey">Select a mail to read</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-{{toggleNav ? '12' : '9'}} px-0" style="background: #fdfdfda8; max-height: 70vh; overflow: scroll" *ngIf="!composeMail && selectedMail != undefined">
+                <div class="col-12 py-3 d-flex justify-content-between align-items-center" style="box-shadow: 0 1px 1px lightgrey" *ngIf="selectedMail.subject != ''">
+                    <h5 class="font-weight-bold mb-0" style="font-size: 22px; color: black">{{selectedMail.subject}}</h5>
+                    <i class="fa fa-print cursor" style="font-size: 1.3rem; color: grey"></i>
+                </div>
+                <div class="col-12 py-3 d-flex justify-content-start align-items-center" style="box-shadow: 0 1px 1px lightgrey">
+                    <img src="../../../../assets/images/Avatar1.png" alt="" class="rounded-circle" style="object-fit: contain; width: 42px; height: 42px; align-self: center">
+                    <div class="flex-fill pl-3">
+                        <div class="col-12 px-0 d-flex">
+                            <div class="col-10 px-0 d-flex">
+                                <h6 class="font-weight-bold mb-0 color-black">{{selectedMail.from_name}}</h6>
+                                <span class="align-self-center">&lt;{{selectedMail.from_email}}&gt;</span>
+                            </div>
+                            <div class="col-2 px-0 d-flex justify-content-end">
+                                <span>{{this.getMessageTime(selectedMail.created_date)}}</span>
+                            </div>
+                        </div>
+                        <div class="col-12 px-0"><span>to me</span></div>
+                    </div>
+                </div>
+                <div class="col-12 pt-3 pb-5" [ngClass]="{'bottom-border': attachment.length != 0}">
+                    <p class="color-black">{{selectedMail.body}}</p>
+                </div>
+                <div class="col-12 py-3" *ngIf="attachment.length != 0">
+                    <h5 class="font-weight-bold">Attachments</h5>
+                </div>
+                <div class="col-12 mb-3 d-flex flex-wrap justify-content-between" *ngIf="attachment.length != 0">
+                    <div class="w-32 mb-2 d-flex justify-content-between p-3" *ngFor="let items of attachment" style="background-color: lightgrey; border-radius: 4px">
+                        <span>{{items.name}}</span>
+                        <a href=""><i class="fa fa-download color-black"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-9 px-0" style="background: #fdfdfda8;  max-height: 70vh; overflow: scroll" *ngIf="composeMail">
+                <form [formGroup]="mailForm">
+                    <div class="col-12 my-2">
+<!--                        <input type="text" class="mail-input" placeholder="To *" formControlName="to">-->
+                        <ng-select [items]="toList"
+                                   bindLabel="student_name"
+                                   bindValue="student_id"
+                                   formControlName="to"
+                                   class="mail-drop"
+                                   placeholder="To *"
+                                   typeToSearchText=""
+                                   multiple="true"
+                                   searchable="true"
+                                   clearable="false"
+                        >
+                        </ng-select>
+                    </div>
+                    <div class="col-12 my-2">
+                        <input type="text" class="mail-input" placeholder="Cc/ Bcc" formControlName="title">
+                    </div>
+                    <div class="col-12 my-2">
+                        <input type="text" class="mail-input" placeholder="Subject" formControlName="subject">
+                    </div>
+                    <div class="col-12 mb-3 mt-5">
+                        <app-tiny-mice  (emitEditorValue)="getEditorValue($event)"
+                                        [editorPatchValue]="false"
+                                        [height]="200"
+                                        [id]="'mailbox'"
+                                        [showDropBtn]="false"
+                                        [showInputBtn]="false">
+                        </app-tiny-mice>
+                    </div>
+                    <div class="col-12 my-3 d-flex justify-content-between">
+                        <button class="btn-outline" (click)="composeMail = false">Cancel</button>
+                        <button class="btn-primary-alt" (click)="sendMail()">Send</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

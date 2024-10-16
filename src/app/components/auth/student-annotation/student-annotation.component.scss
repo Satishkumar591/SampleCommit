@@ -1,0 +1,71 @@
+.tools-main-div{
+  position: fixed;
+  z-index: 999;
+  top: 0;
+}
+
+.main-pdf-div{
+  margin-top: 87px;
+
+}
+
+
+@keyframes blinkStroke {
+  100%,
+  0% {
+    stroke: #500;
+  }
+  30% {
+    stroke: deeppink;
+  }
+  60% {
+    stroke: yellow;
+  }
+  100% {
+    stroke: black;
+  }
+}
+
+@keyframes blinkFill {
+  100%,
+  0% {
+    fill: #500;
+  }
+  30% {
+    fill: deeppink;
+  }
+  60% {
+    fill: yellow;
+  }
+  100% {
+    fill: black;
+  }
+}
+
+.deleteIcon{
+  background: #e6baea !important;
+}
+
+
+
+.rectangle {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+  &.move-to {
+    background-color: red;
+  }
+}
+
+.disable-text-selection {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+//*{ touch-action: none; }

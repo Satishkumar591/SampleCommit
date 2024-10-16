@@ -1,0 +1,41 @@
+/* You can add global styles to this file, and also import other style files */
+
+
+
+@media print {
+  app-root > * { display: none; }
+  app-root app-create-assessment { display: block; }
+}
+
+//app-annotation{
+//  p{
+//    font-size: 16px !important;
+//  }
+//}
+.tooltip{
+  opacity:1!important;
+}
+#zmmtg-root {
+  display: none !important;
+}
+div#transition-popper{
+  //z-index: 999 !important;
+}
+#meetingSDKElement {
+  top: 59px !important;
+  left: 0 !important;
+  right: 0;
+  margin-left: auto;
+  margin-right: auto;
+  width: 244px; /* width of speaker and ribbon view */
+}
+.customZindex{
+  z-index: 11 !important;
+}
+
+.ng-select.ng-select-multiple .ng-select-container .ng-value-container .ng-placeholder{
+  z-index: 0 !important;
+}
+.input-group > .input-group-append > .btn, .input-group > .input-group-append > .input-group-text, .input-group > .input-group-prepend:not(:first-child) > .btn, .input-group > .input-group-prepend:not(:first-child) > .input-group-text, .input-group > .input-group-prepend:first-child > .btn:not(:first-child), .input-group > .input-group-prepend:first-child > .input-group-text:not(:first-child){
+  z-index: 0 !important;
+}

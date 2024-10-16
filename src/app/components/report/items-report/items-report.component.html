@@ -1,0 +1,121 @@
+<section class=" container-fluid missed-work-report">
+    <form [formGroup]="studentReport">
+        <div class="row mt-1">
+            <div class="form-group mb-0 col-md-3 px-0">
+                <label class="col-xl-12 col-md-12"><span style="visibility: hidden">*</span>
+                    Class Name</label>
+                <div class="col-xl-12 col-md-12">
+                    <input type="text" placeholder="Class Name" readonly class="form-control" [value]="reportData.class_name">
+                </div>
+            </div>
+            <div class="form-group mb-0 col-md-3 px-0">
+                <label class="col-xl-12 col-md-12"><span style="visibility: hidden">*</span>
+                    Student List</label>
+                <div class="col-xl-12 col-md-12">
+                    <ng-select (change)="StudentQuestionStatus()"
+                                [items]="studentList"
+                               bindLabel="student_name"
+                               bindValue="student_id"
+                               formControlName="studentName"
+                               placeholder="Student List">
+                    </ng-select>
+                </div>
+            </div>
+            <div class="col-md-6 d-flex justify-content-end">
+                <p class="p-2">
+                    <small class="ml-3"><i class="fa fa-square never-bg p-1"></i> - Not Started</small>
+                    <small class="ml-3"><i class="fa fa-square in-correct-bg p-1"></i> - In Correct</small>
+                    <small class="ml-3"><i class="fa fa-square completed-color-bg p-1"></i> - Correct</small>
+                    <!--                        <small class="ml-3"><i class="fa fa-square not-applicable p-1"></i> - N/A</small>-->
+                </p>
+            </div>
+<!--            <div class="form-group col-6 col-md-2">-->
+<!--                <label class="col-xl-12 col-md-12">Status</label>-->
+<!--                <select class="custom-select col-md-12" formControlName="submitted">-->
+<!--                    <option value="">All</option>-->
+<!--                    <option value="1" >Not Started</option>-->
+<!--                    <option value="2" >In Progress</option>-->
+<!--                    <option value="3" >Completed</option>-->
+<!--                </select>-->
+<!--            </div>-->
+        </div>
+    </form>
+<!--    <div class="row" *ngIf="!functionCalled" id="custom-pdf-loader" style="height: 50vh;">-->
+<!--        <img alt="" src="assets/images/pre-loader/loader-01.svg">-->
+<!--    </div>-->
+    <div *ngIf="missedWorkNoRecord && functionCalled" class="row">
+        <div class="col-12 card p-3">
+<!--            <div class="row">-->
+<!--                <div class="col-12 d-flex justify-content-end">-->
+<!--                    -->
+<!--                </div>-->
+<!--            </div>-->
+            <div class="row d-flex justify-content-center">
+                <div *ngIf="showQuestion && hoverTitle" class="col-12 my-3">
+                    <div class="col-12 py-3 form-span">
+                        <h3 class="letter">Question : <span [innerHTML]="hoverTitle.sub_question_no"></span></h3>
+                        <hr>
+                        <p [innerHTML]="hoverTitle.question | sanitizeHtml" class="innerhtml-margin-clear mb-0"></p>
+                    </div>
+                </div>
+                <div *ngIf="sectionList.length > 1" class="col-md-12 d-flex justify-content-end">
+                    <select (change)="changeSec($event)" [value]="sectionIndex" class="form-span">
+                        <option value="all">All Section</option>
+                        <option *ngFor="let item of sectionList; let i = index" value="{{i + 1}}">{{item.heading}}</option>
+                    </select>
+                </div>
+                <div class="col-12 mt-2 table-responsive-ipad">
+                    <table *ngIf="sectionIndex != 'all'" class="table table-bordered">
+                        <thead>
+                            <th class="cursor" title="Student Name">Student Name</th>
+                            <th (click)="clickEvent(item)" *ngFor="let item of questionStatus[0]?.question[sectionIndex - 1]?.section" class="cursor color-primary" data-html="true" placement="top">{{item.sub_question_no}}</th>
+                        </thead>
+                        <tr *ngFor="let table of questionStatus; let i=index;">
+                            <td class="cursor table-name" (click)="studentCorrectionDetail(table)"> {{table.student_name}}</td>
+                            <td *ngFor="let item of table.question[sectionIndex - 1]?.section">
+<!--                                <span class="not-applicable cursor" *ngIf="item.status == '0' || item.status == ''"></span>-->
+                                <span class="never" *ngIf="item.status == '1'"></span>
+                                <span class="in-correct" *ngIf="item.status == '2'"></span>
+                                <span class="completed-color" *ngIf="item.status == '3'"></span>
+                            </td>
+                        </tr>
+                    </table>
+                    <table *ngIf="sectionIndex == 'all'" class="table table-bordered">
+                        <thead>
+                        <th class="cursor" title="Student Name">Student Name</th>
+                        <th (click)="clickEvent(item)" *ngFor="let item of questionStatus[0]?.question[0]?.section" class="cursor color-primary" data-html="true" placement="top">{{item.sub_question_no}}</th>
+                        </thead>
+                        <tr *ngFor="let table of questionStatus; let i=index;">
+                            <td (click)="studentCorrectionDetail(table)" class="cursor table-name"> {{table.student_name}}</td>
+                            <td *ngFor="let item of table.question[0]?.section">
+                                <!--                                <span class="not-applicable cursor" *ngIf="item.status == '0' || item.status == ''"></span>-->
+                                <span *ngIf="item.status == '1'" class="never"></span>
+                                <span *ngIf="item.status == '2'" class="in-correct"></span>
+                                <span *ngIf="item.status == '3'" class="completed-color"></span>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row d-flex justify-content-center list-card mt-3" *ngIf="!missedWorkNoRecord">
+        <div class="col-12">
+            <button class="nodataList">{{message}}</button>
+        </div>
+    </div>
+</section>
+<ng-template #viewStudentDetails let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h4 class="modal-title">{{this.studentName.student_name}} - Report</h4>
+        <i class="fa fa-close cursor" (click)="onSave()" ></i>
+    </div>
+    <div class="modal-body">
+        <!-- Container-fluid Ends-->
+        <app-answer-sheet [answerShow]="true" [contentId]="contentId" [contentFormat]="contentFormat"
+                          [classId]="classId" [studentReportId]="studentId" [backStatus]="false" [studentContentId]="studentContentId"></app-answer-sheet>
+    </div>
+</ng-template>
+<!--<ng-template #tipContent><p [innerHTML]="hoverTitle | sanitizeHtml"></p></ng-template>-->
+
+

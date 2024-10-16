@@ -1,0 +1,162 @@
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-header">
+            <div class="row mt-2 px-3">
+                <div class="col-6">
+<!--                    <h5>Content Folder List</h5>-->
+                </div>
+                <div class="col-6 d-flex justify-content-end">
+                    <div class="col-6">
+                        <div class="input-group">
+                            <input (input)="updateFilter()" [(ngModel)]="searchFolder" class="form-control" placeholder="Search Content Folder" size="50" style="height:40px" type="text" >
+                            <div class="input-group-append">
+                                <button class="btn btn-primary" type="submit"><i aria-hidden="true" class="fa fa-search"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="btn-popup pull-right">
+                        <a [routerLink]="'/studentlogin/content-folder/add'" class="btn btn-primary ml-3">Add Content Folder</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div *ngIf="folderList.length != 0" class="col-12 blogger-list">
+                <ngx-datatable
+                        [columnMode]="columnMode.force"
+                        [footerHeight]="50"
+                        [headerHeight]="50"
+                        [limit]="10"
+                        [rows]="folderList"
+                        class="bootstrap repository-table"
+                        rowHeight="auto"
+                >
+<!--                    <ngx-datatable-column-->
+<!--                            [canAutoResize]="false"-->
+<!--                            [checkboxable]="true"-->
+<!--                            [draggable]="false"-->
+<!--                            [resizeable]="false"-->
+<!--                            [sortable]="false"-->
+<!--                            [width]="30"-->
+<!--                    >-->
+<!--                    </ngx-datatable-column>-->
+                    <ngx-datatable-column [canAutoResize]="true" [draggable]="false" [width]="30" name="Folder" prop="category_name">
+                        <ng-template let-row="row" let-rowIndex="rowIndex" let-value="value" ngx-datatable-cell-template>
+                            <h6 class="text-center mb-0 font-weight-bold" style="color: black">{{row.category_name}}</h6>
+                        </ng-template>
+                    </ngx-datatable-column>
+                    <ngx-datatable-column [canAutoResize]="true" [draggable]="false" [width]="20" name="Status">
+                        <ng-template let-row="row" let-rowIndex="rowIndex" let-value="value" ngx-datatable-cell-template>
+<!--                            <select (change)="statusChange($event, row)" [(ngModel)]="row.status" class="form-control text-center col-12 d-flex justify-content-center">-->
+<!--                                <option value="1">Active</option>-->
+<!--                                <option value="2">In-Active</option>-->
+<!--                            </select>-->
+<!--                            <div class="btn-group">-->
+<!--                                <button class="{{row.status == '1' ? 'toggle-active' : 'toggle-outline-inactive'}}">Active</button>-->
+<!--                                <button class="{{row.status == '2' ? 'toggle-inactive' : 'toggle-outline-active'}}">In-Active</button>-->
+<!--                            </div>-->
+                            <label class="{{row.status == '2' ? 'color-red' : ''}} font-weight-bold mr-2">In-Active</label>
+                            <label class="toggle">
+                                <input (click)="statusChange($event, row)" [checked]="row.status == '1'" type="checkbox">
+                                <span class="slider round"></span>
+                            </label>
+                            <label class="{{row.status == '1' ? 'color-green' : ''}} font-weight-bold ml-2">Active</label>
+                        </ng-template>
+                    </ngx-datatable-column>
+                    <ngx-datatable-column [canAutoResize]="true" [draggable]="false" [width]="30" name="Action">
+                        <ng-template class="justify-content-center" let-row="row" let-rowIndex="rowIndex" let-value="value" ngx-datatable-cell-template>
+                            <i (click)="shareToClass(row)" class="fa fa-share-square-o color-primary align-self-center cursor" style="font-size: 20px" title="Share to Class"></i>
+                            <i (click)="viewAssignedContent(row)" class="fa fa-folder color-primary ml-3 align-self-center cursor" style="font-size: 20px" title="Assigned Contents"></i>
+                            <i (click)="editFolder(row)" class="fa fa-pencil-square color-primary ml-3 align-self-center cursor" style="font-size: 20px" title="Edit"></i>
+                            <i (click)="openDeleteTemplate(row)" class="fa fa-trash color-primary ml-3 align-self-center cursor" style="font-size: 20px" title="Delete"></i>
+                            <div *ngIf="row.selected == true" class="col-md-12">
+                                <ng-select (change)="openAssignTemplate($event, row)"
+                                           [items]="classList"
+                                            appendTo="body"
+                                            bindLabel="class_name"
+                                            bindValue="class_id"
+                                            dropdownPosition="bottom"
+                                            placeholder="Select Class">
+                                </ng-select>
+                            </div>
+                        </ng-template>
+                    </ngx-datatable-column>
+                </ngx-datatable>
+            </div>
+            <div *ngIf="folderList.length == 0" class="row my-3 d-flex justify-content-center align-items-center" style="height: 50vh">
+                <div class="col-4 text-center">
+                    <button class="nodataList">No Folder Available!</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<ng-template #assignClass let-c="close" let-d="dismiss">
+    <div class="modal-header d-flex justify-content-between">
+        <span class="mb-0">Assign Class</span><i (click)="this.modalRef.close()" class="fa fa-times-circle cursor" style="font-size: 1.2rem"></i>
+    </div>
+    <div class="modal-body" style="border: 0px">
+        <div class="container-fluid">
+            <div class="col-md-12 mt-2">
+                <textarea [(ngModel)]="this.remarks" class="form-control" cols="30" placeholder="Enter Remarks here" rows="10"></textarea>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button (click)="assignToContent()" class="btn btn-primary pull-right">Assign</button>
+    </div>
+</ng-template>
+<ng-template #deleteTemplate let-c="close" let-d="dismiss">
+    <div class="modal-header d-flex justify-content-between">
+        <h4 class="color-primary font-weight-bold">{{deleteDetail.category_name}}</h4><i (click)="this.modalRef.close()" class="fa fa-times-circle cursor" style="font-size: 1.2rem"></i>
+    </div>
+    <div class="modal-body" style="border: 0px">
+        <div class="container-fluid">
+            <div class="col-md-12 mt-2">
+                <span class="color-grey">Are you sure to delete this Content Folder?</span>
+            </div>
+            <div class="col-12 mt-5 px-0">
+                <button (click)="deleteContent()" class="btn btn-primary pull-right">Confirm</button>
+                <button (click)="this.modalRef.close()" class="btn btn-outline-primary mr-2 pull-right">No</button>
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+
+
+<!--<ng-template #viewContents let-c="close" let-d="dismiss">-->
+<!--    <div class="modal-header d-flex justify-content-between">-->
+<!--        <span class="mb-0">Assigned Contents for <h4 class="color-primary font-weight-bold">{{folderDetails.category_name}}</h4></span><i (click)="this.modalRef.close()" class="fa fa-times-circle cursor" style="font-size: 1.2rem"></i>-->
+<!--    </div>-->
+<!--    <div class="modal-body" style="border: 0px">-->
+<!--        <div class="container-fluid">-->
+<!--            <div *ngFor="let item of assignedContentDetails; let i = index" class="col-md-12 mb-2">-->
+<!--                <div class="customize-card5 col-md-12 d-flex px-0">-->
+<!--                    <div class="col-md-8 d-flex flex-wrap">-->
+<!--                        <div class="col-md-12 d-flex flex-wrap">-->
+<!--                            <span>Content Name: </span>&nbsp;&nbsp;&nbsp;<h4 class="mb-0 color-primary font-weight-bold">{{item.name}}</h4>-->
+<!--                        </div>-->
+<!--                        <div class="col-md-3 mt-2">-->
+<!--                            <span class="badge {{item.status == '1' ? 'badge-green' : 'badge-danger'}}">{{item.status == '1' ? 'Active' : 'In-Active'}}</span>-->
+<!--                        </div>-->
+<!--                        <div *ngIf="item.grade_name != ''" class="col-md-4 px-0 d-flex mt-2">-->
+<!--                            <small class="color-grey mb-0 align-self-center">Grade: </small>&nbsp;&nbsp;<span class="mb-0">{{item.grade_name}}</span>-->
+<!--                        </div>-->
+<!--                        <div *ngIf="item.subject_name != ''" class="col-md-5 d-flex pr-0 mt-2">-->
+<!--                            <small class="color-grey mb-0 align-self-center">Subject: </small>&nbsp;&nbsp;<span class="mb-0">{{item.subject_name}}</span>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                    <div class="col-md-4 d-flex justify-content-end">-->
+<!--                        <i aria-hidden="true" class="fa fa-share-alt-square color-primary align-self-center cursor" style="font-size: 2rem"></i>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            <div *ngIf="assignedContentDetails.length == 0">-->
+<!--                <div class="nodataList col-6 d-flex justify-content-center my-3">-->
+<!--                    <span>No Contents found</span>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</ng-template>-->

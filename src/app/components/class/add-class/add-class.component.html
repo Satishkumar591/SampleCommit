@@ -1,0 +1,1063 @@
+<!-- Container-fluid starts-->
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card tab2-card">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-6 col-md-6">
+                    <h5 class="text-capitalize" *ngIf="type == 'add'">Add Class</h5>
+                    <h5 class="text-capitalize" *ngIf="type == 'addEdit'">Add Class</h5>
+                    <h5 class="text-capitalize" *ngIf="type == 'edit'">Edit Class</h5>
+                        </div>
+                        <div class="col-6 col-md-6">
+                    <div class="pull-right">
+<!--                        <button (click)="curicullum(type, 0)" *ngIf="type != 'add'" class="btn btn-outline-primary mr-2" type="button">Curriculum </button>-->
+                        <button type="button" (click)="addclass(type, 1)" class="btn btn-outline-primary mr-2">Save as draft</button>
+                        <button type="button" (click)="submitDraftClass()"  class="btn btn-primary">Save</button>
+<!--                        <button type="button" *ngIf="type == 'addEdit'" (click)="addclass('addEdit',2)" class="btn btn-primary">Student <i class="fa fa-long-arrow-right fa-1x" aria-hidden="true"></i> </button>-->
+<!--                        <button type="button" *ngIf="type == 'edit'" (click)="addclass('edit',2)" class="btn btn-primary">Student <i class="fa fa-long-arrow-right fa-1x" aria-hidden="true"></i> </button>-->
+                    </div>
+                        </div>
+                    </div>
+                    <label class="text-muted">All fields marked with <span class="text-danger">*</span> are required</label>
+                </div>
+                <div class="card-body tab2-card">
+                    <form [formGroup]="classform" class="needs-validation user-add">
+
+
+<!--                        form input data designs started-->
+
+                        <div class="container col-12 col-md-12 d-flex mb-5">
+<!--                            <div class="col-12 col-md-4 px-0" style="">-->
+<!--                                <div class="image-container-left">-->
+<!--                                        <img *ngIf="imagepath == ''" src="assets/images/ristaschool/Mask Group 35.png" alt="">-->
+<!--                                        <img  *ngIf="imagepath != ''"  [src]="sanitizer.bypassSecurityTrustResourceUrl(webhost + '/' + imagepath)" alt="" style="height: 300px; width: 400px">-->
+<!--                                        <i *ngIf="imagepath != ''" class="fa fa-times close-button float-right" title="close" (click)="deleteImg()" ></i>-->
+<!--                                    <div class="profileUrl" *ngIf="readOnly == false">-->
+<!--                                        <input style="display: none" type="file" class="custom-upload-input" (change)="encodeImageFileAsURL($event)" #myInput accept=".png, .jpeg, .jpg">-->
+<!--                                        <button type="button" class="btn btn-light btn-circle border-rista" title="upload Image" (click)="myInput.click()"> <i class="fa fa-upload fa-2x mb-3" aria-hidden="true"></i> </button>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </div>-->
+                            <div class="container col-12 col-md-12">
+                                <div class="row">
+                                    <div class="col-12 col-md-{{showBatch == true ? 6 : 12}} form-group">
+                                        <input class="form-control" [readOnly]="!allowClass" formControlName="classname" id="validationCustom1"
+                                               type="text" placeholder="Class Name *" required="">
+                                        <em class="error" *ngIf="!classform.get('classname').valid && (classform.get('classname').dirty || classform.get('classname').touched)">Class is required</em>
+                                    </div>
+                                    <div class="col-12 col-md-6 form-group" *ngIf="showBatch == true">
+<!--                                        <ng-select  (change)="gradeCheck()"-->
+<!--                                                    [items]="batchData"-->       
+<!--                                                    [ngStyle]="{'pointer-events' : readOnly == true ? 'none' : ''}"-->
+<!--                                                    bindLabel="batch_name"-->
+<!--                                                    bindValue="batch_id"-->                         
+<!--                                                    formControlName="batch"-->
+<!--                                                    placeholder="Select Content Folder"-->
+<!--                                                    typeToSearchText=""-->
+<!--                                                    multiple="true"-->
+<!--                                        >-->
+<!--                                        </ng-select>-->
+                                        <app-treeview-contentfolder
+                                            [type]="type" [calledForm]="'class'" [treeviewHeight]="300"
+                                            [selectedbatch]="batchId">
+                                        </app-treeview-contentfolder>
+                                        <em class="error" *ngIf="!classform.get('batch').valid && (classform.get('batch').dirty || classform.get('batch').touched)">Batch is required</em>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12 col-md-6 form-group">
+                                            <ng-select  (change)="gradeCheck()"
+                                                    [items]="gradeData"
+                                                       [ngStyle]="{'pointer-events' : allowClass == false ? 'none' : ''}"
+                                                       bindLabel="grade_name"
+                                                       bindValue="grade_id"
+                                                       formControlName="grade"
+                                                       placeholder="Select Grade"
+                                                       typeToSearchText=""
+                                                       multiple="true"
+                                            >
+                                            </ng-select>
+                                            <em class="error" *ngIf="!classform.get('grade').valid && (classform.get('grade').dirty || classform.get('grade').touched)">Grade is required</em>
+                                        </div>
+                                    <div class="col-12 col-md-6 form-group">
+                                        <ng-select [items]="subjectData"
+                                                   [ngStyle]="{'pointer-events' : allowClass == false ? 'none' : ''}"
+                                                   bindLabel="subject_name"
+                                                   bindValue="subject_id"
+                                                   formControlName="subject"
+                                                   placeholder="Select Subject *"
+                                                   typeToSearchText=""
+                                                   multiple="true"
+                                        >
+                                        </ng-select>
+                                        <em class="error" *ngIf="!classform.get('subject').valid && (classform.get('subject').dirty || classform.get('subject').touched)">Subject is required</em>
+                                        </div>
+                                </div>
+
+                                <div class="row form-group pb-0">
+                                    <div class="modal-body col-12 col-md-6 py-0">
+                                            <tag-input formControlName="tag"
+                                                    [secondaryPlaceholder]="'Enter tags'"
+                                                       [placeholder]="'Add tags'"
+                                                       [editable]='true'
+                                                       [clearOnBlur]="true"
+                                                       [addOnPaste]="true"
+                                                       [addOnBlur]="true"
+                                                       theme='bootstrap'
+                                                       [disable]="readOnly"
+                                            ></tag-input>
+                                    </div>
+                                    <div class="col-12 col-md-6" *ngIf="allowClass == false">
+                                        <select class="form-control" formControlName="status" disabled>
+                                            <option value="1">Active</option>
+                                            <option value="2">Inactive</option>
+                                        </select>
+                                        <em class="error" *ngIf="!classform.get('status').valid && (classform.get('status').dirty || classform.get('status').touched)">status is required</em>
+                                    </div>
+                                    <div *ngIf="allowClass == true" class="col-12 col-md-6">
+                                        <select class="form-control" formControlName="status">
+                                            <option value="1">Active</option>
+                                            <option value="2">Inactive</option>
+                                        </select>
+                                        <em class="error" *ngIf="!classform.get('status').valid && (classform.get('status').dirty || classform.get('status').touched)">status is required</em>
+                                    </div>
+<!--                                    <div *ngIf="readOnly == false" class="col-6 col-md-3">-->
+<!--&lt;!&ndash;                                        <select class="form-control" formControlName="timezone" placehol>&ndash;&gt;-->
+<!--&lt;!&ndash;                                            <option value="{{item.id}}" *ngFor="let item of timeZoneList">{{item.time_zone}}</option>&ndash;&gt;-->
+<!--&lt;!&ndash;                                        </select>&ndash;&gt;-->
+<!--                                        <ng-select [items]="timeZoneList"-->
+<!--                                                   bindLabel="time_zone"-->
+<!--                                                   bindValue="id"-->
+<!--                                                   formControlName="timezone"-->
+<!--                                                   placeholder="Select TimeZone *"-->
+<!--                                                   typeToSearchText=""-->
+<!--                                        >-->
+<!--                                        </ng-select>-->
+<!--                                        <em *ngIf="!classform.get('timezone').valid && (classform.get('timezone').dirty || classform.get('timezone').touched)" class="error">timezone is required</em>-->
+<!--                                    </div>-->
+                                </div>
+                                <div class="row">
+                                    <div class="form-group col-6">
+                                        <div class="row">
+                                            <div class="col-4">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" id="online" type="radio" name="onlinePerson" value="1" formControlName="onlinePerson" [checked]="onlineType == 'Online'" (change)="onlinePerson($event)">
+                                                    <label class="form-check-label" for="online"> Online</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-5">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" id="inline" type="radio" value="2" name="onlinePerson" formControlName="onlinePerson" [checked]="onlineType == 'In-Person'" (change)="onlinePerson($event)">
+                                                    <label class="form-check-label" for="inline"> In-Person</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <button type="button w-100" [disabled]="allowClass == false" (click)="writeNotes()"  class="btn btn-primary">Notes</button>
+                                    </div>
+                                </div>
+                                <div class="row mt-2" *ngIf="showZoomDetails && allowZoomApi">
+                                    <div class="form-group col-12 col-md-6">
+                                        <input class="form-control" [readOnly]="!allowClass" type="link" pattern="https?://.+" formControlName="meetingLink" placeholder="Zoom Meeting Link *" (ngModelChange)="changeZoomLink()">
+                                        <em class="error" *ngIf="classform.get('meetingLink').hasError('pattern')">Please Enter valid Link</em>
+                                        <em class="error" *ngIf="!classform.get('meetingLink').valid && (classform.get('meetingLink').dirty || classform.get('meetingLink').touched)">Zoom Meeting Link is required</em>
+                                    </div>
+                                    <div class="form-group col-12 col-md-6">
+                                        <input (ngModelChange)="changeZoomLink()" [readOnly]="!allowClass" class="form-control" formControlName="meetingId" placeholder="Meeting ID" type="text">
+                                        <em class="error" *ngIf="!classform.get('meetingId').valid && (classform.get('meetingId').dirty || classform.get('meetingId').touched)">Meeting Id is required</em>
+                                    </div>
+                                </div>
+                                <div class="row" *ngIf="showZoomDetails && allowZoomApi">
+                                    <div class="form-group col-12 col-md-6">
+                                        <input (ngModelChange)="changeZoomLink()" [readOnly]="!allowClass" class="form-control" formControlName="passcode" placeholder="Zoom passcode" type="text">
+                                        <em class="error" *ngIf="!classform.get('passcode').valid && (classform.get('passcode').dirty || classform.get('passcode').touched)">Passcode is required</em>
+                                    </div>
+                                    <div class="form-group col-12 col-md-6">
+                                        <input class="form-control" [readOnly]="!allowClass" type="text" formControlName="telephone" placeholder="Enter Telephone Number">
+                                        <em class="error" *ngIf="!classform.get('telephone').valid && (classform.get('telephone').dirty || classform.get('telephone').touched)">Telephone Number is required</em>
+                                    </div>
+                                </div>
+                                <div class="row align-self-center">
+                                    <div class="modal-body col-12 col-md-12">
+                                        <tag-input formControlName="video"
+                                                   [secondaryPlaceholder]="'Enter Resources'"
+                                                   [placeholder]="'Add Resources'"
+                                                   [editable]='true'
+                                                   [clearOnBlur]="true"
+                                                   [addOnPaste]="true"
+                                                   [addOnBlur]="true"
+                                                   theme='bootstrap'
+                                                   [pasteSplitPattern]="' '"
+                                                   [disable]="readOnly"
+                                        ></tag-input>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- form input data designs closed-->
+
+                        <div class="row list-card">
+                            <div class="col-12 col-md-12 mb-2">
+                                <div class="card">
+                                    <div class="card-body p-3">
+                                        <div class="row d-flex justify-content-between list-title">
+                                            <div class="col-12 col-6 pt-2">
+                                                <h4 class="m-0">Schedule</h4>
+                                            </div>
+                                            <div class="col-12 col-6 d-flex justify-content-end" *ngIf="type == 'add'">
+                                                <button type="button"  class="btn btn-outline-primary mr-3" (click)="scheduleClass('daily','1')"> Daily View</button>
+                                                <button
+                                                        type="button"
+                                                        class="btn btn-outline-primary mr-3"
+                                                        (click)="scheduleClass('calendar','1')"> Calendar View</button>
+                                            </div>
+                                            <div class="col-12 col-6 d-flex justify-content-end" *ngIf="type == 'addEdit' || type == 'edit'">
+                                                <button type="button"  class="btn btn-outline-primary mr-3" (click)="scheduleClass('daily', '2')"> Daily View</button>
+                                                <button
+                                                        type="button"
+                                                        class="btn btn-outline-primary mr-3"
+                                                        (click)="scheduleClass('calendar','2')"> Calendar View</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+                    <!--availability time data list design started-->
+
+                        <div class="row slot-sec telemedicineAvailability" *ngIf="scheduleClassType == 'daily'">
+                            <div class="col-12 col-md-12 mb-2">
+                                <div class="card">
+                                    <div class="card-body p-3">
+                                       <div class="row">
+                                           <div class="col-6 col-md-3">
+                                               <div class="row-md-12">
+                                                   <label>Start Date</label>
+                                               </div>
+                                               <div class="row-md-12" *ngIf="readOnlyStart == false">
+                                                   <div class="d-flex align-items-baseline">
+                                                       <input class="form-control"  formControlName="startDate" placeholder="Start Date"
+                                                              name="dp" angular-mydatepicker #dp="angular-mydatepicker" autocomplete="off"
+                                                              [options]="myDpOptions" (dateChanged)="onDateChanged($event)" (click)="dp.toggleCalendar()">
+                                                       <div class="input-group-append">
+                                                           <button type="button" class="btn btn-primary" (click)="dp.toggleCalendar()">
+                                                               <i class="fa fa-calendar-o"></i></button>
+                                                       </div>
+                                                   </div>
+                                                   </div>
+                                               <div class="row-md-12" *ngIf="readOnly == true || acceptstartdate == true">
+                                                   <div class="d-flex align-items-baseline">
+                                                       <input #dp="angular-mydatepicker" (dateChanged)="onDateChanged($event)" [options]="editMyDpOptions" [readOnly]="readonlyAllData"
+                                                              angular-mydatepicker class="form-control" formControlName="startDate"
+                                                              name="dp" placeholder="Start Date">
+                                                       <div *ngIf="!readonlyAllData" class="input-group-append">
+                                                           <button (click)="dp.toggleCalendar()" class="btn btn-primary" type="button">
+                                                               <i class="fa fa-calendar-o"></i></button>
+                                                       </div>
+                                                   </div>
+                                               </div>
+                                               <em class="errormessage" *ngIf="classform.get('startDate').invalid && (classform.get('startDate').dirty || classform.get('startDate').touched)">
+                                                   StartDate is invalid
+                                               </em>
+                                           </div>
+
+                                           <div class="col-6 col-md-3">
+                                               <div class="row-md-12">
+                                                   <label>End Date</label>
+                                               </div>
+                                               <div class="row-md-12" *ngIf="readOnly == false">
+                                                   <div class="d-flex align-items-baseline">
+                                                   <input class="form-control" formControlName="endDate" placeholder="End Date"
+                                                          name="dp1" angular-mydatepicker #dp1="angular-mydatepicker" autocomplete="off"
+                                                          [options]="myDpOptions1" (dateChanged)="onDateChanged1($event)" (click)="dp1.toggleCalendar()">
+                                                       <div class="input-group-append">
+                                                           <button type="button" class="btn btn-primary" (click)="dp1.toggleCalendar()">
+                                                               <i class="fa fa-calendar-o"></i></button>
+                                                       </div>
+                                                   </div>
+                                               </div>
+                                               <div class="row-md-12" *ngIf="readOnly == true">
+                                                   <input class="form-control" [readOnly]="readonlyAllData" formControlName="endDate" placeholder="End Date"
+                                                          name="dp1" angular-mydatepicker #dp1="angular-mydatepicker"
+                                                          [options]="myDpOptions1" (dateChanged)="onDateChanged1($event)">
+                                               </div>
+                                               <em class="errormessage" *ngIf="classform.get('endDate').invalid && (classform.get('endDate').dirty || classform.get('endDate').touched)">
+                                                   EndDate is invalid
+                                               </em>
+                                           </div>
+                                       </div>
+
+                                        <div class="row mt-2">
+                                            <div class="col-12 col-md-12">
+                                                <h5 class="m-0 color-primary">Monday</h5>
+                                            </div>
+                                            <div class="col-12 col-md-12">
+                                                <div class="row d-flex flex-row p-2">
+                                                    <div class="ml-1 alignCenter cursor" *ngIf="mondayTimings !=''">
+
+                                                        <span class="badge badge-pill badge-grey-selected ml-2 mt-1" *ngFor="let data of mondayTimings;let i = index" >
+                                                        <a (click)="editSlot(data , i)">{{data.teacher_name}} : {{data.slotstarttime}} - {{data.slotendtime }}  &nbsp;</a>
+                                                        <a class="rounded-circle">
+                                                            <i class="fa fa-close rounded-circle" *ngIf="allowClass"
+                                                               (click)="deleteTime('monday',i,data)" aria-hidden="true"></i></a>
+                                                            <a (click)="showAttendance(data ,'1')" class="rounded-circle ml-2" title="Mark Attendance">
+                                                                <i class="fa fa-street-view"  aria-hidden="true"></i></a>
+
+                                                    </span>
+                                                        <span class="ml-2" *ngIf="allowClass"><button type="button"  class="badge-btn" (click)="showSlot(1)">
+                                                            <i class="fa fa-plus" aria-hidden="true"></i></button>
+                                                        </span>
+                                                    </div>
+                                                    <div class="ml-1 alignCenter" *ngIf="mondayTimings ==''" >
+                                                    <span class="badge badge-pill badge-grey ml-2" *ngIf="allowClass == false">
+                                                        <a>&nbsp; Start Time - End Time &nbsp;</a>
+                                                    </span>
+                                                        <span class="badge badge-pill badge-grey ml-2 cursor" *ngIf="allowClass" (click)="showSlot(1)">
+                                                        <a>&nbsp; Start Time - End Time &nbsp;</a>
+                                                    </span>
+                                                        <span class="ml-2" *ngIf="allowClass"><button type="button"  class="badge-btn" (click)="showSlot(1)">
+                                                            <i class="fa fa-plus" aria-hidden="true"></i></button>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+
+                                            <div class="col-12 col-md-12">
+                                                <h5 class="m-0 color-primary">Tuesday</h5>
+                                            </div>
+                                            <div class="col-12 col-md-12">
+                                                <div class="row d-flex flex-row p-2">
+                                                    <div class="ml-1 alignCenter cursor" *ngIf="tuesdayTimings !=''">
+                                                        <span class="badge badge-pill badge-grey-selected ml-2 mt-1" *ngFor="let data of tuesdayTimings;let i = index" >
+                                                            <a (click)="editSlot(data , i)">{{data.teacher_name}} : {{data.slotstarttime}} - {{data.slotendtime }}  &nbsp;</a>
+                                                            <a  class="rounded-circle"><i class="fa fa-close rounded-circle" *ngIf="allowClass" (click)="deleteTime('tuesday',i,data)" aria-hidden="true"></i></a>
+                                                       <a (click)="showAttendance(data ,'2')" class="rounded-circle ml-2" title="Mark Attendance">
+                                                                <i class="fa fa-street-view"  aria-hidden="true"></i></a>
+                                                        </span>
+                                                        <span class="ml-2" *ngIf="allowClass"><button type="button"  class="badge-btn" (click)="showSlot(2)">
+                                                            <i class="fa fa-plus" aria-hidden="true"></i></button>
+                                                        </span>
+                                                    </div>
+                                                    <div class="ml-1 alignCenter" *ngIf="tuesdayTimings ==''" >
+                                                    <span class="badge badge-pill badge-grey ml-2" *ngIf="allowClass == false">
+                                                        <a>&nbsp; Start Time - End Time &nbsp;</a>
+                                                    </span>
+                                                    <span class="badge badge-pill badge-grey ml-2 cursor" *ngIf="allowClass" (click)="showSlot(2)">
+                                                        <a>&nbsp; Start Time - End Time &nbsp;</a>
+                                                    </span>
+                                                        <span class="ml-2" *ngIf="allowClass"><button type="button"  class="badge-btn" (click)="showSlot(2)">
+                                                            <i class="fa fa-plus" aria-hidden="true"></i></button>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+
+                                            <div class="col-12 col-md-12">
+                                                <h5 class="m-0 color-primary">Wednesday</h5>
+                                            </div>
+                                            <div class="col-12 col-md-12">
+                                                <div class="row d-flex flex-row p-2">
+                                                    <div class="ml-1 alignCenter cursor" *ngIf="wednesDayTimingsday !=''">
+                                                        <span class="badge badge-pill badge-grey-selected ml-2 mt-1" *ngFor="let data of wednesDayTimingsday;let i = index" >
+                                                        <a (click)="editSlot(data , i)">{{data.teacher_name}} : {{data.slotstarttime}} - {{data.slotendtime }}  &nbsp;</a>
+                                                        <a  class="rounded-circle"><i class="fa fa-close rounded-circle" *ngIf="allowClass" (click)="deleteTime('wednesday',i,data)" aria-hidden="true"></i></a>
+                                                    <a (click)="showAttendance(data ,'3')" class="rounded-circle ml-2"  title="Mark Attendance">
+                                                                <i class="fa fa-street-view"  aria-hidden="true"></i></a>
+                                                    </span>
+                                                        <span class="ml-2" *ngIf="allowClass"><button type="button"  class="badge-btn" (click)="showSlot(3)">
+                                                            <i class="fa fa-plus" aria-hidden="true"></i></button>
+                                                        </span>
+                                                    </div>
+                                                    <div class="ml-1 alignCenter" *ngIf="wednesDayTimingsday ==''" >
+                                                    <span class="badge badge-pill badge-grey ml-2" *ngIf="allowClass == false">
+                                                        <a>&nbsp; Start Time - End Time &nbsp;</a>
+                                                    </span>
+                                                    <span class="badge badge-pill badge-grey ml-2 cursor" *ngIf="allowClass" (click)="showSlot(3)">
+                                                        <a>&nbsp; Start Time - End Time &nbsp;</a>
+                                                    </span>
+                                                        <span class="ml-2" *ngIf="allowClass">
+                                                            <button type="button"  class="badge-btn" (click)="showSlot(3)"><i class="fa fa-plus" aria-hidden="true"></i></button>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+
+                                            <div class="col-12 col-md-12">
+                                                <h5 class="m-0 color-primary">Thursday</h5>
+                                            </div>
+                                            <div class="col-12 col-md-12">
+                                                <div class="row d-flex flex-row p-2">
+                                                    <div class="ml-1 alignCenter cursor" *ngIf="thursdayTimingsday !=''">
+                                                        <span  class="badge badge-pill badge-grey-selected ml-2 mt-1" *ngFor="let data of thursdayTimingsday;let i = index" >
+                                                        <a (click)="editSlot(data , i)">{{data.teacher_name}} : {{data.slotstarttime}} - {{data.slotendtime }}  &nbsp;</a>
+                                                        <a  class="rounded-circle"><i class="fa fa-close rounded-circle" *ngIf="allowClass" (click)="deleteTime('thursday',i,data)"  aria-hidden="true"></i></a>
+                                                    <a (click)="showAttendance(data ,'4')" class="rounded-circle ml-2" title="Mark Attendance">
+                                                                <i class="fa fa-street-view"  aria-hidden="true"></i></a>
+                                                    </span>
+                                                        <span class="ml-2" *ngIf="allowClass"><button type="button"  class="badge-btn" (click)="showSlot(4)">
+                                                            <i class="fa fa-plus" aria-hidden="true"></i></button>
+                                                        </span>
+                                                    </div>
+                                                    <div class="ml-1 alignCenter" *ngIf="thursdayTimingsday ==''" >
+                                                    <span class="badge badge-pill badge-grey ml-2" *ngIf="allowClass == false">
+                                                        <a>&nbsp; Start Time - End Time &nbsp;</a>
+                                                    </span>
+                                                    <span class="badge badge-pill badge-grey ml-2 cursor" *ngIf="allowClass" (click)="showSlot(4)">
+                                                        <a>&nbsp; Start Time - End Time &nbsp;</a>
+                                                    </span>
+                                                        <span class="ml-2" *ngIf="allowClass"><button type="button"  class="badge-btn" (click)="showSlot(4)">
+                                                            <i class="fa fa-plus" aria-hidden="true"></i></button>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+
+                                            <div class="col-12 col-md-12">
+                                                <h5 class="m-0 color-primary">Friday</h5>
+                                            </div>
+                                            <div class="col-12 col-md-12">
+                                                <div class="row d-flex flex-row p-2">
+                                                    <div class="ml-1 alignCenter cursor" *ngIf="fridayTimingsday !=''">
+                                                        <span class="badge badge-pill badge-grey-selected ml-2 mt-1" *ngFor="let data of fridayTimingsday;let i = index" >
+                                                        <a (click)="editSlot(data , i)">{{data.teacher_name}} : {{data.slotstarttime}} - {{data.slotendtime }}  &nbsp;</a>
+                                                        <a  class="rounded-circle"><i class="fa fa-close rounded-circle" *ngIf="allowClass" (click)="deleteTime('friday',i,data)" aria-hidden="true"></i></a>
+                                                    <a (click)="showAttendance(data ,'5')" class="rounded-circle ml-2" title="Mark Attendance">
+                                                                <i class="fa fa-street-view"  aria-hidden="true"></i></a>
+                                                    </span>
+                                                        <span class="ml-2" *ngIf="allowClass"><button type="button"  class="badge-btn" (click)="showSlot(5)">
+                                                            <i class="fa fa-plus" aria-hidden="true"></i></button>
+                                                        </span>
+                                                    </div>
+                                                    <div class="ml-1 alignCenter" *ngIf="fridayTimingsday ==''" >
+                                                    <span class="badge badge-pill badge-grey ml-2" *ngIf="allowClass == false">
+                                                        <a>&nbsp; Start Time - End Time &nbsp;</a>
+                                                    </span>
+                                                    <span class="badge badge-pill badge-grey ml-2 cursor" *ngIf="allowClass" (click)="showSlot(5)">
+                                                        <a>&nbsp; Start Time - End Time &nbsp;</a>
+                                                    </span>
+                                                        <span class="ml-2" *ngIf="allowClass"><button type="button"  class="badge-btn" (click)="showSlot(5)">
+                                                            <i class="fa fa-plus" aria-hidden="true"></i></button>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+
+                                            <div class="col-12 col-md-12">
+                                                <h5 class="m-0 color-primary">Saturday</h5>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <div class="row d-flex flex-row p-2">
+                                                    <div class="ml-1 alignCenter cursor" *ngIf="saturdayTimingsday !=''">
+                                                        <span  class="badge badge-pill badge-grey-selected ml-2 mt-1" *ngFor="let data of saturdayTimingsday;let i = index">
+                                                        <a (click)="editSlot(data , i)">{{data.teacher_name}} : {{data.slotstarttime}} - {{data.slotendtime }}  &nbsp;</a>
+                                                        <a  class="rounded-circle"><i class="fa fa-close rounded-circle" *ngIf="allowClass" (click)="deleteTime('saturday',i,data)" aria-hidden="true"></i></a>
+                                                   <a (click)="showAttendance(data ,'6')" class="rounded-circle ml-2" title="Mark Attendance">
+                                                                <i class="fa fa-street-view"  aria-hidden="true"></i></a>
+                                                    </span>
+                                                        <span class="ml-2" *ngIf="allowClass"><button type="button"  class="badge-btn" (click)="showSlot(6)">
+                                                            <i class="fa fa-plus" aria-hidden="true"></i></button>
+                                                        </span>
+                                                    </div>
+                                                    <div class="ml-1 alignCenter" *ngIf="saturdayTimingsday ==''" >
+                                                    <span class="badge badge-pill badge-grey ml-2" *ngIf="allowClass == false">
+                                                        <a>&nbsp; Start Time - End Time &nbsp;</a>
+                                                    </span>
+                                                    <span class="badge badge-pill badge-grey ml-2 cursor" *ngIf="allowClass" (click)="showSlot(6)">
+                                                        <a>&nbsp; Start Time - End Time &nbsp;</a>
+                                                    </span>
+                                                        <span class="ml-2" *ngIf="allowClass"><button type="button"  class="badge-btn" (click)="showSlot(6)">
+                                                            <i class="fa fa-plus" aria-hidden="true"></i></button>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+
+                                            <div class="col-md-12">
+                                                <h5 class="m-0 color-primary">Sunday</h5>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <div class="row d-flex flex-row p-2">
+                                                    <div class="ml-1 alignCenter cursor" *ngIf="sundayTimingsday !=''">
+                                                        <span class="badge badge-pill badge-grey-selected ml-2 mt-1" *ngFor="let data of sundayTimingsday;let i = index" >
+                                                        <a (click)="editSlot(data , i)">{{data.teacher_name}} : {{data.slotstarttime}} - {{data.slotendtime }}  &nbsp;</a>
+                                                        <a  class="rounded-circle"><i class="fa fa-close rounded-circle" *ngIf="allowClass" (click)="deleteTime('sunday',i,data)" aria-hidden="true"></i></a>
+                                                   <a (click)="showAttendance(data ,'7')" class="rounded-circle ml-2" title="Mark Attendance">
+                                                                <i class="fa fa-street-view"  aria-hidden="true"></i></a>
+                                                    </span>
+                                                        <span class="ml-2" *ngIf="allowClass"><button type="button"  class="badge-btn" (click)="showSlot(7)">
+                                                            <i class="fa fa-plus" aria-hidden="true"></i></button>
+                                                        </span>
+                                                    </div>
+                                                    <div class="ml-1 alignCenter" *ngIf="sundayTimingsday ==''" >
+                                                    <span class="badge badge-pill badge-grey ml-2" *ngIf="allowClass == false">
+                                                        <a>&nbsp; Start Time - End Time &nbsp;</a>
+                                                    </span>
+                                                    <span class="badge badge-pill cursor badge-grey ml-2" *ngIf="allowClass" (click)="showSlot(7)">
+                                                        <a>&nbsp; Start Time - End Time &nbsp;</a>
+                                                    </span>
+                                                        <span class="ml-2" *ngIf="allowClass"><button type="button"  class="badge-btn" (click)="showSlot(7)">
+                                                            <i class="fa fa-plus" aria-hidden="true"></i></button>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <!-- availability time data list design closed-->
+
+
+                        <!--// calender designs html view -->
+
+                        <div class="row" *ngIf="scheduleClassType == 'calendar'">
+                            <div class="col-md-4">
+                                <div class="btn-group">
+                                    <div [ngClass]="currentCalendarshow === 'preview' ? 'btn btn-primary' : 'btn btn-outline-primary'"
+                                         mwlCalendarPreviousView
+                                         [view]="view"
+                                         [(viewDate)]="viewDate"
+                                         (viewDateChange)="closeOpenMonthViewDay('preview')">
+                                        Previous
+                                    </div>
+                                    <div [ngClass]="currentCalendarshow === 'today' ? 'btn btn-primary' : 'btn btn-outline-primary'"
+                                         mwlCalendarToday
+                                         [(viewDate)]="viewDate"
+                                         (viewDateChange)="closeOpenMonthViewDay('today')">
+                                        Today
+                                    </div>
+                                    <div [ngClass]="currentCalendarshow === 'next' ? 'btn btn-primary' : 'btn btn-outline-primary'"
+                                         mwlCalendarNextView
+                                         [view]="view"
+                                         [(viewDate)]="viewDate"
+                                         (viewDateChange)="closeOpenMonthViewDay('next')">
+                                        Next
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 text-center">
+                                <h3 class="letter">{{ viewDate | calendarDate:(view + 'ViewTitle'):'en' }}</h3>
+                            </div>
+                            <div class="col-md-4 text-right">
+                                <div class="btn-group">
+                                    <div class="btn btn-outline-primary"
+                                         (click)="setView(CalendarView.Month)"
+                                         [class.active]="view === CalendarView.Month">
+                                        Month
+                                    </div>
+                                    <div class="btn btn-outline-primary"
+                                         (click)="setView(CalendarView.Week)"
+                                         [class.active]="view === CalendarView.Week">
+                                        Week
+                                    </div>
+                                    <div class="btn btn-outline-primary"
+                                         (click)="setView(CalendarView.Day)"
+                                         [class.active]="view === CalendarView.Day">
+                                        Day
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 mt-2" [ngSwitch]="view">
+                                <mwl-calendar-month-view
+                                        *ngSwitchCase="CalendarView.Month"
+                                        [viewDate]="viewDate"
+                                        [events]="events"
+                                        [refresh]="refresh"
+                                        [activeDayIsOpen]="activeDayIsOpen"
+                                        [cellTemplate]="customCellTemplate"
+                                        (dayClicked)="dayClicked($event.day)"
+                                        (eventClicked)="handleEvent('Clicked', $event.event, type)"
+                                        (eventTimesChanged)="eventTimesChanged($event, type)"></mwl-calendar-month-view>
+                                <mwl-calendar-week-view
+                                        *ngSwitchCase="CalendarView.Week"
+                                        [viewDate]="viewDate"
+                                        [events]="calenderTimeSlot"
+                                        [refresh]="refresh"
+                                >
+                                </mwl-calendar-week-view>
+                                <mwl-calendar-day-view
+                                        *ngSwitchCase="CalendarView.Day"
+                                        [viewDate]="viewDate"
+                                        [events]="calenderTimeSlot"
+                                        [refresh]="refresh"></mwl-calendar-day-view>
+                            </div>
+                        </div>
+
+<!--                        /// calender design closed -->
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<ng-template #customCellTemplate let-day="day" let-locale="locale">
+    <div class="cal-cell-top">
+    <span class="cal-day-badge" *ngIf="day.badgeTotal > 0"
+    >{{ day.badgeTotal }}</span>
+        <span class="cal-day-number">
+            {{ day.date | calendarDate:'monthViewDayNumber':locale }}
+        </span>
+    </div>
+    <small style="margin: 5px;" *ngIf="day.events.length >0">
+        <span *ngFor="let item of day.events;let i=index">
+            <p *ngIf="i== 0 || i === 1 || i ==2 " class="letter">{{item.teacher_name}} : {{item.titleName}} at {{item.slotstarttime + ' ' + item.slotendtime}}{{i != 0 ? ' , ': ''}}</p>
+        </span>
+        <span *ngIf="day.events.length > 3">
+                    {{day.events.length-3 + ' More'}}
+
+        </span>
+    </small>
+</ng-template>
+
+<ng-template #editTimeDialog let-close="close">
+    <div class="modal-header">
+        <h4 class="modal-title">Edit Slot</h4>
+        <i class="fa fa-close cursor" (click)="close()" ></i>
+    </div>
+    <form [formGroup]="editslotform" class="telemedicineaAddAvailability">
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="row">
+                    <div class="col-md-1 mt-2">
+                        <label>Date </label>
+                    </div>
+                    <div class="col-md-11">
+                        <div class="d-flex align-items-baseline">
+                        <input class="form-control" formControlName="selectedDate" placeholder="Select Date *"
+                               name="dp" angular-mydatepicker #dp2="angular-mydatepicker" autocomplete="off"
+                               [options]="myDpOptions" (dateChanged)="onDateChanged($event)" (click)="dp2.toggleCalendar()">
+                        <div class="input-group-append">
+                            <button type="button" class="btn btn-primary" (click)="dp2.toggleCalendar()">
+                                <i class="fa fa-calendar-o"></i></button>
+                        </div>
+                    </div>
+                    </div>
+                    <em class="errormessage" *ngIf="editslotform.get('selectedDate').invalid && (editslotform.get('selectedDate').dirty || editslotform.get('selectedDate').touched)">
+                        Date is invalid
+                    </em>
+                </div>
+                </div>
+                <div class="col-md-12 mt-3 form-group" *ngIf="adminLogin == true">
+                    <label>Teacher Name</label>
+                    <ng-select [items]="teacherData"
+                               formControlName="teacherid"
+                               bindLabel="teacher_name"
+                               bindValue="teacher_id"
+                               placeholder="Select Teacher"
+                               typeToSearchText=""
+                               required=""
+                               multiple="true"
+                    >
+                    </ng-select>
+                </div>
+                <div class="col-md-12 form-group mt-3"  *ngIf="adminLogin == false">
+                    <label>Teacher Name</label>
+                    <input class="form-control"  formControlName="teacherid" readonly type="text" value="{{teacherName}}" placeholder="Select Teacher">
+                </div>
+                <div class="col-md-6 form-group">
+
+                    <label>Start Time</label>
+                    <ngb-timepicker [(ngModel)]="fromTime" [ngModelOptions]="{standalone: true}" (ngModelChange)="checkTime()" [meridian]="meridian" [spinners]="spinner"></ngb-timepicker>
+                </div>
+                <div class="col-md-6 form-group">
+
+                    <label>End Time</label>
+                    <ngb-timepicker [(ngModel)]="toTime" [ngModelOptions]="{standalone: true}" (ngModelChange)="checkTime()" [meridian]="meridian" [spinners]="spinner"></ngb-timepicker>
+
+                </div>
+                <div class="w-100 text-center" *ngIf="timeErr">
+                    <div class="alert alert-danger">
+                        Please select the Valid &nbsp;<strong>From Time & To Time</strong>.
+                    </div>
+                </div>
+                <div class="form-group col-md-12" *ngIf="showZoomDetails && allowZoomApi">
+                    <label>Zoom Meeting Link</label>
+                    <div class="input-group">
+                      <input class="form-control" type="link" pattern="https?://.+" formControlName="meetingLink" placeholder="Zoom Meeting Link *">
+                        <div class="input-group-append">
+                            <button type="button" class="btn-primary" *ngIf="this.editslotform.controls.meetingLink.value" (click)="cleardata(1, 'calendar')">
+                                <i class="fa fa-close" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <em class="error" *ngIf="editslotform.get('meetingLink').hasError('pattern')">Please Enter valid Link</em>
+                    <em class="error" *ngIf="!editslotform.get('meetingLink').valid && (editslotform.get('meetingLink').dirty || editslotform.get('meetingLink').touched)">Meeting Link is required</em>
+                </div>
+                <div class="form-group col-md-12" *ngIf="showZoomDetails && allowZoomApi">
+                    <label>Zoom Meeting ID</label>
+                    <div class="input-group">
+                        <input class="form-control" type="text" formControlName="meetingId" placeholder="Meeting ID">
+                            <div class="input-group-append">
+                                <button type="button" class="btn-primary" *ngIf="this.editslotform.controls.meetingId.value" (click)="cleardata(2, 'calendar')">
+                                    <i class="fa fa-close" aria-hidden="true"></i>
+                                </button>
+                            </div>
+                    </div>
+                    <em class="error" *ngIf="!editslotform.get('meetingId').valid && (editslotform.get('meetingId').dirty || editslotform.get('meetingId').touched)">Meeting Id is required</em>
+                </div>
+                <div class="form-group col-md-6" *ngIf="showZoomDetails && allowZoomApi">
+                    <label>Zoom Passcode</label>
+                    <div class="input-group">
+                        <input class="form-control" type="text" formControlName="meetingPasscode" placeholder="Zoom passcode">
+                            <div class="input-group-append">
+                                <button type="button" class="btn-primary" *ngIf="this.editslotform.controls.meetingPasscode.value" (click)="cleardata(3, 'calendar')">
+                                    <i class="fa fa-close" aria-hidden="true"></i>
+                                </button>
+                            </div>
+                    </div>
+                    <em class="error" *ngIf="!editslotform.get('meetingPasscode').valid && (editslotform.get('meetingPasscode').dirty || editslotform.get('meetingPasscode').touched)">Meeting Passcode is required</em>
+                </div>
+                <div class="form-group col-md-6" *ngIf="showZoomDetails && allowZoomApi">
+                    <label>Telephone</label>
+                    <div class="input-group">
+                        <input class="form-control" type="text" formControlName="telephone" placeholder="Enter Telephone Number">
+                            <div class="input-group-append">
+                                <button type="button" class="btn-primary" *ngIf="this.editslotform.controls.telephone.value" (click)="cleardata(4, 'calendar')">
+                                    <i class="fa fa-close" aria-hidden="true"></i>
+                                </button>
+                            </div>
+                    </div>
+                    <em class="error" *ngIf="!editslotform.get('telephone').valid && (editslotform.get('telephone').dirty || editslotform.get('telephone').touched)">Telephone Number is required</em>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-primary" (click)="submitTimeSlot(2)">Update</button>
+        </div>
+    </form>
+</ng-template>
+<ng-template #modalContent let-close="close">
+    <div class="modal-header">
+        <h5 class="modal-title">Event action occurred</h5>
+        <button type="button" class="close" (click)="close()">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div>
+            Action:
+            <pre></pre>
+        </div>
+        <div>
+            Event:
+            <pre></pre>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" (click)="close()">
+            OK
+        </button>
+    </div>
+</ng-template>
+
+
+<ng-template #gradeSelection let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h4 class="modal-title headerText" id="modal-basic-title2"><b>Edit Grade</b></h4>
+    </div>
+    <div class="modal-body">
+        <h5>Are sure want to change the grade since it will change the previously updated student list </h5>
+    </div>
+    <div class="modal-footer" style="border-top: none">
+        <button type="button" class="btn btn-outline-primary" (click)="noClose('grade')">No</button>
+        <button type="button" class="btn btn-primary" (click)="eraseSessiondate('grade')">Yes</button>
+    </div>
+</ng-template>
+
+<ng-template #batchSelection let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h4 class="modal-title headerText" id="modal-basic-title21"><b>Edit Content Folder</b></h4>
+    </div>
+    <div class="modal-body">
+        <h5>Are sure want to change the Content Folder since it will change the previously updated student list </h5>
+    </div>
+    <div class="modal-footer" style="border-top: none">
+        <button type="button" class="btn btn-outline-primary" (click)="noClose('batch')">No</button>
+        <button type="button" class="btn btn-primary" (click)="eraseSessiondate('batch')">Yes</button>
+    </div>
+</ng-template>
+
+
+<ng-template #addSlot let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h4 class="modal-title">Schedule</h4>
+        <i class="fa fa-close cursor" (click)="onSave1()" ></i>
+    </div>
+    <form [formGroup]="slotform" class="telemedicineaAddAvailability">
+        <div class="modal-body">
+            <div class="row">
+                 <div class="col-md-12 form-group" *ngIf="adminLogin == true">
+                     <label>Teacher Name</label>
+                <ng-select [items]="teacherData"
+                           (change)="teacherSelection(teacherData)"
+                           formControlName="teacherid"
+                           bindLabel="teacher_name"
+                           bindValue="teacher_id"
+                           placeholder="Select Teacher"
+                           typeToSearchText=""
+                           multiple="true"
+                >
+                </ng-select>
+            </div>
+                <div class="col-md-12 form-group" *ngIf="adminLogin == false">
+                    <label>Teacher Name</label>
+                    <input class="form-control"  formControlName="teacherid" readonly type="text" value="{{teacherName}}" placeholder="Select Teacher">
+                </div>
+                <div class="col-md-6 form-group">
+
+                        <label>Start Time</label>
+                        <ngb-timepicker [(ngModel)]="fromTime" [ngModelOptions]="{standalone: true}" (ngModelChange)="checkTime()"  [meridian]="meridian" [spinners]="spinner"></ngb-timepicker>
+
+                </div>
+                <div class="col-md-6 form-group">
+
+                    <label>End Time</label>
+                <ngb-timepicker [(ngModel)]="toTime" [ngModelOptions]="{standalone: true}" (ngModelChange)="checkTime()"  [meridian]="meridian" [spinners]="spinner"></ngb-timepicker>
+
+                </div>
+                <div class="w-100 text-center" *ngIf="timeErr">
+                    <div class="alert alert-danger">
+                        Please select the Valid &nbsp;<strong>From Time & To Time</strong>.
+                    </div>
+                </div>
+                 <div class="form-group col-md-12" *ngIf="showZoomDetails && allowZoomApi">
+                            <label>Zoom Meeting Link</label>
+                        <div class="input-group">
+                        <input class="form-control"  type="link" pattern="https?://.+" formControlName="meetingLink" placeholder="Zoom Meeting Link *" (input)="newselection()">
+                            <div class="input-group-append">
+                                <button type="button" class="btn-primary" *ngIf="this.slotform.controls.meetingLink.value" (click)="cleardata(1, 'slot')">
+                                    <i class="fa fa-close" aria-hidden="true"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <em class="error" *ngIf="slotform.get('meetingLink').hasError('pattern')">Please Enter valid Link</em>
+                     <em class="error" *ngIf="!slotform.get('meetingLink').valid && (slotform.get('meetingLink').dirty || slotform.get('meetingLink').touched)">Meeting Link is required</em>
+                 </div>
+                    <div class="form-group col-md-12" *ngIf="showZoomDetails && allowZoomApi">
+                        <label>Zoom Meeting ID</label>
+                        <div class="input-group">
+                        <input class="form-control" type="text" formControlName="meetingId" placeholder="Meeting ID" (input)="newselection()">
+                            <div class="input-group-append">
+                                <button type="button" class="btn-primary" *ngIf="this.slotform.controls.meetingId.value" (click)="cleardata(2, 'slot')">
+                                    <i class="fa fa-close" aria-hidden="true"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <em class="error" *ngIf="!slotform.get('meetingId').valid && (slotform.get('meetingId').dirty || slotform.get('meetingId').touched)">Meeting Id is required</em>
+                    </div>
+                    <div class="form-group col-md-6" *ngIf="showZoomDetails && allowZoomApi">
+                        <label>Zoom Passcode</label>
+                        <div class="input-group">
+                        <input class="form-control" type="text" formControlName="meetingPasscode" placeholder="Zoom passcode" (input)="newselection()">
+                        <div class="input-group-append">
+                            <button type="button" class="btn-primary" *ngIf="this.slotform.controls.meetingPasscode.value" (click)="cleardata(3, 'slot')">
+                                <i class="fa fa-close" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                    </div>
+                        <em class="error" *ngIf="!slotform.get('meetingPasscode').valid && (slotform.get('meetingPasscode').dirty || slotform.get('meetingPasscode').touched)">Meeting Passcode is required</em>
+                    </div>
+                <div class="form-group col-md-6" *ngIf="showZoomDetails && allowZoomApi">
+                    <label>Telephone Number</label>
+                    <div class="input-group">
+                        <input class="form-control" type="text" formControlName="telephone" placeholder="Enter Telephone Number" (input)="newselection()">
+                        <div class="input-group-append">
+                            <button type="button" class="btn-primary" *ngIf="this.slotform.controls.telephone.value" (click)="cleardata(4, 'slot')">
+                                <i class="fa fa-close" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <em class="error" *ngIf="!slotform.get('telephone').valid && (slotform.get('telephone').dirty || slotform.get('telephone').touched)">Telephone Number is required</em>
+                </div>
+                <!--</div>-->
+                <div class="col-md-12" *ngIf="editTime == false">
+                    <h5 class="text-center">Repeat for</h5>
+                    <div class="row d-flex justify-content-center">
+                        <div *ngFor="let data of days;let i= index;">
+                            <button *ngIf="data.show"
+                                    type="button" (click)="selectDate(data.id)"
+                                    [ngClass]="data.status == 0 ? 'btn btn-outline-primary m-2' : 'btn btn-primary m-2'"
+                            >{{data.day}}</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-primary" (click)="submitSlot()">Submit</button>
+        </div>
+    </form>
+</ng-template>
+
+<ng-template #writeNoteOpen let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h4 class="modal-title text-center">Add Notes</h4>
+        <i class="fa fa-close cursor" (click)="onsave()" ></i>
+    </div>
+        <div class="modal-body">
+            <div class="row px-3 d-flex justify-content-center">
+                <div class="col-10 mt-2" *ngFor="let list of showNotes; let i = index">
+                    <div class="row border border-secondary rounded" *ngIf="list.add_date != '00-00-0000'">
+                        <div class="col-9" style="word-wrap: break-word;">
+<!--                            {{list.note}}-->
+                            <span [innerHTML]="list.note" class="mb-0 mt-3"></span>
+                        </div>
+                        <div class="col-2 text-right">
+                            <p>{{list.add_date}}</p>
+                        </div>
+                        <div class="col-1" *ngIf="type == 'add'">
+                            <i class="fa fa-close fa-1x text-danger" aria-hidden="true" style="cursor:pointer"  (click)="deletedNotes(i, 'add')"></i>
+                        </div>
+                        <div class="col-1" *ngIf="type == 'edit' || type == 'addEdit'">
+                            <i class="fa fa-close fa-1x text-danger" aria-hidden="true" style="cursor:pointer"  (click)="deletedNotes(list, 'edit')"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-11 mt-2">
+                    <!-- <textarea name="" id="" placeholder="Enter Notes" [(ngModel)]="notes" style="width: 100%; height: 100px; padding: 4px"></textarea> -->
+                    <app-tiny-mice  (emitEditorValue)="getEditorValue($event)"
+                    [editorPatchValue]="false"
+                    [height]="300"
+                    [id]="'addNotes'"
+                    [(ngModel)]="notes"
+                    [showDropBtn]="false"
+                    [showInputBtn]="false">
+                </app-tiny-mice>
+                </div>
+                <div class="col-11 text-right mt-2">
+                    <button type="button" (click)="onsave()" class="btn btn-outline-primary mr-2">Close</button>
+                    <button type="button" (click)="addNotes(type)"  class="btn btn-primary">Add</button>
+                </div>
+            </div>
+        </div>
+</ng-template>
+
+<ng-template #classCheck let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h4 class="text-center col-12 modal-title"><b>Draft Class</b></h4>
+    </div>
+    <div class="modal-body">
+        <h5 class="color-primary">
+            Class will be saved as draft. Add a schedule to activate.
+        </h5>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" (click)="close();addclass(this.type, 2)">Yes</button>
+        <button class="btn btn-outline-primary" (click)="close()">No</button>
+    </div>
+</ng-template>
+
+
+<ng-template #zoomLink let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h4 class="text-center col-12 modal-title"><b>Zoom Meeting Link</b></h4>
+    </div>
+    <div class="modal-body">
+        <h5 class="color-primary">
+            Do you want to update the Zoom details for the schedule as well?
+        </h5>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" (click)="close();updateZoomLink()">Yes</button>
+        <button class="btn btn-outline-primary" (click)="close()">No</button>
+    </div>
+</ng-template>
+<ng-template  #studentAtendance let-c="close" let-d="dismiss">
+    <div class="modal-header col-12 d-flex align-self-center">
+        <h4 class="text-center col-11 modal-title ml-5"><b>Student Attendance</b></h4>
+        <i (click)="this.modalRef1.close()" class="fa fa-close cursor d-flex align-self-center" style="font-size: 1.2rem"></i>
+    </div>
+    <div *ngIf="scheduleDates.length == 0" class="col-12 d-flex justify-content-center list-card my-5">
+        <div class="col-8">
+            <button class="nodataList">No Attendance Found in past and present days</button>
+        </div>
+    </div>
+    <div *ngIf="scheduleDates.length > 0" class="modal-body">
+        <div class="col-md-12 d-flex px-0 mb-3">
+            <div class="col-md-6 px-0">
+                <select (ngModelChange)="dropdownChange($event)" [(ngModel)]="studentAttendanceDate" class="form-control">
+                    <option *ngFor="let item of scheduleDates;let i = index" [value]="item">{{item}}</option>
+                </select>
+            </div>
+            <div *ngIf="studentAttendanceDate == dateAddValue" class="col-md-6 px-0 d-flex justify-content-end">
+                <input (click)="allPresent($event)" class="align-self-center" id="allPresent" type="checkbox">&nbsp; &nbsp; <span class="align-self-center">All Present</span>
+            </div>
+        </div>
+        <ngx-datatable
+            #table
+            class="bootstrap"
+            [rows]="studentRows"
+            [columnMode]="'force'"
+            [loadingIndicator]="false"
+            [headerHeight]="40"
+            [footerHeight]="40"
+            [limit]="10"
+            [rowHeight]="'auto'"
+            [selected]="selected"
+            [selectionType]="'checkbox'"
+            (activate)="onActivate($event)"
+            (select)="onSelect($event)"
+        >
+            <ngx-datatable-column class="contenttext" name="Name">
+                <ng-template ngx-datatable-cell-template let-row="row" let-rowIndex="rowIndex" let-value="value">
+                    <span class="ml-2"> {{row.first_name}} {{row.last_name}}</span>
+                </ng-template>
+            </ngx-datatable-column>
+            <ngx-datatable-column class="contenttext" name="Email" *ngIf="allowClass">
+                <ng-template ngx-datatable-cell-template let-row="row" let-rowIndex="rowIndex"  let-value="value">
+                    <span class="ml-3"> {{row.student_id}}</span>
+                </ng-template>
+            </ngx-datatable-column>
+            <ngx-datatable-column class="contenttext " name="Grade">
+                <ng-template ngx-datatable-cell-template let-row="row"  let-rowIndex="rowIndex"  let-value="value">
+                    <span class="ml-2"> {{row.grade_name}}</span>
+                </ng-template>
+            </ngx-datatable-column>
+            <ngx-datatable-column *ngIf="studentAttendanceDate == dateAddValue" class="contenttext " name="Attendance">
+                <ng-template let-row="row" let-rowIndex="rowIndex"  let-value="value"  ngx-datatable-cell-template>
+                    <span class="mr-2"><input (change)="attendance($event, row.isSelected, 'true' ,rowIndex)" [checked]="row.attendance == '1'" name="{{rowIndex+'rad'}}"  type="radio">&nbsp; Present</span><span><input (change)="attendance($event, row.isSelected, 'false' ,rowIndex)"  [checked]="row.attendance == '0'" name="{{rowIndex+'rad'}}" type="radio">&nbsp; Absent</span>
+                </ng-template>
+            </ngx-datatable-column>
+            <ngx-datatable-column *ngIf="studentAttendanceDate != dateAddValue" class="contenttext " name="Attendance">
+                <ng-template class="text-center" let-row="row" let-rowIndex="rowIndex"  let-value="value"  ngx-datatable-cell-template>
+                    <span *ngIf="row.attendance == '1'" class="color-green ml-3">Present</span><span *ngIf="row.attendance == '0'" class="color-red ml-3">Absent</span>
+                </ng-template>
+            </ngx-datatable-column>
+        </ngx-datatable>
+    </div>
+    <div *ngIf="scheduleDates.length > 0" class="modal-footer">
+        <button (click)="this.modalRef1.close()" class="btn btn-outline-primary">Cancel</button>
+        <button (click)="updateStudentAnnotate()" [disabled]="studentAttendanceDate != dateAddValue" class="btn btn-primary">Submit</button>
+    </div>
+</ng-template>
+

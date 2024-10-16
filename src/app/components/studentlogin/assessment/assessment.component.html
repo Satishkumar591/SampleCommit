@@ -1,0 +1,102 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="group-btn col-md-{{env.deviceType() ? '8' : '9'}}">
+            <button (click)="assessmentList(3)" [ngClass]="{'active1': filterType == 3}" class="btn btn-outline-primary {{env.deviceType() ? 'border-radius-20' : ''}}" type="button">In progress</button>
+            <button (click)="assessmentList(4)" [ngClass]="{'active1': filterType == 4}" class="btn btn-outline-primary {{env.deviceType() ? 'border-radius-20' : ''}}" type="button">Completed</button>
+            <button (click)="assessmentList(1)" [ngClass]="{'active1': filterType == 1}" class="btn btn-outline-primary {{env.deviceType() ? 'border-radius-20' : ''}}" type="button">All</button>
+        </div>
+        <div class="col-md-{{env.deviceType() ? '4' : '3'}} btn-popup pull-right">
+            <div class="input-group">
+                <input class="form-control" placeholder="Search by Assessment name" size="50" [ngStyle]="{'height' : env.deviceType() ? '34px' : '40px'}" type="text" [(ngModel)]="searchAssess" (input)="updateFilter(searchAssess)">
+                <div class="input-group-append">
+                    <button class="btn btn-primary  {{env.deviceType() ? 'py-0 border-radius-2' : ''}}" type="submit" ><i aria-hidden="true" class="fa fa-search"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row d-flex justify-content-center list-card mt-5" *ngIf="listData.length == 0">
+        <div class="col-4">
+            <button class="nodataList">No Assessment Available !</button>
+        </div>
+    </div>
+    <section class="row list-card mt-2" *ngIf="listData.length != 0">
+        <div class="col-md-12">
+            <div *ngFor="let list of listData" class="card class-card class-hover" (click)="answerPage(list)">
+                <div class="card-body {{env.deviceType() ? 'p-2' : ''}}">
+                    <div class="row {{env.deviceType() ? 'mt-1' : ''}}">
+                        <div class="col-md-1 d-flex justify-content-center align-items-center">
+                            <figure class="cursor" title="Preview">
+                                <img *ngIf="list.profile_url == ''" alt="" class="img-50 rounded-circle" src="assets/images/ristaschool/assessment.png">
+                                <img *ngIf="list.profile_url != ''" [src]="sanitizer.bypassSecurityTrustResourceUrl(webhost + '/' + list.profile_url)" alt="" class="img-50 rounded-circle">
+                            </figure>
+                        </div>
+                        <div class="col-md-6">
+                            <h4 class="t-period">
+                                <span *ngIf="list.student_content_status == 1 && list.overdueStatus" class="badge badge-secondary">Not started</span>
+                                <span *ngIf="list.student_content_status == 1 && !list.overdueStatus" class="badge badge-danger">Overdue</span>
+                                <span *ngIf="list.student_content_status == 2" class="badge badge-warning">In-Progress</span>
+<!--                                <span *ngIf="list.status == 3 && (list.student_content_status == 1 || list.student_content_status == 2)" class="badge badge-warning">In-Progress</span>-->
+                                <span *ngIf="list.student_content_status == '3'" class="badge badge-primary">Score Released</span>
+                                <span *ngIf="list.student_content_status == '4' || list.student_content_status == '6'" class="badge badge-info">Correction Pending</span>
+                                <span *ngIf="list.student_content_status == '5'" class="badge badge-success">Correction Completed</span>
+                                &nbsp;<span class="font-weight-bold">{{list.content_name}}</span></h4>
+                            <div class="d-flex">
+                                <p><span>Subject: </span> <span class="t-name font-weight-bold">{{list.subject_name}}</span></p>
+                                <p class="ml-4"><span>Class: </span> <span class="t-name font-weight-bold">{{list.class_name}}</span></p>
+                                <p *ngIf="list.student_content_status == '3'" class="ml-4"><span>Teacher: </span> <span class="t-name font-weight-bold">{{list.teacher_first_name}} {{list.teacher_last_name}}</span></p>
+                            </div>
+                        </div>
+                        <div class="col-5">
+                            <div class="row align-self-end">
+                                <div class="col-md-12 d-flex flex-column">
+                                    <p class="text-right">
+                                        &nbsp;<span class="total-score">End Date: </span> <span *ngIf="list.end_date != '0000-00-00'" class="t-name font-weight-bold">{{list.end_date|date:'MM-dd-yyyy'}}, {{list.end_time}}</span>&nbsp;
+                                         <span *ngIf="list.overdue != 0 && !list.overdueStatus" class="total-score">Overdue For:
+                                             <span *ngIf="list.overdue != 1" class="over-due1">{{list.overdue}} Days</span>
+                                         </span>
+                                        <span *ngIf="list.overdue != 0 && list.overdueStatus" class="total-score">Due In:
+                                            <span *ngIf="list.overdue != 1" class="due-in">{{list.overdue}} Days</span>
+                                        </span>
+                                        <span *ngIf="list.student_content_status == '3'" class="total-score"><br/>Total Score: <span class="t-name">{{list.total_score}}</span></span>&nbsp;
+                                        <span class="total-score" *ngIf="list.student_content_status == '3'">Obtained Score: <span class="t-name">{{list.obtained_score}}</span></span>
+                                    </p>
+<!--                                    <button [disabled]="list.status == 1" class="btn-sm-i btn-outline-primary pull-right" type="button">Enter</button>-->
+                                    <div class="dropdown text-right" *ngIf="list.allow_answer_key == '1' && list.student_content_status == '3' && list.downloadPDF.length != 0">
+                                        <button class="btn btn-outline-primary">Action <i class="ml-2 fa fa-sort-desc float-right" aria-hidden="true"></i></button>
+                                        <div class="dropdown-content" style="right: 1px">
+                                            <a (click)="checkFunction($event)" target="_blank" [href]="webhost+'/'+list.downloadPDF[0].original_image_url"><i class="fa fa-key pl-1 pr-1" aria-hidden="true"></i> Answer Key</a>
+                                        </div>
+                                    </div>
+<!--                                    <button (click)="openAnswerKey(list)" class="btn-sm-i btn-outline-primary pull-right mr-2" title="Answer Key" type="button"><i class="fa fa-key"></i></button>-->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+<ng-template #throwError>
+    <div class="modal-header">
+        <h4 class="modal-title letter">{{ErrorTitle}}</h4>
+        <i class="fa fa-close cursor" (click)="onSave()" ></i>
+    </div>
+    <div class="modal-body text-center">
+        <p><b>{{message}}</b></p>
+    </div>
+    <div class="modal-footer">
+        <div class="btn-popup pull-right">
+            <button class="btn btn-outline-primary" (click)="onSave()">ok</button>
+        </div>
+    </div>
+</ng-template>
+<ng-template #answerKey>
+    <div class="modal-header">
+        <h4 class="modal-title letter">Answer Key</h4>
+        <i (click)="onSave()" class="fa fa-close cursor"></i>
+    </div>
+    <div class="modal-body text-center">
+        <pdf-viewer [src]="answerKeyPath" style="display: block;height: 100vh;"></pdf-viewer>
+    </div>
+</ng-template>

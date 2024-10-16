@@ -1,0 +1,104 @@
+<!-- Container-fluid starts-->
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card tab2-card">
+                <div class="card-header">
+                    <h5 class="text-capitalize"> {{type}} User</h5>
+                </div>
+                <div class="card-body tab2-card">
+                    <form [formGroup]="accountForm" class="needs-validation user-add" novalida>
+                        <div class="form-group row">
+                            <label for="validationCustom0" class="col-xl-3 col-md-4"><span>*</span>
+                                First Name</label>
+                            <div class="col-xl-8 col-md-7">
+                                <input class="form-control " formControlName="fname" id="validationCustom0"
+                                       type="text" required="">
+                                <em class="error" *ngIf="!accountForm.get('fname').valid && (accountForm.get('fname').dirty || accountForm.get('fname').touched)">First name is required</em>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="validationCustom1" class="col-xl-3 col-md-4"><span>*</span> Last
+                                Name</label>
+                            <div class="col-xl-8 col-md-7">
+                                <input class="form-control" formControlName="lname" id="validationCustom1"
+                                       type="text" required="">
+                                <em class="error" *ngIf="!accountForm.get('lname').valid && (accountForm.get('lname').dirty || accountForm.get('lname').touched)">Last name is required</em>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="validationCustom6" class="col-xl-3 col-md-4"><span style="visibility: hidden">*</span>
+                                Gender</label>
+                            <div class="col-xl-8 col-md-7">
+                                <select class="form-control" formControlName="gender" id="validationCustom6">
+                                    <option selected disabled>--Select--</option>
+                                    <option value="male">Male</option>
+                                    <option value="female">Female</option>
+                                </select>
+<!--                                <em class="error" *ngIf="!accountForm.get('gender').valid && (accountForm.get('gender').dirty || accountForm.get('gender').touched)">Gender is required</em>-->
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label  class="col-xl-3 col-md-4"><span style="visibility: hidden">*</span>
+                                DOB</label>
+                            <div class="col-xl-8 col-md-7 form-group">
+                                <div class="d-flex align-items-baseline">
+                                <input class="form-control" placeholder="yyyy-mm-dd"
+                                       name="dp"  formControlName="dob" ngbDatepicker #d="ngbDatepicker">
+                                <div class="input-group-append">
+                                    <button class="btn btn-outline-secondary calendar" (click)="d.toggle()" type="button"><i class="fa fa-calendar" aria-hidden="true"></i></button>
+                                </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="validationCustom1" class="col-xl-3 col-md-4"><span>*</span>
+                                Mobile</label>
+                            <div class="col-xl-8 col-md-7">
+                                <input class="form-control" formControlName="mobile" id="validationCustom3"
+                                       type="text" required="">
+                                <em class="error" *ngIf="!accountForm.get('mobile').valid && (accountForm.get('mobile').dirty || accountForm.get('mobile').touched)">Mobile is required</em>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="validationCustom2" class="col-xl-3 col-md-4"><span>*</span>
+                                Email</label>
+                            <div class="col-xl-8 col-md-7">
+                                <input class="form-control" formControlName="email" id="validationCustom2"
+                                       type="text" required="">
+                                <em class="error" *ngIf="!accountForm.get('email').valid && (accountForm.get('email').dirty || accountForm.get('email').touched)">Email is required</em>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="validationCustom5" class="col-xl-3 col-md-4"><span>*</span>
+                                Role</label>
+                            <div class="col-xl-8 col-md-7">
+                                <select class="form-control" formControlName="role" id="validationCustom5">
+                                    <option selected disabled>--Select--</option>
+                                    <option value="1">Admin</option>
+                                    <option value="2">User</option>
+                                </select>
+                                <em class="error" *ngIf="!accountForm.get('role').valid && (accountForm.get('role').dirty || accountForm.get('role').touched)">Role is required</em>
+                            </div>
+                        </div>
+
+
+                        <div class="form-group row">
+                            <label for="validationCustom8" class="col-xl-3 col-md-4"><span>*</span>
+                                Location</label>
+                            <div class="col-xl-8 col-md-7">
+                                <input class="form-control" formControlName="location" id="validationCustom8"
+                                       type="text" required="">
+                                <em class="error" *ngIf="!accountForm.get('location').valid && (accountForm.get('location').dirty || accountForm.get('location').touched)">Location is required</em>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="pull-right">
+                        <button type="button" (click)="addUser()" class="btn btn-primary">Save</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Container-fluid Ends-->

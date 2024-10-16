@@ -1,0 +1,94 @@
+main {
+  //width: 70%;
+  //margin: auto;
+  //text-align: center;
+}
+
+//button {
+//  margin-top: 20px;
+//  background-color: #2D8CFF;
+//  color: #ffffff;
+//  text-decoration: none;
+//  padding-top: 10px;
+//  padding-bottom: 10px;
+//  padding-left: 40px;
+//  padding-right: 40px;
+//  display: inline-block;
+//  border-radius: 10px;
+//}
+//
+//button:hover {
+//  background-color: #2681F2;
+//}
+//.overlay1{
+//  height: 30vh !important;
+//  width: 30vw !important;
+//  //background: grey !important;
+//  z-index: 999 !important;
+//  bottom: 0 !important;
+//  right: 15 !important;
+//  position: fixed !important;
+//  opacity: 0.5 !important;
+//  text-align: center !important;
+//  color: #dfdfdf !important;
+//  font-size: 32px !important;
+//}
+//
+.modal-header .btnGrp{
+  position: absolute;
+  top: 8px;
+  right: 10px;
+}
+
+
+.min{
+  width: 250px;
+  height: 35px;
+  overflow: hidden !important;
+  padding: 0px !important;
+  margin: 0px;
+
+  float: left;
+  position: static !important;
+}
+
+.min .modal-dialog, .min .modal-content{
+  height: 100%;
+  width: 100%;
+  margin: 0px !important;
+  padding: 0px !important;
+}
+
+.min .modal-header{
+  height: 100%;
+  width: 100%;
+  margin: 0px !important;
+  padding: 3px 5px !important;
+}
+
+.display-none {
+  display: none;
+}
+
+button .fa{
+  font-size: 16px;
+  margin-left: 10px;
+}
+
+.min .fa{
+  font-size: 14px;
+}
+
+.min .menuTab{display: none;}
+
+button:focus { outline: none; }
+
+.minmaxCon{
+  height: 35px;
+  bottom: 1px;
+  left: 1px;
+  position: fixed;
+  right: 1px;
+  z-index: 9999;
+}
+

@@ -1,0 +1,62 @@
+
+.contentFolder {
+  position: relative;
+  top: 100%;
+  left: 0;
+  z-index: 1000;
+  display: block;
+  float: left;
+  min-width: 10rem;
+  padding: 0.5rem 1rem;
+  margin: 0.125rem 0 0;
+  font-size: 1rem;
+  color: #212529;
+  text-align: left;
+  list-style: none;
+  border: 2px solid #8F008A;
+  //border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 0.25rem;
+}
+
+div.ngx-treeview {
+  height: 1em;
+}
+div.ngx-treeview {
+  position: absolute;
+  //max-height: calc(100% - 6px);
+  //text-overflow: ellipsis;
+}
+
+//.hoverText{
+//  label:hover{
+//    transform: scaleX(1);
+//    transform-origin: bottom left;
+//    border-bottom: 2px solid #8F008A;
+//  }
+//}
+
+.hover-underline-animation {
+  display: inline-block;
+  position: relative;
+  //color: #0087ca;
+}
+
+.hover-underline-animation:after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  transform: scaleX(0);
+  height: 2px;
+  bottom: 0;
+  left: 0;
+  background-color: #0087ca;
+  transform-origin: bottom right;
+  transition: transform 0.25s ease-out;
+}
+
+.hover-underline-animation:hover {
+  //padding-left: 3px;
+  //color: #8F008A;
+  //transform: transform 0.5s ease-out;
+  //transform-origin: bottom left;
+}

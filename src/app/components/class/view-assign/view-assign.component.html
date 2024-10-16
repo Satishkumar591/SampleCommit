@@ -1,0 +1,528 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="pdf-nav col-12 col-md-6 mt-2">
+            <button class="btn btn-outline-primary pull-left" [ngClass]="{'active1': type == 'assignments'}" (click)="classList(2)">Assignment</button>
+            <button class="btn btn-outline-primary pull-left" [ngClass]="{'active1': type == 'assessments'}" (click)="classList(3)">Assessment</button>
+            <button (click)="classList(1)" [ngClass]="{'active1': type == 'resources'}" aria-pressed="true" class="btn btn-outline-primary pull-left" type="button">Resources</button>
+        </div>
+        <div class="pdf-assign-btn col-12 col-md-6 mt-2">
+            <button *ngIf="type == 'resources' && allowClass" class="btn btn-primary pull-right ml-3" (click)="upload('resources')">Add Resource</button>
+            <button *ngIf="type == 'assignments' && allowClass" class="btn btn-primary pull-right ml-3 " (click)="upload('assignments')">Add Assignment</button>
+            <button *ngIf="type == 'assessments' && allowClass" class="btn btn-primary pull-right ml-3" (click)="upload('assessments')">Add Assessment</button>
+            <button class="btn btn-outline-primary pull-right" (click)="backAction()"><i class="fa fa-long-arrow-left fa-1x" aria-hidden="true"></i> Back</button>
+        </div>
+    </div>
+    <hr>
+        <div class="row group-btn mt-2">
+            <div class="col-6 align-self-center">
+                <h4 class="viewname">{{typeName}} : {{className}}</h4>
+            </div>
+            <div class="col-6 col-lg-6 d-flex justify-content-md-end">
+<!--                <button class="btn btn-outline-primary mr-2"> Add Topic <i class="fa fa-plus-circle ml-1" aria-hidden="true"></i></button>-->
+                <div [hidden]="this.viewType == '2'" class="btn-group">
+                    <button class="btn btn-outline-primary dropdown-toggle" data-toggle="dropdown"> {{dueButton}} </button>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item dropdown-link" (click)="typeSelection('1')">Upcoming</a>
+                        <a class="dropdown-item dropdown-link" (click)="typeSelection('2')">In Progress</a>
+                        <a class="dropdown-item dropdown-link" (click)="typeSelection('3')">Completed</a>
+                        <a class="dropdown-item dropdown-link" (click)="typeSelection('0')">All</a>
+                    </div>
+                </div>
+                <button type="button" (click)="listView(2)" [ngClass]="{'active1': gridView == '2'}" class="btn-sm btn-outline-primary pull-right"><i class="fa fa-bars"></i> List</button>
+                <button type="button" (click)="listView(1)" [ngClass]="{'active1': gridView == '1'}" class="btn-sm btn-outline-primary pull-right ml-0"><i class="fa fa-th-large"></i> Grid</button>
+            </div>
+        </div>
+        <div class="row mt-3 d-flex justify-content-center" *ngIf="resourceList == ''">
+            <div class="col-4">
+                <button class="nodataList" >No Data Available!</button>
+            </div>
+        </div>
+        <div *ngIf="type == 'resources'">
+            <div class="col-12 px-0 d-flex flex-wrap mt-3" *ngIf="showGrid">
+                <div  *ngFor="let list of resourceList; let i = index" class="col-4 px-2">
+                    <div class="card class-card class-hover cursor" (click)="navigateToStudentView(list, 'resources')">
+                        <div class="row p-2 d-flex flex-wrap">
+                            <div class="col-3 school-img cursor mt-2" (click)="detailPreview(i)">
+                                <img *ngIf="list.profile_url == ''" alt="" src="assets/images/ristaschool/resource.png" style="width: 50px;height: 50px;" class="cursor rounded-circle">
+                                <img *ngIf="list.profile_url != ''" [src]="sanitizer.bypassSecurityTrustResourceUrl(webhost + '/' + list.profile_url)" style="width: 50px;height: 50px;" class="cursor rounded-circle" alt="">
+                            </div>
+                            <div class="col-9">
+                                <h4 class="t-period"><span class="font-weight-bold">{{list.content_name}}
+                                    <small *ngIf="list.content_format == '1'" class="contenttext">(PDF)</small>
+                                    <small *ngIf="list.content_format == '2'" class="contenttext">(LINK)</small>
+                                    <small *ngIf="list.content_format == '3'" class="contenttext">(TEXT)</small>
+                                    </span></h4>
+                                <p>
+                                    <span *ngIf="list.start_date != '0000-00-00' && list.start_date != ''" class="contenttext font-weight-bold">{{list.start_date| customDateFormat}}</span>
+                                    <span *ngIf="list.start_date != '0000-00-00' && list.end_date != '0000-00-00' && list.start_date != '' && list.end_date != ''">&nbsp;-&nbsp;</span>
+                                    <span *ngIf="list.end_date != '0000-00-00' && list.end_date != ''" class="contenttext font-weight-bold">{{list.end_date| customDateFormat}}</span>&nbsp;<br/>
+                                    <span *ngIf="list.start_time != list.end_time">
+                                            <span class="contenttext font-weight-bold">{{list.start_time}}</span>&nbsp;-&nbsp;<span class="contenttext font-weight-bold">{{list.end_time}}</span>
+                                        </span>
+                                </p>
+                            </div>
+                            <div class="col-12 d-flex justify-content-end  mt-2">
+                                <div class="dropdown" (click)="$event.stopPropagation()">
+                                    <button class="btn btn-outline-primary">Action <i class="fa fa-sort-desc float-right ml-2" aria-hidden="true"></i></button>
+                                    <div class="dropdown-content" style="right: 1px">
+                                        <a (click)="PreviewPage(list, 'resources', 'student_preview')" *ngIf="list.content_format == 1 && (viewType == 1 || viewType == 3)"><i class="fa fa-address-card" aria-hidden="true"></i> Student view</a>
+                                        <a (click)="PreviewText(list, 'resources', 'student_preview')" *ngIf="list.content_format == 3 && (viewType == 1 || viewType == 3)"><i class="fa fa-address-card" aria-hidden="true"></i> Student view</a>
+                                        <a (click)="PreviewText(list, 'resources', 'teacher_preview')" *ngIf="list.content_format == 3"><i class="fa fa-eye" aria-hidden="true"></i> Teacher View</a>
+                                        <a (click)="PreviewPage(list, 'resources', 'teacher_preview')" *ngIf="list.content_format == 1"><i class="fa fa-eye" aria-hidden="true"></i> Teacher View</a>
+                                        <a (click)="editAction(i, list)" *ngIf="allowClass&& viewType != '2'"><i class="fa fa-pencil" aria-hidden="true"></i> Edit</a>
+                                        <a (click)="deleteAction(i)" *ngIf="allowClass"><i class="fa fa-trash" aria-hidden="true"></i> Delete</a>
+                                    </div>
+                                </div>
+                                <!--                            <button (click)="PreviewPage(list, 'resources', 'student_preview')" *ngIf="list.content_format == 1 && (viewType == 1 || viewType == 3)" class="btn-outline-primary btn-sm-view mr-1" title="Student view"><i class="fa fa-address-card" aria-hidden="true"></i></button>-->
+                                <!--                            <button (click)="PreviewText(list, 'resources', 'student_preview')" *ngIf="list.content_format == 3 && (viewType == 1 || viewType == 3)" class="btn-outline-primary btn-sm-view mr-1" title="Student view"><i aria-hidden="true" class="fa fa-address-card"></i></button>-->
+                                <!--                            <button (click)="PreviewText(list, 'resources', 'preview')" *ngIf="list.content_format == 3" class="btn-outline-primary btn-sm-view mr-1" title="Teacher View"><i aria-hidden="true" class="fa fa-eye"></i></button>-->
+                                <!--                            <button (click)="PreviewPage(list, 'resources', 'preview')" *ngIf="list.content_format == 1" class="btn-outline-primary btn-sm-view mr-1" title="Teacher View"><i aria-hidden="true" class="fa fa-eye"></i></button>-->
+                                <!--                            <button (click)="editAction(i, list)" *ngIf="allowClass && viewType != '2'" class="btn-sm-view btn-outline-primary mr-1" title="Edit"><i aria-hidden="true" class="fa fa-pencil "></i></button>-->
+                                <!--                            <button class="btn-sm-view btn-outline-primary" (click)="deleteAction(i)" *ngIf="allowClass" title="Delete"><i class="fa fa-trash " aria-hidden="true"></i></button>-->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 d-flex flex-column justify-content-center mt-3" *ngIf="!showGrid">
+                <div *ngFor="let list of resourceList; let i = index" (click)="navigateToStudentView(list, 'resources')" class="col-12 flex-start card class-card class-hover cursor">
+                    <div class="row p-2 d-flex flex-wrap">
+                        <div class="col-1 school-img cursor" (click)="detailPreview(i)">
+                            <img *ngIf="list.profile_url == ''" alt="" src="assets/images/ristaschool/resource.png" style="width: 50px;height: 50px;" class="cursor rounded-circle">
+                            <img *ngIf="list.profile_url != ''" [src]="sanitizer.bypassSecurityTrustResourceUrl(webhost + '/' + list.profile_url)" style="width: 50px;height: 50px;" class="cursor rounded-circle" alt="">
+                        </div>
+                        <div class="col-6">
+                            <h4 class="t-period"><span class="font-weight-bold">{{list.content_name}}
+                                <small *ngIf="list.content_format == '1'" class="contenttext">(PDF)</small>
+                                    <small *ngIf="list.content_format == '2'" class="contenttext">(LINK)</small>
+                                    <small *ngIf="list.content_format == '3'" class="contenttext">(TEXT)</small>
+                                    </span></h4>
+                            <p class="mb-0">
+                                <span *ngIf="list.start_date != '0000-00-00' && list.start_date != ''" class="contenttext font-weight-bold">{{list.start_date| customDateFormat}}</span>
+                                &nbsp;<span class="contenttext font-weight-bold" *ngIf="list.start_time != list.end_time">{{list.start_time}}</span>
+                                <span *ngIf="list.start_date != '0000-00-00' && list.end_date != '0000-00-00' && list.start_date != '' && list.end_date != ''">&nbsp;-&nbsp;</span>
+                                <span *ngIf="list.end_date != '0000-00-00' && list.end_date != ''" class="contenttext font-weight-bold">{{list.end_date| customDateFormat}}</span>
+                                &nbsp;<span class="contenttext font-weight-bold" *ngIf="list.start_time != list.end_time">{{list.end_time}}</span>
+                            </p>
+                        </div>
+                        <div class="col-5 d-flex justify-content-end mt-2">
+                            <div class="dropdown" (click)="$event.stopPropagation()">
+                                <button class="btn btn-outline-primary">Action <i class="fa fa-sort-desc float-right ml-2" aria-hidden="true"></i></button>
+                                <div class="dropdown-content" style="right: 1px">
+                                    <a (click)="PreviewPage(list, 'resources', 'student_preview')" *ngIf="list.content_format == 1 && (viewType == 1 || viewType == 3)"><i class="fa fa-address-card" aria-hidden="true"></i> Student view</a>
+                                    <a (click)="PreviewText(list, 'resources', 'student_preview')" *ngIf="list.content_format == 3 && (viewType == 1 || viewType == 3)"><i class="fa fa-address-card" aria-hidden="true"></i> Student view</a>
+                                    <a (click)="PreviewText(list, 'resources', 'teacher_preview')" *ngIf="list.content_format == 3"><i class="fa fa-eye" aria-hidden="true"></i> Teacher View</a>
+                                    <a (click)="PreviewPage(list, 'resources', 'teacher_preview')" *ngIf="list.content_format == 1"><i class="fa fa-eye" aria-hidden="true"></i> Teacher View</a>
+                                    <a (click)="editAction(i, list)" *ngIf="allowClass&& viewType != '2'"><i class="fa fa-pencil" aria-hidden="true"></i> Edit</a>
+                                    <a (click)="deleteAction(i)" *ngIf="allowClass"><i class="fa fa-trash" aria-hidden="true"></i> Delete</a>
+                                </div>
+                            </div>
+<!--                            <button (click)="PreviewPage(list, 'resources', 'student_preview')" *ngIf="list.content_format == 1 && (viewType == 1 || viewType == 3)" class="btn-outline-primary btn-sm-view mr-1" title="Student view"><i class="fa fa-address-card" aria-hidden="true"></i></button>-->
+<!--                            <button (click)="PreviewText(list, 'resources', 'student_preview')" *ngIf="list.content_format == 3 && (viewType == 1 || viewType == 3)" class="btn-outline-primary btn-sm-view mr-1" title="Student view"><i aria-hidden="true" class="fa fa-address-card"></i></button>-->
+<!--                            <button (click)="PreviewText(list, 'resources', 'preview')" *ngIf="list.content_format == 3" class="btn-outline-primary btn-sm-view mr-1" title="Teacher View"><i aria-hidden="true" class="fa fa-eye"></i></button>-->
+<!--                            <button (click)="PreviewPage(list, 'resources', 'preview')" *ngIf="list.content_format == 1" class="btn-outline-primary btn-sm-view mr-1" title="Teacher View"><i aria-hidden="true" class="fa fa-eye"></i></button>-->
+<!--                            <button (click)="editAction(i, list)" *ngIf="allowClass && viewType != '2'" class="btn-sm-view btn-outline-primary mr-1" title="Edit"><i aria-hidden="true" class="fa fa-pencil "></i></button>-->
+<!--                            <button class="btn-sm-view btn-outline-primary" (click)="deleteAction(i)" *ngIf="allowClass" title="Delete"><i class="fa fa-trash " aria-hidden="true"></i></button>-->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div *ngIf="type == 'assignments'">
+            <section class="col-12 px-0 d-flex flex-wrap mt-3" *ngIf="showGrid">
+                <div (cdkDropListDropped)="droppedCorrect($event)" cdkDropList>
+                    <div *ngFor="let list of resourceList; let i = index" class="col-4 px-2">
+                        <div class="card class-card class-hover cursor" cdkDrag>
+                            <div class="row p-2 d-flex flex-wrap">
+                                <div class="col-3 school-img cursor mt-2">
+                                    <img *ngIf="list.profile_url == ''" src="assets/images/ristaschool/option-writing-checkbox-concepts-survey.png" style="width: 50px;height: 50px;" class="cursor rounded-circle" alt="">
+                                    <img *ngIf="list.profile_url != ''" [src]="sanitizer.bypassSecurityTrustResourceUrl(webhost + '/' + list.profile_url)" style="width: 50px;height: 50px;" class="cursor rounded-circle" alt="">
+                                </div>
+                                <div class="col-9">
+                                    <h4 class="t-period"><span class="font-weight-bold">{{list.content_name}}
+                                        <small *ngIf="list.content_format == '1'" class="contenttext">(PDF)</small>
+                                    <small *ngIf="list.content_format == '2'" class="contenttext">(LINK)</small>
+                                    <small *ngIf="list.content_format == '3'" class="contenttext">(TEXT)</small>
+                                    </span></h4>
+                                    <p>
+                                        <span *ngIf="list.start_date != '0000-00-00' && list.start_date != ''" class="contenttext font-weight-bold">{{list.start_date| customDateFormat}}</span>
+                                        <span *ngIf="list.start_date != '0000-00-00' && list.end_date != '0000-00-00' && list.start_date != '' && list.end_date != ''">&nbsp;-&nbsp;</span>
+                                        <span *ngIf="list.end_date != '0000-00-00' && list.end_date != ''" class="contenttext font-weight-bold">{{list.end_date| customDateFormat}}</span>&nbsp;<br/>
+                                        <span *ngIf="list.start_time != list.end_time">
+                                            <span class="contenttext font-weight-bold">{{list.start_time}}</span>&nbsp;-&nbsp;<span class="contenttext font-weight-bold">{{list.end_time}}</span>
+                                        </span>
+                                    </p>
+                                </div>
+                                <div class="col-12 d-flex justify-content-end mt-2">
+                                    <div class="dropdown" (click)="$event.stopPropagation()">
+                                        <button class="btn btn-outline-primary">Action <i class="fa fa-sort-desc float-right ml-2" aria-hidden="true"></i></button>
+                                        <div class="dropdown-content" style="right: 1px">
+                                            <a (click)="correctionPage(list, 'assignments')" *ngIf="viewType == 1 || viewType == 3"><i class="fa fa-users" aria-hidden="true"></i> Grading</a>
+                                            <a (click)="PreviewPage(list, 'assignments', 'student_preview')" *ngIf="list.content_format == 1 && (viewType == 1 || viewType == 3)"><i class="fa fa-address-card" aria-hidden="true"></i> Student view</a>
+                                            <a (click)="PreviewText(list, 'assignments', 'student_preview')" *ngIf="list.content_format == 3 && (viewType == 1 || viewType == 3)"><i class="fa fa-address-card" aria-hidden="true"></i> Student view</a>
+                                            <a (click)="openTeacherVersionPdf(list)" *ngIf="list.teacher_version_path && list.teacher_version_path.length != ''"><i class="fa fa-id-badge" aria-hidden="true"></i> Teacher Version PDF</a>
+                                            <a (click)="PreviewText(list, 'assignments', 'teacher_preview')" *ngIf="list.content_format == 3"><i class="fa fa-eye" aria-hidden="true"></i> Teacher View</a>
+                                            <a (click)="PreviewPage(list, 'assignments', 'teacher_preview')" *ngIf="list.content_format == 1"><i class="fa fa-eye" aria-hidden="true"></i> Teacher View</a>
+                                            <a (click)="reportDetails('Assignment', list)" *ngIf="viewType == '1' || viewType == 3 && allowClass"><i class="fa fa-file-text-o" aria-hidden="true"></i> Reports</a>
+                                            <a (click)="itemsReportDetails(list)" *ngIf="viewType != '2'"><i class="fa fa-file-archive-o" aria-hidden="true"></i> Itemized Reports</a>
+                                            <a (click)="editAction(i, list)" *ngIf="allowClass&& viewType != '2'"><i class="fa fa-pencil" aria-hidden="true"></i> Edit</a>
+                                            <a (click)="deleteAction(i)" *ngIf="allowClass"><i class="fa fa-trash" aria-hidden="true"></i> Delete</a>
+                                        </div>
+                                    </div>
+                                    <!--                            <button (click)="correctionPage(list, 'assignments')" *ngIf="viewType == 1 || viewType == 3" class="btn-outline-primary btn-sm-view mr-1" title="Grading"><i aria-hidden="true" class="fa fa-users"></i></button>-->
+                                    <!--                            <button (click)="PreviewPage(list, 'assignments', 'student_preview')" *ngIf="list.content_format == 1 && (viewType == 1 || viewType == 3)" class="btn-outline-primary btn-sm-view mr-1" title="Student view"><i class="fa fa-address-card" aria-hidden="true"></i></button>-->
+                                    <!--                            <button (click)="PreviewText(list, 'assignments', 'student_preview')" *ngIf="list.content_format == 3 && (viewType == 1 || viewType == 3)" class="btn-outline-primary btn-sm-view mr-1" title="Student view"><i aria-hidden="true" class="fa fa-address-card"></i></button>-->
+                                    <!--                            <button (click)="openTeacherVersionPdf(list)" *ngIf="list.teacher_version_path && list.teacher_version_path.length != ''" class="btn-outline-primary btn-sm-view mr-1" title="Teacher Version PDF"><i class="fa fa-id-badge"></i></button>-->
+                                    <!--                            <button (click)="PreviewText(list, 'assignments', 'preview')" *ngIf="list.content_format == 3" class="btn-outline-primary btn-sm-view mr-1" title="Teacher View"><i aria-hidden="true" class="fa fa-eye"></i></button>-->
+                                    <!--                            <button (click)="PreviewPage(list, 'assignments', 'preview')" *ngIf="list.content_format == 1" class="btn-outline-primary btn-sm-view mr-1" title="Teacher View"><i aria-hidden="true" class="fa fa-eye"></i></button>-->
+                                    <!--                            <button (click)="reportDetails('Assignment', list)" *ngIf="viewType == '1' || viewType == 3 && allowClass" class="btn-outline-primary btn-sm-view mr-1" title="Reports"><i class="fa fa-file-text-o" aria-hidden="true"></i></button>-->
+                                    <!--                            <button (click)="itemsReportDetails(list)" *ngIf="viewType != '2'" class="btn-outline-primary btn-sm-view mr-1" title="Itemized Reports"><i aria-hidden="true" class="fa fa-file-archive-o"></i></button>-->
+                                    <!--                            <button (click)="editAction(i, list)" *ngIf="allowClass&& viewType != '2'" class="btn-sm-view btn-outline-primary mr-1" title="Edit"><i aria-hidden="true" class="fa fa-pencil "></i></button>-->
+                                    <!--                            <button class="btn-sm-view btn-outline-primary" (click)="deleteAction(i)" *ngIf="allowClass" title="Delete"><i class="fa fa-trash " aria-hidden="true"></i></button>-->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section class="col-12 d-flex flex-column justify-content-center mt-3 px-0" *ngIf="!showGrid">
+                <div (cdkDropListDropped)="droppedCorrect($event)" cdkDropList>
+                    <div *ngFor="let list of resourceList; let i = index" class="col-12 flex-start cursor">
+                        <div class="col-12 card class-card class-hover" cdkDrag>
+                            <div class="row p-2 d-flex flex-wrap">
+
+                                <div class="col-1 school-img cursor">
+                                    <img *ngIf="list.profile_url == ''" src="assets/images/ristaschool/option-writing-checkbox-concepts-survey.png" style="width: 50px;height: 50px;" class="cursor rounded-circle" alt="">
+                                    <img *ngIf="list.profile_url != ''" [src]="sanitizer.bypassSecurityTrustResourceUrl(webhost + '/' + list.profile_url)" style="width: 50px;height: 50px;" class="cursor rounded-circle" alt="">
+                                </div>
+                                <div class="col-6">
+                                    <h4 class="t-period"><span class="font-weight-bold">{{list.content_name}}
+                                        <small *ngIf="list.content_format == '1'" class="contenttext">(PDF)</small>
+                                    <small *ngIf="list.content_format == '2'" class="contenttext">(LINK)</small>
+                                    <small *ngIf="list.content_format == '3'" class="contenttext">(TEXT)</small>
+                                    </span></h4>
+                                    <p class="mb-0">
+                                        <span *ngIf="list.start_date != '0000-00-00' && list.start_date != ''" class="contenttext font-weight-bold">{{list.start_date| customDateFormat}}</span>
+                                        &nbsp;<span class="contenttext font-weight-bold" *ngIf="list.start_time != list.end_time">{{list.start_time}}</span>
+                                        <span *ngIf="list.start_date != '0000-00-00' && list.end_date != '0000-00-00' && list.start_date != '' && list.end_date != ''">&nbsp;-&nbsp;</span>
+                                        <span *ngIf="list.end_date != '0000-00-00' && list.end_date != ''" class="contenttext font-weight-bold">{{list.end_date| customDateFormat}}</span>
+                                        &nbsp;<span class="contenttext font-weight-bold" *ngIf="list.start_time != list.end_time">{{list.end_time}}</span>
+                                    </p>
+                                </div>
+                                <div class="col-5 d-flex justify-content-end mt-2">
+                                    <div class="dropdown" (click)="$event.stopPropagation()">
+                                        <button class="btn btn-outline-primary">Action <i class="fa fa-sort-desc float-right ml-2" aria-hidden="true"></i></button>
+                                        <div class="dropdown-content" style="right: 1px">
+                                            <a (click)="correctionPage(list, 'assignments')" *ngIf="viewType == 1 || viewType == 3"><i class="fa fa-users" aria-hidden="true"></i> Grading</a>
+                                            <a (click)="PreviewPage(list, 'assignments', 'student_preview')" *ngIf="list.content_format == 1 && (viewType == 1 || viewType == 3)"><i class="fa fa-address-card" aria-hidden="true"></i> Student view</a>
+                                            <a (click)="PreviewText(list, 'assignments', 'student_preview')" *ngIf="list.content_format == 3 && (viewType == 1 || viewType == 3)"><i class="fa fa-address-card" aria-hidden="true"></i> Student view</a>
+                                            <a (click)="openTeacherVersionPdf(list)" *ngIf="list.teacher_version_path && list.teacher_version_path.length != ''"><i class="fa fa-id-badge" aria-hidden="true"></i> Teacher Version PDF</a>
+                                            <a (click)="PreviewText(list, 'assignments', 'teacher_preview')" *ngIf="list.content_format == 3"><i class="fa fa-eye" aria-hidden="true"></i> Teacher View</a>
+                                            <a (click)="PreviewPage(list, 'assignments', 'teacher_preview')" *ngIf="list.content_format == 1"><i class="fa fa-eye" aria-hidden="true"></i> Teacher View</a>
+                                            <a (click)="reportDetails('Assignment', list)" *ngIf="viewType == '1' || viewType == 3 && allowClass"><i class="fa fa-file-text-o" aria-hidden="true"></i> Reports</a>
+                                            <a (click)="itemsReportDetails(list)" *ngIf="viewType != '2'"><i class="fa fa-file-archive-o" aria-hidden="true"></i> Itemized Reports</a>
+                                            <a (click)="editAction(i, list)" *ngIf="allowClass&& viewType != '2'"><i class="fa fa-pencil" aria-hidden="true"></i> Edit</a>
+                                            <a (click)="deleteAction(i)" *ngIf="allowClass"><i class="fa fa-trash" aria-hidden="true"></i> Delete</a>
+                                        </div>
+                                    </div>
+                                    <!--                            <button (click)="correctionPage(list, 'assignments')" *ngIf="viewType == 1 || viewType == 3" class="btn-outline-primary btn-sm-view mr-1" title="Grading"><i aria-hidden="true" class="fa fa-users"></i></button>-->
+                                    <!--                            <button (click)="PreviewPage(list, 'assignments', 'student_preview')" *ngIf="list.content_format == 1 && (viewType == 1 || viewType == 3)" class="btn-outline-primary btn-sm-view mr-1" title="Student view"><i class="fa fa-address-card" aria-hidden="true"></i></button>-->
+                                    <!--                            <button (click)="PreviewText(list, 'assignments', 'student_preview')" *ngIf="list.content_format == 3 && (viewType == 1 || viewType == 3)" class="btn-outline-primary btn-sm-view mr-1" title="Student view"><i aria-hidden="true" class="fa fa-address-card"></i></button>-->
+                                    <!--                            <button (click)="openTeacherVersionPdf(list)" *ngIf="list.teacher_version_path && list.teacher_version_path.length != ''" class="btn-outline-primary btn-sm-view mr-1" title="Teacher Version PDF"><i class="fa fa-id-badge"></i></button>-->
+                                    <!--                            <button (click)="PreviewText(list, 'assignments', 'preview')" *ngIf="list.content_format == 3" class="btn-outline-primary btn-sm-view mr-1" title="Teacher View"><i aria-hidden="true" class="fa fa-eye"></i></button>-->
+                                    <!--                            <button (click)="PreviewPage(list, 'assignments', 'preview')" *ngIf="list.content_format == 1" class="btn-outline-primary btn-sm-view mr-1" title="Teacher View"><i aria-hidden="true" class="fa fa-eye"></i></button>-->
+                                    <!--                            <button (click)="reportDetails('Assignment', list)" *ngIf="viewType == '1' || viewType == 3 && allowClass" class="btn-outline-primary btn-sm-view mr-1" title="Reports"><i class="fa fa-file-text-o" aria-hidden="true"></i></button>-->
+                                    <!--                            <button (click)="itemsReportDetails(list)" *ngIf="viewType != '2'" class="btn-outline-primary btn-sm-view mr-1" title="Itemized Reports"><i aria-hidden="true" class="fa fa-file-archive-o"></i></button>-->
+                                    <!--                            <button (click)="editAction(i, list)" *ngIf="allowClass && viewType != '2'" class="btn-sm-view btn-outline-primary mr-1" title="Edit"><i aria-hidden="true" class="fa fa-pencil "></i></button>-->
+                                    <!--                            <button class="btn-sm-view btn-outline-primary" (click)="deleteAction(i)" *ngIf="allowClass" title="Delete"><i class="fa fa-trash " aria-hidden="true"></i></button>-->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+        </div>
+        <div *ngIf="type == 'assessments'">
+            <div class="col-12 px-0 d-flex flex-wrap mt-3" *ngIf="showGrid">
+                <div *ngFor="let list of resourceList; let i = index" (click)="navigateToStudentView(list, 'assessments')" class="col-4 px-2">
+                    <div class="card class-card class-hover cursor">
+                        <div class="row p-2 d-flex flex-wrap">
+                            <div class="col-3 school-img cursor mt-2" (click)="detailPreview(i)">
+                                <img *ngIf="list.profile_url == ''" src="assets/images/ristaschool/assessment.png" style="width: 50px;height: 50px;" class="cursor rounded-circle" alt="">
+                                <img *ngIf="list.profile_url != ''" [src]="sanitizer.bypassSecurityTrustResourceUrl(webhost + '/' + list.profile_url)" style="width: 50px;height: 50px;" class="cursor rounded-circle" alt="">
+                            </div>
+                            <div class="col-9">
+                                <h4 class="t-period"><span class="font-weight-bold">{{list.content_name}}
+                                    <small *ngIf="list.content_format == '1'" class="contenttext">(PDF)</small>
+                                    <small *ngIf="list.content_format == '2'" class="contenttext">(LINK)</small>
+                                    <small *ngIf="list.content_format == '3'" class="contenttext">(TEXT)</small>
+                                    </span></h4>
+                                <p>
+                                    <span *ngIf="list.start_date != '0000-00-00' && list.start_date != ''" class="contenttext font-weight-bold">{{list.start_date| customDateFormat}}</span>
+                                    <span *ngIf="list.start_date != '0000-00-00' && list.end_date != '0000-00-00' && list.start_date != '' && list.end_date != ''">&nbsp;-&nbsp;</span>
+                                    <span *ngIf="list.end_date != '0000-00-00' && list.end_date != ''" class="contenttext font-weight-bold">{{list.end_date| customDateFormat}}</span>&nbsp;<br/>
+                                    <span *ngIf="list.start_time != list.end_time">
+                                            <span class="contenttext font-weight-bold">{{list.start_time}}</span>&nbsp;-&nbsp;<span class="contenttext font-weight-bold">{{list.end_time}}</span>
+                                        </span>
+                                </p>
+                            </div>
+                            <div class="col-12 d-flex justify-content-end mt-2">
+                                <div class="dropdown" (click)="$event.stopPropagation()">
+                                    <button class="btn btn-outline-primary">Action <i class="fa fa-sort-desc float-right ml-2" aria-hidden="true"></i></button>
+                                    <div class="dropdown-content" style="right: 1px">
+                                        <a (click)="correctionPage(list, 'assessments')" *ngIf="viewType == 1 || viewType == 3"><i class="fa fa-users" aria-hidden="true"></i> Grading</a>
+                                        <a (click)="PreviewPage(list, 'assessments', 'student_preview')" *ngIf="list.content_format == 1 && (viewType == 1 || viewType == 3)"><i class="fa fa-address-card" aria-hidden="true"></i> Student view</a>
+                                        <a (click)="PreviewText(list, 'assessments', 'student_preview')" *ngIf="list.content_format == 3 && (viewType == 1 || viewType == 3)"><i class="fa fa-address-card" aria-hidden="true"></i> Student view</a>
+                                        <a (click)="openTeacherVersionPdf(list)" *ngIf="list.teacher_version_path && list.teacher_version_path.length != ''"><i class="fa fa-id-badge" aria-hidden="true"></i> Teacher Version PDF</a>
+                                        <a (click)="PreviewText(list, 'assessments', 'teacher_preview')" *ngIf="list.content_format == 3"><i class="fa fa-eye" aria-hidden="true"></i> Teacher View</a>
+                                        <a (click)="PreviewPage(list, 'assessments', 'teacher_preview')" *ngIf="list.content_format == 1"><i class="fa fa-eye" aria-hidden="true"></i> Teacher View</a>
+                                        <a (click)="reportDetails('Assessment', list)" *ngIf="viewType == '1' || viewType == 3 && allowClass"><i class="fa fa-file-text-o" aria-hidden="true"></i> Reports</a>
+                                        <a (click)="itemsReportDetails(list)" *ngIf="viewType != '2'"><i class="fa fa-file-archive-o" aria-hidden="true"></i> Itemized Reports</a>
+                                        <a (click)="editAction(i, list)" *ngIf="allowClass&& viewType != '2'"><i class="fa fa-pencil" aria-hidden="true"></i> Edit</a>
+                                        <a (click)="deleteAction(i)" *ngIf="allowClass"><i class="fa fa-trash" aria-hidden="true"></i> Delete</a>
+                                    </div>
+                                </div>
+                                <!--                            <button (click)="correctionPage(list, 'assessments')" *ngIf="viewType == 1 || viewType == 3" class="btn-outline-primary btn-sm-view mr-1" title="Grading"><i aria-hidden="true" class="fa fa-users"></i></button>-->
+                                <!--                            <button (click)="PreviewPage(list, 'assessments', 'student_preview')" *ngIf="list.content_format == 1 && (viewType == 1 || viewType == 3)" class="btn-outline-primary btn-sm-view mr-1" title="Student view"><i class="fa fa-address-card" aria-hidden="true"></i></button>-->
+                                <!--                            <button (click)="PreviewText(list, 'assessments', 'student_preview')" *ngIf="list.content_format == 3 && (viewType == 1 || viewType == 3)" class="btn-outline-primary btn-sm-view mr-1" title="Student view"><i aria-hidden="true" class="fa fa-address-card"></i></button>-->
+                                <!--                            <button (click)="openTeacherVersionPdf(list)" *ngIf="list.teacher_version_path && list.teacher_version_path.length != ''" class="btn-outline-primary btn-sm-view mr-1" title="Teacher Version PDF"><i class="fa fa-id-badge"></i></button>-->
+                                <!--                            <button (click)="PreviewText(list, 'assessments', 'preview')" *ngIf="list.content_format == 3" class="btn-outline-primary btn-sm-view mr-1" title="Teacher View"><i aria-hidden="true" class="fa fa-eye"></i></button>-->
+                                <!--                            <button (click)="PreviewPage(list, 'assessments', 'preview')" *ngIf="list.content_format == 1" class="btn-outline-primary btn-sm-view mr-1" title="Teacher View"><i aria-hidden="true" class="fa fa-eye"></i></button>-->
+                                <!--                            <button (click)="reportDetails('Assessment', list)" *ngIf="viewType == '1' || viewType == 3 && allowClass" class="btn-outline-primary btn-sm-view mr-1" title="Reports"><i class="fa fa-file-text-o" aria-hidden="true"></i></button>-->
+                                <!--                            <button (click)="itemsReportDetails(list)" *ngIf="viewType != '2'" class="btn-outline-primary btn-sm-view mr-1" title="Itemized Reports"><i aria-hidden="true" class="fa fa-file-archive-o"></i></button>-->
+                                <!--                            <button (click)="editAction(i, list)" *ngIf="allowClass && viewType != '2'" class="btn-sm-view btn-outline-primary mr-1" title="Edit"><i aria-hidden="true" class="fa fa-pencil "></i></button>-->
+                                <!--                            <button class="btn-sm-view btn-outline-primary" (click)="deleteAction(i)" *ngIf="allowClass" title="Delete"><i class="fa fa-trash " aria-hidden="true"></i></button>-->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 d-flex flex-column justify-content-center mt-3" *ngIf="!showGrid">
+                <div *ngFor="let list of resourceList; let i = index" (click)="navigateToStudentView(list, 'assessments')" class="col-12 card class-card class-hover cursor">
+                    <div class="row p-2 d-flex flex-wrap">
+                        <div class="col-1 school-img cursor" (click)="detailPreview(i)">
+                            <img *ngIf="list.profile_url == ''" src="assets/images/ristaschool/assessment.png" style="width: 50px;height: 50px;" class="cursor rounded-circle" alt="">
+                            <img *ngIf="list.profile_url != ''" [src]="sanitizer.bypassSecurityTrustResourceUrl(webhost + '/' + list.profile_url)" style="width: 50px;height: 50px;" class="cursor rounded-circle" alt="">
+                        </div>
+                        <div class="col-6">
+                            <h4 class="t-period"><span class="font-weight-bold">{{list.content_name}}
+                                <small *ngIf="list.content_format == '1'" class="contenttext">(PDF)</small>
+                                    <small *ngIf="list.content_format == '2'" class="contenttext">(LINK)</small>
+                                    <small *ngIf="list.content_format == '3'" class="contenttext">(TEXT)</small>
+                                    </span></h4>
+                            <p class="mb-0">
+                                <span *ngIf="list.start_date != '0000-00-00' && list.start_date != ''" class="contenttext font-weight-bold">{{list.start_date| customDateFormat}}</span>
+                                &nbsp;<span class="contenttext font-weight-bold" *ngIf="list.start_time != list.end_time">{{list.start_time}}</span>
+                                <span *ngIf="list.start_date != '0000-00-00' && list.end_date != '0000-00-00' && list.start_date != '' && list.end_date != ''">&nbsp;-&nbsp;</span>
+                                <span *ngIf="list.end_date != '0000-00-00' && list.end_date != ''" class="contenttext font-weight-bold">{{list.end_date| customDateFormat}}</span>
+                                &nbsp;<span class="contenttext font-weight-bold" *ngIf="list.start_time != list.end_time">{{list.end_time}}</span>
+                            </p>
+                        </div>
+                        <div class="col-5 d-flex justify-content-end mt-2">
+                            <div class="dropdown" (click)="$event.stopPropagation()">
+                                <button class="btn btn-outline-primary">Action <i class="fa fa-sort-desc float-right ml-2" aria-hidden="true"></i></button>
+                                <div class="dropdown-content" style="right: 1px">
+                                    <a (click)="correctionPage(list, 'assessments')" *ngIf="viewType == 1 || viewType == 3"><i class="fa fa-users" aria-hidden="true"></i> Grading</a>
+                                    <a (click)="PreviewPage(list, 'assessments', 'student_preview')" *ngIf="list.content_format == 1 && (viewType == 1 || viewType == 3)"><i class="fa fa-address-card" aria-hidden="true"></i> Student view</a>
+                                    <a (click)="PreviewText(list, 'assessments', 'student_preview')" *ngIf="list.content_format == 3 && (viewType == 1 || viewType == 3)"><i class="fa fa-address-card" aria-hidden="true"></i> Student view</a>
+                                    <a (click)="openTeacherVersionPdf(list)" *ngIf="list.teacher_version_path && list.teacher_version_path.length != ''"><i class="fa fa-id-badge" aria-hidden="true"></i> Teacher Version PDF</a>
+                                    <a (click)="PreviewText(list, 'assessments', 'teacher_preview')" *ngIf="list.content_format == 3"><i class="fa fa-eye" aria-hidden="true"></i> Teacher View</a>
+                                    <a (click)="PreviewPage(list, 'assessments', 'teacher_preview')" *ngIf="list.content_format == 1"><i class="fa fa-eye" aria-hidden="true"></i> Teacher View</a>
+                                    <a (click)="reportDetails('Assessment', list)" *ngIf="viewType == '1' || viewType == 3 && allowClass"><i class="fa fa-file-text-o" aria-hidden="true"></i> Reports</a>
+                                    <a (click)="itemsReportDetails(list)" *ngIf="viewType != '2'"><i class="fa fa-file-archive-o" aria-hidden="true"></i> Itemized Reports</a>
+                                    <a (click)="editAction(i, list)" *ngIf="allowClass&& viewType != '2'"><i class="fa fa-pencil" aria-hidden="true"></i> Edit</a>
+                                    <a (click)="deleteAction(i)" *ngIf="allowClass"><i class="fa fa-trash" aria-hidden="true"></i> Delete</a>
+                                </div>
+                            </div>
+<!--                            <button (click)="correctionPage(list, 'assessments')" *ngIf="viewType == 1 || viewType == 3" class="btn-outline-primary btn-sm-view mr-1" title="Grading"><i aria-hidden="true" class="fa fa-users"></i></button>-->
+<!--                            <button (click)="PreviewPage(list, 'assessments', 'student_preview')" *ngIf="list.content_format == 1 && (viewType == 1 || viewType == 3)" class="btn-outline-primary btn-sm-view mr-1" title="Student view"><i class="fa fa-address-card" aria-hidden="true"></i></button>-->
+<!--                            <button (click)="PreviewText(list, 'assessments', 'student_preview')" *ngIf="list.content_format == 3 && (viewType == 1 || viewType == 3)" class="btn-outline-primary btn-sm-view mr-1" title="Student view"><i aria-hidden="true" class="fa fa-address-card"></i></button>-->
+<!--                            <button (click)="openTeacherVersionPdf(list)" *ngIf="list.teacher_version_path && list.teacher_version_path.length != ''" class="btn-outline-primary btn-sm-view mr-1" title="Teacher Version PDF"><i class="fa fa-id-badge"></i></button>-->
+<!--                            <button (click)="PreviewText(list, 'assessments', 'preview')" *ngIf="list.content_format == 3" class="btn-outline-primary btn-sm-view mr-1" title="Teacher View"><i aria-hidden="true" class="fa fa-eye"></i></button>-->
+<!--                            <button (click)="PreviewPage(list, 'assessments', 'preview')" *ngIf="list.content_format == 1" class="btn-outline-primary btn-sm-view mr-1" title="Teacher View"><i aria-hidden="true" class="fa fa-eye"></i></button>-->
+<!--                            <button (click)="reportDetails('Assessment', list)" *ngIf="viewType == '1' || viewType == 3 && allowClass" class="btn-outline-primary btn-sm-view mr-1" title="Reports"><i class="fa fa-file-text-o" aria-hidden="true"></i></button>-->
+<!--                            <button (click)="itemsReportDetails(list)" *ngIf="viewType != '2'" class="btn-outline-primary btn-sm-view mr-1" title="Itemized Reports"><i aria-hidden="true" class="fa fa-file-archive-o"></i></button>-->
+<!--                            <button (click)="editAction(i, list)" *ngIf="allowClass && viewType != '2'" class="btn-sm-view btn-outline-primary mr-1" title="Edit"><i aria-hidden="true" class="fa fa-pencil "></i></button>-->
+<!--                            <button class="btn-sm-view btn-outline-primary" (click)="deleteAction(i)" *ngIf="allowClass" title="Delete"><i class="fa fa-trash " aria-hidden="true"></i></button>-->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+</div>
+<ng-template #detailsTemplate let-c="close" let-d="dismiss">
+    <div  class="modal-header">
+        <p><b>{{contentname}}</b></p>
+        <i class="fa fa-times cursor" (click)="close()" title="close" ></i>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="row-6">
+                    <img *ngIf="profileurl == '' && contentType == 1" src="assets/images/ristaschool/resource.png" style="width: 370px; height: 270px" alt="">
+                    <img *ngIf="profileurl == '' && contentType == 2" src="assets/images/ristaschool/option-writing-checkbox-concepts-survey.png" style="width: 370px; height: 270px" alt="">
+                    <img *ngIf="profileurl == '' && contentType == 3" src="assets/images/ristaschool/assessment.png" style="width: 370px; height: 270px" alt="">
+                    <img *ngIf="profileurl != ''" [src]="sanitizer.bypassSecurityTrustResourceUrl(webhost + '/' + profileurl)" style="width: 370px; height: 270px" alt="">
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="mt-2">
+                    <p>Created by <br><b class="contenttext">{{createdby}}</b></p>
+                    <p>Grade <br><b class="contenttext">{{gradename}}</b></p>
+                    <p>Subject <br><b class="contenttext">{{subjectname}}</b></p>
+                    <p>Tags <br><b class="contenttext">{{tags}}</b></p>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <p>No of Questions <br><b class="contenttext">{{noofquestions}}</b></p>
+                    </div>
+                    <div class="col-md-6">
+                        <p>Status <br><b class="contenttext">{{details}}</b></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>
+<ng-template #content let-c="close" let-d="dismiss" *ngFor="let list of resourceList">
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">Delete {{type == 'resources' ? 'Resource' : type == 'assignments' ? 'Assignment' : 'Assessment'}}</h4>
+    </div>
+    <div class="modal-body">
+        <!-- Container-fluid starts-->
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-12">
+                    <h5 class="text-center mt-3">Are you sure you want to delete this {{type == 'resources' ? 'resource' : type == 'assignments' ? 'assignment' : 'assessment'}}</h5>
+                </div>
+            </div>
+        </div>
+
+        <!-- Container-fluid Ends-->
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-primary" (click)="update(del)">Delete</button>
+        <button type="button" class="btn btn-outline-primary" (click)="close()">Cancel</button>
+    </div>
+</ng-template>
+<ng-template #assign let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h4 class="contenttext">{{contentname}}</h4>
+    </div>
+    <div class="modal-body">
+        <form [formGroup]="contentForm">
+            <div>
+                <div class="row form-group">
+                    <div class="col-md-12">
+                        <label>{{viewType == '2' ? 'Content Folder Name' : 'Class Name'}}</label>
+                    </div>
+                    <div class="col-md-12">
+                        <input class="form-control" readonly type="text" placeholder="Enter the Class Name" value="{{className}}">
+                    </div>
+                </div>
+                </div>
+
+            <div class="row form-group mb-3" *ngIf="allowScore">
+                <!--        <div class="row form-group">-->
+                <div class="col-md-12">
+                    <label>Release Score</label>
+                </div>
+                <div class="col-md-12">
+                    <!--                <select class="form-control"  formControlName="releaseScore" (change)="typeSelection()">-->
+                    <select (change)="releaseScoreFilter($event)"  class="form-control" formControlName="releaseScore">
+                        <option  value="n/a" disabled>Select Response type</option>
+                        <option value="0">Do not release scores or response</option>
+                        <option value="1">Release scores and correct answers after the test is complete</option>
+                        <option value="2" *ngIf="contentFormat == '3'">Release scores and correct answers after each question</option>
+                    </select>
+                </div>
+            </div>
+            <div *ngIf="!checkAutoRelease" class="col-12 px-0">
+                <p class="assign-error text-center">Auto score release is not applicable for this content</p>
+            </div>
+
+                <div *ngIf="viewType != '2'" class="row form-group">
+                    <div class="col-md-2">
+                        <div class="row-md-12">
+                            <label>Start Date</label>
+                        </div>
+                        <div class="row-md-12">
+                            <input class="form-control" placeholder="Start Date" formControlName="startdate"
+                                   name="dp" angular-mydatepicker #dp="angular-mydatepicker" autocomplete="off"
+                                   [options]="myDpOptions1" (dateChanged)="onDateChanged($event)" (click)="dp.toggleCalendar()">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="row-md-12">
+                            <label>Start Time</label>
+                        </div>
+                        <div class="row-md-12">
+                            <ngb-timepicker [(ngModel)]="fromTime" [ngModelOptions]="{standalone: true}" (ngModelChange)="checkTime()"  [meridian]="meridian" [spinners]="spinner"></ngb-timepicker>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="row-md-12">
+                            <label>End Date</label>
+                        </div>
+                        <div class="row-md-12">
+                            <input class="form-control" placeholder="End Date" formControlName="enddate"
+                                   name="dp1" angular-mydatepicker #dp1="angular-mydatepicker" autocomplete="off"
+                                   [options]="myDpOptions2" (click)="dp1.toggleCalendar()">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="row-md-12">
+                            <label>End Time</label>
+                        </div>
+                        <div class="row-md-12">
+                            <ngb-timepicker [(ngModel)]="toTime" [ngModelOptions]="{standalone: true}" (ngModelChange)="checkTime()"  [meridian]="meridian" [spinners]="spinner"></ngb-timepicker>
+                        </div>
+                    </div>
+                </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-outline-primary" (click)="contentClose()">Cancel</button>
+        <button class="btn btn-primary" (click)="editContentDetails(edit)">Submit</button>
+    </div>
+</ng-template>
+<ng-template #reports>
+    <div class="modal-header">
+        <h4 class="modal-title">Report</h4>
+        <i class="fa fa-close cursor" (click)="onSave()" ></i>
+    </div>
+    <div class="modal-body">
+        <app-missed-work-report
+                [classShow] = "true"
+                [showContent]= "selectContent"
+                [studentView]= "false"
+                [timeView]= "false"
+                [contentNameValue]= "contentNameValue">
+        </app-missed-work-report>
+    </div>
+
+</ng-template>
+<ng-template #itemsReports>
+    <div class="modal-header">
+        <h4 class="modal-title">{{reportData.content_name | titlecase}} - Report</h4>
+        <i class="fa fa-close cursor" (click)="onSave()" ></i>
+    </div>
+    <div class="modal-body">
+        <app-items-report
+                [showContent]= "'other'"
+                [studentView]= "false"
+                [timeView]= "true">
+        </app-items-report>
+    </div>
+
+</ng-template>
+<ng-template #teacherVersion>
+    <div class="modal-header">
+        <h4 class="modal-title">Teacher Version</h4>
+        <i (click)="onSave()" class="fa fa-close cursor" ></i>
+    </div>
+    <div class="modal-body">
+        <pdf-viewer [src]="pdfTeacherVersion" style="display: block;height: 100vh;"></pdf-viewer>
+    </div>
+</ng-template>

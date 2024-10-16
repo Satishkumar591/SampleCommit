@@ -1,0 +1,305 @@
+<section class=" container-fluid missed-work-report">
+    <form [formGroup]="studentReport">
+        <div class="row mb-2 mt-4">
+<!--            <div class="form-group col-6 col-md-2" *ngIf="!classShow">-->
+<!--                <label class="col-xl-12 col-md-12"><span style="visibility: hidden">*</span>-->
+<!--                    Class List</label>-->
+<!--                <div class="col-xl-12 col-md-12">-->
+<!--                    <ng-select (change)="selectClass()"-->
+<!--                               [items]="classList"-->
+<!--                               bindLabel="class_name"-->
+<!--                               bindValue="class_id"-->
+<!--                               formControlName="className"-->
+<!--                               placeholder="Class List">-->
+<!--                    </ng-select>-->
+<!--                </div>-->
+<!--            </div>-->
+            <div class="form-group col-6 col-md-3" *ngIf="classShow">
+                <label class="col-xl-12 col-md-12"><span style="visibility: hidden">*</span>
+                    Class Name</label>
+                <div class="col-xl-12 col-md-12">
+                    <input type="text" placeholder="Class Name" readonly class="form-control" [value]="reportData.class_name">
+                </div>
+            </div>
+            <div class="form-group col-6 col-md-3" *ngIf="missedWorkStudentNoRecord">
+                <label class="col-xl-12 col-md-12"><span style="visibility: hidden">*</span>
+                    Student List</label>
+                <div class="col-xl-12 col-md-12">
+                    <ng-select (change)="studentReportDetails()"
+                               [items]="studentList"
+                               bindLabel="student_name"
+                               bindValue="student_id"
+                               formControlName="studentName"
+                               placeholder="Student List">
+                    </ng-select>
+                </div>
+            </div>
+<!--            <div class="form-group col-12 col-md-3" *ngIf="missedWorkStudentNoRecord == true">-->
+<!--                <label class="col-xl-12 col-md-12">Student</label>-->
+<!--                <select class="custom-select col-md-12" formControlName="studentName" (change)="studentReportDetails()">-->
+<!--                    <option value="">All</option>-->
+<!--                    <option *ngFor="let student of studentList" [value]="student.student_id">{{student.student_name}}</option>-->
+<!--                </select>-->
+<!--            </div>-->
+            <div class="form-group col-6 col-md-2" *ngIf="classShow && showContent == 'other'">
+                <label class="col-xl-12 col-md-12">Content Type</label>
+                <select class="custom-select col-md-12" formControlName="contentType" (change)="contentTypeSelect()">
+                    <option value="2">Assignment</option>
+                    <option value="3" >Assessment</option>
+                </select>
+            </div>
+            <div class="form-group col-6 col-md-2" *ngIf="classShow && (showContent == 'Assignment' || showContent == 'Assessment')">
+                <label class="col-xl-12 col-md-12"><span style="visibility: hidden">*</span>
+                    Content Type</label>
+                <div class="col-xl-12 col-md-12">
+                    <input type="text" placeholder="Class Name" readonly class="form-control" [value]="showContent">
+                </div>
+            </div>
+            <div class="form-group col-6 col-md-2">
+                <label class="col-xl-12 col-md-12">Status</label>
+                <select class="custom-select col-md-12" formControlName="submitted" (change)="studentReportDetails()">
+                    <option value="">All</option>
+                    <option value="1" >Up Coming</option>
+                    <option value="2" >In Progress</option>
+                    <option value="3" >Completed</option>
+                    <option value="4" >Overdue</option>
+                    <option value="5" >Not Started</option>
+                </select>
+            </div>
+            <div class="form-group col-6 col-md-2">
+                <label class="col-xl-12 col-md-12">Performance</label>
+                <select class="custom-select col-md-12" formControlName="performance" (change)="studentReportDetails()">
+                    <option value="">All</option>
+                    <option value="1" >Master</option>
+                    <option value="2" >Excellent</option>
+                    <option value="3" >Proficient</option>
+                    <option value="4" >Average</option>
+                    <option value="5">Below Average</option>
+                    <option value="6">Missed</option>
+                </select>
+            </div>
+            <div class="form-group col-6 col-md-3" *ngIf="timeView">
+                <label class="col-xl-12 col-md-12" ><span style="visibility: hidden">*</span>
+                    From Date</label>
+                <div class="col-xl-12 col-md-12 form-group">
+                    <div class="input-group">
+                        <input class="form-control" name="fromdate" placeholder="mm-dd-yyyy" [options]="myDpOptions"
+                               formControlName="fromDate" angular-mydatepicker #dp="angular-mydatepicker" (dateChanged)="onDateChanged1($event, '1')">
+                        <div class="input-group-append">
+                            <button type="button" class="btn btn-primary" (click)="dp.toggleCalendar()">
+                                <i class="fa fa-calendar-o"></i>
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="form-group col-6 col-md-3" *ngIf="timeView">
+                <label class="col-xl-12 col-md-12" ><span style="visibility: hidden">*</span>
+                    To Date</label>
+                <div class="col-xl-12 col-md-12 form-group">
+                    <div class="input-group">
+                        <input class="form-control" name="todate" placeholder="mm-dd-yyyy"
+                               formControlName="toDate" angular-mydatepicker #dp1="angular-mydatepicker" [options]="myDpOptions1" (dateChanged)="onDateChanged1($event, '2')"/>
+                        <div class="input-group-append">
+                            <button type="button" class="btn btn-primary" (click)="dp1.toggleCalendar()">
+                                <i class="fa fa-calendar-o"></i>
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="form-group col-6 col-md-6">
+                <label class="col-xl-12 col-md-12"><span style="visibility: hidden">*</span>
+                    Content Name</label>
+                <div class="col-xl-12 col-md-12">
+                    <ng-select (change)="selectContantName($event)"
+                               [items]="studentContentList"
+                               bindLabel="content_name"
+                               bindValue="content_id"
+                               formControlName="contentName"
+                               placeholder="Content Name"
+                               [multiple]="true"
+                               [readonly]="showContentDetails">
+                        <ng-template ng-header-tmp>
+                                <h5 class="cursor letter pt-2" (click)="onSelectAll()">Select All</h5>
+                        </ng-template>
+                    </ng-select>
+                    <!--                    [multiple]="true"-->
+                </div>
+            </div>
+        </div>
+    </form>
+<!--    <div class="row" *ngIf="missedWorkNoRecord">-->
+<!--        <div class="col-md-6">-->
+<!--        </div>-->
+<!--        <div class="col-md-6">-->
+<!--            <h6 class="yet-to-start-color">Yet To Start</h6>-->
+<!--            <h6 class="in-progress-color">In Progress</h6>-->
+<!--            <h6 class="completed-color">Completed</h6>-->
+<!--            <h6 class="over-due">Overdue</h6>-->
+<!--            <h6 class="yet-to-start-color">In Progress - Not Started</h6>-->
+<!--        </div>-->
+<!--    </div>-->
+    <div class="row" *ngIf="missedWorkNoRecord">
+        <div class="col-12 card p-3">
+            <div class="row">
+               <div class="col-4">
+                   <h3 class="letter mt-3 mb-3" *ngIf="studentReport.controls.contentType.value  == '2'">Assignment Details</h3>
+                   <h3 class="letter mt-3 mb-3" *ngIf="studentReport.controls.contentType.value  == '3'">Assessment Details</h3>
+               </div>
+                <div class="col-8 d-flex justify-content-end">
+                    <p class="p-3">
+                        <small class="ml-3"><i class="fa fa-square yet-to-start-color-bg p-1"></i> - UpComing</small>
+                        <small class="ml-3"><i class="fa fa-square in-progress-color-bg p-1"></i> - In Progress</small>
+                        <small class="ml-3"><i class="fa fa-square completed-color-bg p-1"></i> - Completed</small>
+                        <small class="ml-3"><i class="fa fa-square pending-color-bg p-1"></i> - Pending</small>
+                        <small class="ml-3"><i class="fa fa-square over-due-bg p-1"></i> - Overdue</small>
+                        <small class="ml-3"><i class="fa fa-square never-bg p-1"></i> - Not Started</small>
+                    </p>
+                </div>
+            </div>
+<!--        <ng2-smart-table [settings]="missedWorkReport"  [source]="rows"></ng2-smart-table>-->
+<!--            <ngx-datatable-->
+<!--                    class="bootstrap"-->
+<!--                    [rows]="rows"-->
+<!--                    [columnMode]="'force'"-->
+<!--                    [headerHeight]="50"-->
+<!--                    [footerHeight]="50"-->
+<!--                    [rowHeight]="'auto'"-->
+<!--                    [externalPaging]="true"-->
+<!--                    [count]="totalrecords"-->
+<!--                    [offset]="pageOffSet"-->
+<!--                    [limit]="recordsperpage"-->
+<!--                    (page)='setPage($event)'-->
+<!--                    [scrollbarH]="harizontalScroll">-->
+
+<!--                <ngx-datatable-column name="Student Name" prop="student_name">-->
+<!--                    <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">-->
+<!--                        <h6>{{row.student_name}}</h6>-->
+<!--                    </ng-template>-->
+<!--                </ngx-datatable-column>-->
+<!--getRowIndex(rows-->
+<!--                <ngx-datatable-column *ngFor="let col1 of coloumValues[0]; let i = index" [name]="rows.content_name">-->
+<!--                    <ng-template *ngFor="let col of col1[i];" ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">-->
+<!--&lt;!&ndash;                        <p>&ndash;&gt;-->
+<!--                            <span class="yet-to-start-color" *ngIf="col.color == '1'"></span>-->
+<!--&lt;!&ndash;                        </p>&ndash;&gt;-->
+<!--                        <span class="in-progress-color" *ngIf="col.color == '2'"></span>-->
+<!--                        <span class="completed-color" *ngIf="col.color == '3'"></span>-->
+<!--                        <span class="over-due" *ngIf="col.color == '4'" (click)="notifyParent(col, 2)"> Notify Parent</span>-->
+<!--                        <span class="never" *ngIf="col.color == '5'"></span>-->
+<!--                    </ng-template>-->
+<!--                </ngx-datatable-column>-->
+
+<!--                <ngx-datatable-column name="Performance" prop="performance">-->
+<!--                    <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-row="row" let-value="value">-->
+<!--                        <h6>{{value}}<span *ngIf="value != '-'">%</span></h6>-->
+<!--                    </ng-template>-->
+<!--                </ngx-datatable-column>-->
+<!--            </ngx-datatable>-->
+            <div class="row">
+                <div class="col-12 table-responsive-ipad">
+                    <table class="table table-bordered">
+                        <thead *ngFor="let table of rows; let i=index;">
+                            <th *ngIf="i==0;">Student Name</th>
+                            <ng-container *ngIf="i==0;">
+                                <th  *ngFor="let item of table.content" class="text-center align-middle"><span class="d-block">{{item.content_name}}</span> <span *ngIf="item.end_date != '0000-00-00'">{{item.end_date | customDateFormat}}</span></th>
+                            </ng-container>
+                            <th *ngIf="i==0;" class="text-center align-middle">Performance</th>
+                        </thead>
+                        <tr *ngFor="let table of rows; let i=index;">
+                            <td (click)="getStudentFullDetail(table)" class="color-primary cursor"> {{table.student_name}}</td>
+                            <td *ngFor="let item of table.content" class="text-center align-bottom">
+                                <div *ngIf="item.status == '2' || item.status == '3' || item.status == '6' || item.status == '7'" class="col-12 mb-1 color-primary px-0">
+                                    <span style="border: none; padding: 2px 8px">{{item.attend_questions}}</span>/<span style="border: none; padding: 2px 8px">{{item.total_questions}}</span>
+                                </div>
+                                <a (click)="notifyParent(item, 2)" *ngIf="item.status == '4' || item.status == '6'" class="d-block cursor notify-parent mb-1"> Notify Parent <span *ngIf="item.status == '6'">({{item.parents_notify_count}})</span></a>
+                                <span (click)="notifyParent(item, 2)"  *ngIf="item.status == '4'" class="over-due cursor">{{item.parents_notify_count}}</span>
+                                <span class="cursor" *ngIf="item.status == '0' || item.status == ''">-</span>
+                                <span class="yet-to-start-color cursor" (click)="studentCorrectionDetail(item)" *ngIf="item.status == '1'">{{item.student_average_score}}</span>
+                                <!--                        </p>-->
+                                <span (click)="studentCorrectionDetail(item)" *ngIf="item.status == '2' || item.status == '6'" class="in-progress-color cursor">{{item.student_average_score}}</span>
+                                <span class="completed-color cursor" (click)="studentCorrectionDetail(item)" *ngIf="item.status == '3'">{{item.student_average_score}}</span>
+                                <span class="never cursor" (click)="studentNotAnswer(item)" *ngIf="item.status == '5'">{{item.student_average_score}}</span>
+                                <span (click)="studentCorrectionDetail(item)" *ngIf="item.status == '7'" class="pending-color cursor">{{item.student_average_score}}</span>
+                                <span *ngIf="item.testcode_id > 0" class="ml-2 cursor bg-primary p-1" title="score Details" (click)="scoreRedirect(item.student_content_id)"><i class="fa fa-line-chart" aria-hidden="true"></i></span>
+                            </td>
+                            <td class="text-center align-middle">{{table.performance}}<span *ngIf="table.performance != '-'">%</span></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row d-flex justify-content-center list-card mt-3" *ngIf="!missedWorkNoRecord">
+        <div class="col-12">
+            <button class="nodataList">{{message}}</button>
+        </div>
+    </div>
+    <ng-template #contentnow let-c="close" let-d="dismiss">
+        <div class="modal-header">
+            <h4 class="modal-title col-12 text-center"><b>Notify Parent</b></h4>
+        </div>
+        <div class="modal-body">
+            <!-- Container-fluid starts-->
+            <div class="container-fluid">
+                <h5 class="text-center">Are you sure want to notify {{studentname[0].student_name}} parents ?</h5>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-primary" (click)="confirmNotifiy()">Confirm</button>
+            <button type="button" class="btn btn-outline-primary" (click)="close()">Cancel</button>
+        </div>
+    </ng-template>
+</section>
+<ng-template #notStarted let-c="close" let-d="dismiss">
+        <div class="modal-header">
+            <h4 class="modal-title col-12 text-center"><b>Not Started</b></h4>
+        </div>
+        <div class="modal-body">
+            <!-- Container-fluid starts-->
+            <div class="container-fluid">
+                <h5 class="text-center"> Not submitted the
+                    <span *ngIf="studentReport.controls.contentType.value  == '2'">Assignment</span>
+                    <span *ngIf="studentReport.controls.contentType.value  == '3'">Assessment</span> yet.</h5>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-outline-primary" (click)="closeNotstarted()">Ok</button>
+        </div>
+</ng-template>
+<ng-template #viewStudentDetails let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h4 class="modal-title">Student Answer Report - <span class="color-primary">{{contentData}}</span></h4>
+<!--        <h4 class="modal-title">{{contentData}}</h4>-->
+        <i class="fa fa-close cursor" (click)="onSave()" ></i>
+    </div>
+    <div class="modal-body">
+        <!-- Container-fluid Ends-->
+        <div *ngIf="contentData == ''" id="custom-pdf-loader" style="height: 40vh;">
+            <img alt="" src="assets/images/pre-loader/loader-01.svg">
+        </div>
+        <app-answer-sheet (studentName)="getStudentName($event)" [answerShow]="true"
+                          [backStatus]="false" [classId]="classId" [contentFormat]="contentFormat"
+                          [contentId]="contentId" [studentReportId]="studentId" [studentContentId]="studentContentId" ></app-answer-sheet>
+    </div>
+</ng-template>
+<ng-template #viewoveralldetails let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h4 class="modal-title color-primary" id="modal-basic-title">{{studentName}} Overall details</h4>
+        <i (click)="closeOverAll()" aria-hidden="true"
+           class="fa fa-close fa-lg mt-1" style="color:#7F3486; cursor: pointer; float: right;"></i>
+    </div>
+    <div class="modal-body">
+        <app-overalldetails
+                [studentdata]="viewdetail"
+        >
+        </app-overalldetails>
+    </div>
+<!--    <div class="modal-footer">-->
+<!--        <button (click)="close()" class="btn cancel" type="button">Cancel</button>-->
+<!--        <button class="btn btn-primary" type="button">Edit</button>-->
+<!--    </div>-->
+</ng-template>

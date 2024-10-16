@@ -1,0 +1,463 @@
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-body p-4">
+            <div class="row">
+                <div class="col-md-12">
+                    <a class="pull-right btn btn-outline-primary" (click)="backFunction()"><i class="fa fa-long-arrow-left fa-1x"
+                                                                     aria-hidden="true"></i> Back</a>
+                </div>
+            </div>
+
+            <div class="row mt-2">
+                <div class="col-md-12 col-12 mb-2">
+                    <label style="font-size: 18px" class="font-weight-bold color-primary">Personal Details</label>
+                </div>
+                <div class="col-12 table-responsive userTable">
+                    <form [formGroup]="studentForm">
+                        <table class="table text-left table-bordered">
+                            <tbody>
+                            <tr>
+                                <td>First Name</td>
+                                <td *ngIf="!studentTableEdit">
+                                                <span class="text-capitalize font-weight-bold">{{studentProfileDetails[0]?.first_name != '' ?
+                                                    studentProfileDetails[0]?.first_name : '-'}}</span>
+                                </td>
+                                <td *ngIf="studentTableEdit">
+                                    <input class="form-control" placeholder="First Name" type="text"
+                                           formControlName="first_name" required="">
+                                </td>
+                                <td>Last Name</td>
+                                <td *ngIf="!studentTableEdit">
+                                            <span class="text-capitalize font-weight-bold">{{studentProfileDetails[0]?.last_name != '' ?
+                                                studentProfileDetails[0]?.last_name : '-'}}</span>
+                                </td>
+                                <td *ngIf="studentTableEdit">
+                                    <input class="form-control" placeholder="Last Name" type="text"
+                                           formControlName="last_name" required="">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Email Address</td>
+                                <td *ngIf="!studentTableEdit">
+                                                    <span class="font-weight-bold">{{studentProfileDetails[0]?.email_id != '' ?
+                                                        studentProfileDetails[0]?.email_id : '-'}}</span>
+                                </td>
+                                <td *ngIf="studentTableEdit">
+                                    <input class="form-control" placeholder="Email_id" type="text"
+                                           pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-z]{2,4}$"
+                                           formControlName="email_id" required="">
+                                </td>
+                                <td>Gender</td>
+                                <td *ngIf="!studentTableEdit">
+                                            <span class="text-capitalize font-weight-bold">{{studentProfileDetails[0]?.gender != '' ?
+                                                studentProfileDetails[0]?.gender : '-'}}</span>
+                                </td>
+                                <td *ngIf="studentTableEdit">
+                                    <select class="form-control" id="validationCustom07"
+                                            formControlName="gender">
+                                        <option value="" disabled>Select Gender</option>
+                                        <option value="male">Male</option>
+                                        <option value="female">Female</option>
+                                        <option value="n/a">Do not want to disclose</option>
+                                    </select>
+                                </td>
+
+                            </tr>
+                            <tr>
+                                <td>Date of Birth</td>
+                                <td *ngIf="!studentTableEdit">
+                                                    <span class="font-weight-bold">{{studentProfileDetails[0]?.birthday != '0000-00-00' ?
+                                                        (studentProfileDetails[0]?.birthday |date:'MM-dd-yyyy') : '-'}}</span>
+                                </td>
+                                <td *ngIf="studentTableEdit">
+                                    <div class="d-flex align-items-baseline">
+                                        <input class="form-control" placeholder="mm-dd-yyyy"
+                                               name="dp" formControlName="dob" angular-mydatepicker
+                                               #dp="angular-mydatepicker" (keypress)="datePattern($event)"
+                                               [options]="dobDpOtions" autocomplete="off">
+                                        <div class="input-group-append">
+                                            <button type="button" class="btn btn-primary"
+                                                    (click)="dp.toggleCalendar()">
+                                                <i class="fa fa-calendar-o"></i></button>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>Grade</td>
+                                <td *ngIf="!studentTableEdit">
+                                            <span class="text-capitalize font-weight-bold">{{studentProfileDetails[0]?.grade_id != '0' && studentProfileDetails[0]?.grade_id ?
+                                                studentProfileDetails[0]?.grade_name : '-'}}</span>
+                                </td>
+                                <td *ngIf="studentTableEdit">
+                                    <ng-select [items]="gradeData"
+                                               bindLabel="grade_name"
+                                               bindValue="grade_id"
+                                               placeholder="Please Select"
+                                               typeToSearchText=""
+                                               formControlName="grade"
+                                    >
+                                    </ng-select>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>Student ID</td>
+                                <td *ngIf="!studentTableEdit">
+                                            <span class="text-capitalize font-weight-bold">{{studentProfileDetails[0]?.school_idno != '' ?
+                                                studentProfileDetails[0]?.school_idno : '-'}}</span>
+                                </td>
+                                <td *ngIf="studentTableEdit">
+                                    <input class="form-control" placeholder="Student ID" type="text"
+                                           formControlName="studentid">
+                                </td>
+                                <td>Contact Number</td>
+                                <td *ngIf="!studentTableEdit">
+                                                    <span class="font-weight-bold">{{studentProfileDetails[0]?.mobile[0] != '' ?
+                                                        studentProfileDetails[0]?.mobile[0] : '-'}}</span>
+                                </td>
+                                <td *ngIf="studentTableEdit">
+                                    <input class="form-control" placeholder="Contact Number 1" type="text"
+                                           formControlName="mobile" (keypress)="numberPattern($event)"
+                                           maxlength="15" minlength="10">
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>Contact Number 2</td>
+                                <td *ngIf="!studentTableEdit">
+                                                    <span class="font-weight-bold">{{studentProfileDetails[0]?.mobile[1] != '' ?
+                                                        studentProfileDetails[0]?.mobile[1] : '-'}}</span>
+                                </td>
+                                <td *ngIf="studentTableEdit">
+                                    <input class="form-control" placeholder="Contact Number 2" type="text"
+                                           formControlName="mobile1" (keypress)="numberPattern($event)"
+                                           maxlength="15" minlength="10">
+                                </td>
+                                <td>Contact Number 3</td>
+                                <td *ngIf="!studentTableEdit">
+                                                    <span class="font-weight-bold">{{studentProfileDetails[0]?.mobile[2] != '' ?
+                                                        studentProfileDetails[0]?.mobile[2] : '-'}}</span>
+                                </td>
+                                <td *ngIf="studentTableEdit">
+                                    <input class="form-control" placeholder="Contact Number 3" type="text"
+                                           formControlName="mobile2" (keypress)="numberPattern($event)"
+                                           maxlength="15" minlength="10">
+                                </td>
+                            </tr>
+                            <tr>
+
+                                <td>Status</td>
+                                <td class="text-capitalize font-weight-bold" *ngIf="!studentTableEdit">
+                                                    <span>{{studentProfileDetails[0]?.status == '1' ? 'Active' : studentProfileDetails[0]?.status == '2' ? 'In-Active' :
+                                                        studentProfileDetails[0]?.status == '3' ? 'Suspened' : studentProfileDetails[0]?.status == '4' ? 'Deleted' : '-'}}</span>
+                                </td>
+                                <td *ngIf="studentTableEdit">
+                                    <select id="selectStudent" class="form-control" formControlName="status">
+                                        <option value="1">Active</option>
+                                        <option value="2">In-Active</option>
+                                        <option value="3">Suspended</option>
+                                        <option value="4">Deleted</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Registration Date</td>
+                                <td *ngIf="!studentTableEdit">
+                                                    <span class="font-weight-bold">{{studentProfileDetails[0]?.registration_date != '0000-00-00' ?
+                                                        (studentProfileDetails[0]?.registration_date |date:'MM-dd-yyyy') : '-'}}</span>
+                                </td>
+                                <td *ngIf="studentTableEdit">
+                                    <div class="d-flex align-items-baseline">
+                                        <input class="form-control" placeholder="mm-dd-yyyy"
+                                               name="dp" formControlName="registration_date"
+                                               angular-mydatepicker #dp="angular-mydatepicker"
+                                               (keypress)="datePattern($event)"
+                                               [options]="myDpOptions2" autocomplete="off">
+                                        <div class="input-group-append">
+                                            <button type="button" class="btn btn-primary"
+                                                    (click)="dp.toggleCalendar()">
+                                                <i class="fa fa-calendar-o"></i></button>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>Profile Photo</td>
+                                <td *ngIf="!studentTableEdit">
+                                    <span *ngIf="studentProfileDetails[0]?.profile_url != ''">Available</span>
+                                    <span *ngIf="studentProfileDetails[0]?.profile_url == ''">Not-Available</span>
+                                </td>
+                                <td *ngIf="studentTableEdit">
+                                    <div class="col-xl-8 col-md-7 color-primary">
+                                        <input #myInput type="file" class="custom-upload-input"
+                                               (change)="encodeImageFileAsURL($event)"
+                                               accept=".png, .jpeg, .jpg">
+                                    </div>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+
+                    </form>
+                </div>
+            </div>
+            <div class="row mt-4">
+                <div class="col-md-12 col-12 mb-2">
+                    <label style="font-size: 18px" class="font-weight-bold color-primary">Parent Details</label>
+                </div>
+                <div class="col-md-12 col-12">
+                    <ul class="nav nav-tabs justify-content-left" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" data-toggle="tab" href="#home"
+                               role="tab" aria-controls="home" aria-selected="true" (click)="tabChange(1)">Parent 1</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="tab" href="#home"
+                               role="tab" aria-controls="profile" aria-selected="false" (click)="tabChange(2)">Parent
+                                2</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-md-12 col-12 mt-3">
+                    <div class="tab-content" id="myTabContent">
+                        <div class="tab-pane fade show active" id="home" role="tabpanel"
+                             aria-labelledby="home-tab">
+                            <div class="row">
+                                <div class="col-12 table-responsive userTable">
+                                    <form [formGroup]="studentForm">
+                                        <table class="table text-left table-bordered">
+                                            <tbody>
+                                            <tr>
+                                                <td>First Name</td>
+                                                <td *ngIf="!parentTableEdit">
+                                                    <span class="text-capitalize font-weight-bold">{{studentProfileDetails[0]['parent' + selectedParent + '_firstname'] != '' ?
+                                                        studentProfileDetails[0]['parent' + selectedParent + '_firstname'] : '-'}}</span>
+                                                </td>
+                                                <td *ngIf="parentTableEdit">
+                                                    <input class="form-control" placeholder="First Name"
+                                                           formControlName="{{'parent' + selectedParent + 'first_name'}}"
+                                                           type="text">
+                                                </td>
+                                                <td>Last Name</td>
+                                                <td *ngIf="!parentTableEdit">
+                                            <span class="text-capitalize font-weight-bold">{{studentProfileDetails[0]['parent' + selectedParent + '_lastname'] != '' ?
+                                                studentProfileDetails[0]['parent' + selectedParent + '_lastname'] : '-'}}</span>
+                                                </td>
+                                                <td *ngIf="parentTableEdit">
+                                                    <input class="form-control" placeholder="First Name"
+                                                           formControlName="{{'parent' + selectedParent + 'last_name'}}"
+                                                           type="text">
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>Email Address 1</td>
+                                                <td *ngIf="!parentTableEdit">
+                                                    <span class="font-weight-bold">{{studentProfileDetails[0]['parent' + selectedParent + '_email_ids'][0] != ''
+                                                        ? studentProfileDetails[0]['parent' + selectedParent + '_email_ids'][0] : '-'}}</span>
+                                                </td>
+                                                <td *ngIf="parentTableEdit">
+                                                    <input class="form-control" placeholder="Email_id 1"
+                                                           pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-z]{2,4}$"
+                                                           formControlName="{{'parent' + selectedParent + 'email_id1'}}"
+                                                           type="text">
+                                                </td>
+                                                <td>Email Address 2</td>
+                                                <td *ngIf="!parentTableEdit">
+                                                    <span class="font-weight-bold">{{studentProfileDetails[0]['parent' + selectedParent + '_email_ids'][1] != ''
+                                                        ? studentProfileDetails[0]['parent' + selectedParent + '_email_ids'][1] : '-'}}</span>
+                                                </td>
+                                                <td *ngIf="parentTableEdit">
+                                                    <input class="form-control" placeholder="Email_id 2"
+                                                           pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-z]{2,4}$"
+                                                           formControlName="{{'parent' + selectedParent + 'email_id2'}}"
+                                                           type="text">
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>Address1</td>
+                                                <td *ngIf="!parentTableEdit">
+                                            <span class="text-capitalize font-weight-bold">{{studentProfileDetails[0].address[selectedParent - 1].address1 != '' ?
+                                                studentProfileDetails[0].address[selectedParent - 1].address1 : '-'}}</span>
+                                                </td>
+                                                <td *ngIf="parentTableEdit">
+                                                    <input class="form-control" placeholder="Address 1"
+                                                           formControlName="{{'parent' + selectedParent + 'address1'}}"
+                                                           type="text">
+                                                </td>
+                                                <td>Address2</td>
+                                                <td *ngIf="!parentTableEdit">
+                                                    <span class="text-capitalize font-weight-bold">{{studentProfileDetails[0].address[selectedParent - 1].address2 != '' ?
+                                                        studentProfileDetails[0].address[selectedParent - 1].address2 : '-'}}</span>
+                                                </td>
+                                                <td *ngIf="parentTableEdit">
+                                                    <input class="form-control" placeholder="Address 2" type="text"
+                                                           formControlName="{{'parent' + selectedParent + 'address2'}}"
+                                                           type="text">
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>City</td>
+                                                <td *ngIf="!parentTableEdit">
+                                                    <span class="text-capitalize font-weight-bold">{{studentProfileDetails[0].address[selectedParent - 1].city != '' ?
+                                                        studentProfileDetails[0].address[selectedParent - 1].city : '-'}}</span>
+                                                </td>
+                                                <td *ngIf="parentTableEdit">
+                                                    <input class="form-control" placeholder="City" type="text"
+                                                           formControlName="{{'parent' + selectedParent + 'city'}}"
+                                                           type="text">
+                                                </td>
+                                                <td>State</td>
+                                                <td class="text-capitalize" *ngIf="!parentTableEdit">
+                                                    <span class="text-capitalize font-weight-bold">{{studentProfileDetails[0].address[selectedParent - 1].state_name != '' ?
+                                                        studentProfileDetails[0].address[selectedParent - 1].state_name : '-'}}</span>
+                                                </td>
+                                                <td *ngIf="parentTableEdit">
+                                                    <ng-select [items]="stateListData"
+                                                               bindLabel="name"
+                                                               bindValue="state_id"
+                                                               placeholder="Please Select"
+                                                               formControlName="state"
+                                                    >
+                                                    </ng-select>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>Country</td>
+                                                <td class="text-capitalize" *ngIf="!parentTableEdit">
+                                                    <span class="text-capitalize font-weight-bold">{{studentProfileDetails[0].address[selectedParent - 1].country_name != '' ?
+                                                        studentProfileDetails[0].address[selectedParent - 1].country_name : '-'}}</span>
+                                                </td>
+                                                <td *ngIf="parentTableEdit">
+                                                    <ng-select [items]="countryListData"
+                                                               bindLabel="name"
+                                                               bindValue="country_id"
+                                                               placeholder="Please Select"
+                                                               formControlName="country"
+                                                               (change)="stateList($event)"
+                                                    >
+                                                    </ng-select>
+                                                </td>
+                                                <td>Zip Code</td>
+                                                <td *ngIf="!parentTableEdit">
+                                                    <span class="text-capitalize font-weight-bold">{{studentProfileDetails[0].address[selectedParent - 1].postal_code != '' ?
+                                                        studentProfileDetails[0].address[selectedParent - 1].postal_code : '-'}}</span>
+                                                </td>
+                                                <td *ngIf="parentTableEdit">
+                                                    <input class="form-control" placeholder="Zip Code" type="text"
+                                                           formControlName="zip">
+                                                </td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-4">
+                <div class="col-md-12 col-12 mb-2">
+                    <label style="font-size: 18px" class="font-weight-bold">Class Details</label>
+                </div>
+
+                <div class="col-md-12 col-12 table-responsive student-profile" style="overflow-y: auto; max-height: 70vh">
+                    <table class="table table-bordered">
+                        <thead style="background: #cdd9f6">
+                        <th style="position: sticky; top: 0;background: #cdd9f6">Class Name</th>
+                        <th style="position: sticky; top: 0;background: #cdd9f6">Class Code</th>
+                        <th style="position: sticky; top: 0;background: #cdd9f6">Subject</th>
+                        <th style="position: sticky; top: 0;background: #cdd9f6">Grade</th>
+                        <th style="position: sticky; top: 0;background: #cdd9f6">Start Date</th>
+                        <th style="position: sticky; top: 0;background: #cdd9f6">End Date</th>
+                        <th style="position: sticky; top: 0;background: #cdd9f6">Joined Date</th>
+                        <th style="position: sticky; top: 0;background: #cdd9f6">Dropped Date</th>
+                        <th style="position: sticky; top: 0;background: #cdd9f6">Action</th>
+                        </thead>
+                        <tbody>
+                        <tr *ngIf="studentFullClassListData.length == 0" class="text-center">
+                            <td colspan="12">
+                                <span class="color-primary">No Data Available!</span>
+                            </td>
+                        </tr>
+                        <tr *ngFor="let class of studentFullClassListData;">
+                            <td style="vertical-align: middle" class="color-primary">
+                                <span class="font-weight-bold">{{class.class_name}}</span></td>
+                            <td style="vertical-align: middle">{{class.class_code}}</td>
+                            <td style="vertical-align: middle">{{class.subject != '' ? class.subject : '-'}}</td>
+                            <td style="vertical-align: middle">{{class.grade != '' ? class.grade : '-'}}</td>
+                            <td style="vertical-align: middle">{{class.start_date | customDateFormat}}</td>
+                            <td style="vertical-align: middle">{{class.end_date | customDateFormat}}</td>
+                            <td style="vertical-align: middle">{{class.joining_date | customDateFormat}}</td>
+                            <td style="vertical-align: middle">{{class.drafted_date != '0000-00-00' ? (class.drafted_date | customDateFormat) : '-'}}</td>
+                            <td style="vertical-align: middle">
+                                <img class="mx-2" style="width:23px" src="assets/images/icons/report.png" title="Report" (click)="getStudentFullDetail(class)">
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="row mt-4">
+                <div class="col-md-12 col-12 mb-2">
+                    <label style="font-size: 18px" class="font-weight-bold">Attendance Details</label>
+                </div>
+
+                <div class="col-12">
+                    <div class="form-group col-4 col-md-4 pl-0" *ngIf="classList.length != 0">
+                        <label class="col-xl-12 col-md-12 pl-0 font-weight-bold" style="font-size: 16px">Class List</label>
+                        <ng-select [items]="classList"
+                                   bindLabel="class_name"
+                                   bindValue="class_id"
+                                   placeholder="Please Select"
+                                   [ngModel]="selectedClassId"
+                                   (change)="attendanceFilter($event)"
+                        >
+                        </ng-select>
+                    </div>
+                </div>
+
+                <div class="col-md-12 col-12 student-profile" style="overflow-y: auto; max-height: 70vh">
+                    <table class="table table-bordered">
+                        <thead style="background: #cdd9f6">
+                        <th style="position: sticky; top: 0;background: #cdd9f6">Class Name</th>
+                        <th style="position: sticky; top: 0;background: #cdd9f6">Date</th>
+                        <th style="position: sticky; top: 0;background: #cdd9f6">Time Slot</th>
+                        <th style="position: sticky; top: 0;background: #cdd9f6">Attendance</th>
+                        </thead>
+                        <tbody>
+                        <tr *ngIf="attendanceListData.length == 0" class="text-center">
+                            <td colspan="12">
+                                <span class="color-primary">No Data Available!</span>
+                            </td>
+                        </tr>
+                        <tr *ngFor="let attendance of attendanceListData; let i = index">
+                            <td style="vertical-align: middle" class="color-primary">
+                                <span class="font-weight-bold">{{attendance.class_name}}</span></td>
+                            <td style="vertical-align: middle" >{{attendance.date | customDateFormat}}</td>
+                            <td style="vertical-align: middle">
+                                <span>{{attendance.start_time}} - {{attendance.end_time}}</span>
+                                </td>
+                            <td style="vertical-align: middle">
+                                <span class="font-weight-bold" [ngStyle]="{'color' : attendance.attendance == '1' ? '#16b416' : 'red'}">{{attendance.attendance == '1' ? 'P' : 'A'}}</span>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+</div>
+
+<ng-template #viewoveralldetails let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h4 class="modal-title color-primary" id="modal-basic-title">Assignment Details</h4>
+        <i (click)="closeOverAll()" aria-hidden="true"
+           class="fa fa-close fa-lg mt-1" style="color:#7F3486; cursor: pointer; float: right;"></i>
+    </div>
+    <div class="modal-body">
+        <app-student-report [classData]="classData" [studentId]="studentId" ></app-student-report>
+    </div>
+</ng-template>

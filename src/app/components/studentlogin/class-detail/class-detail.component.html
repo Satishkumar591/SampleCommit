@@ -1,0 +1,595 @@
+<div class="container-fluid">
+    <div class="row d-flex justify-content-center list-card mt-5" *ngIf="choosedData.length == 0">
+        <div class="col-4">
+            <button class="nodataList">No Data Available!</button>
+        </div>
+    </div>
+    <section class="row list-card" *ngIf="choosedData.length != 0">
+
+        <div class="col-md-12">
+            <div class="card" *ngFor="let list of choosedData; let i = index">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-2">
+                            <figure *ngIf="this.list.profile_url == ''">
+                                <img src="assets/images/ristaschool/Mask Group 35.png" class="w-100" style="height: 135px" alt="">
+                            </figure>
+                            <figure *ngIf="this.list.profile_url != ''">
+                                <img [src]="sanitizer.bypassSecurityTrustResourceUrl(webhost + '/' + list.profile_url)" class="w-100" alt="">
+                            </figure>
+                        </div>
+                        <div class="col-md-5">
+                            <h4 class="t-period"><span class="font-weight-bold">{{list.class_name}} </span>
+                            </h4>
+                            <p><span class="font-weight-bold">Subject: </span> <span class="t-name font-weight-bold">{{list.subject_name}}</span></p>
+                            <p *ngIf="list.start_date == '0000-00-00'&& list.end_date == '0000-00-00'"><span class="font-weight-bold">Start: </span>  &nbsp; &nbsp;
+                                <span class="font-weight-bold">End: </span>
+                            </p>
+                            <p *ngIf="list.start_date != '0000-00-00'&& list.end_date != '0000-00-00'"><span class="font-weight-bold">Start: </span> <span class="t-name font-weight-bold">{{list.start_date|date:'MM-dd-yyyy'}} {{list.start_time}}</span> &nbsp; &nbsp;
+                                <span class="font-weight-bold">End: </span> <span class="t-name font-weight-bold">{{list.end_date|date:'MM-dd-yyyy'}} {{list.end_time}}</span>
+                            </p>
+                            <div class="d-inline-flex align-items-center">
+                                <h4 class="mb-0"><span class="badge badge-secondary" *ngIf="list.status == '1'">Not Started</span>
+                                    <span class="badge badge-warning" *ngIf="list.status == '2'">In-Progress</span>
+                                    <span class="badge badge-danger" *ngIf="list.status == '3'">Completed</span>
+                                </h4>
+                                <button *ngIf="list.video_link.length != '0'" type="button" class="btn btn-outline-primary ml-2 {{env.deviceType() ? 'border-radius-5' : ''}}"  (click)="otherlink(list.video_link);tabShow = 'otherlinks'">
+                                    <i class="fa fa-external-link mr-2"></i>Other Links</button>
+<!--                                <a class="ml-2">-->
+<!--                                    <button (click)="openZoomDialog(list);" class="btn btn-outline-primary btn-sm p-2 {{env.deviceType() ? 'border-radius-5' : ''}}"  type="button">Enter Online Class</button>-->
+<!--                                </a>-->
+<!--                                <i *ngIf="list.notes != ''" class="fa fa-file-text fa-2x pull-right cursor mr-3" title="Notes" style="color:#8F008A;margin-top: .325rem;" (click)="showNotes(list.notes);tabShow = 'notes'"></i>-->
+<!--                                <i class="fa fa-microphone mr-2 fa-2x pull-right cursor" title="Recordings" (click)="tabShow = 'recordings'" style="color:#8F008A;margin-top: .35rem;"></i>-->
+                            </div>
+                        </div>
+                        <div class="col-md-5">
+                            <div class="row d-flex align-items-end flex-column">
+                                <div class="col-md-12">
+                                    <div class="ml-2 dropdown pull-right">
+                                        <button class="btn btn-primary {{env.deviceType() ? 'border-radius-5' : ''}}">{{contentFilterType == '1' ? 'New' :
+                                            contentFilterType == '2' ? 'In Progress' : 'Completed'}}<i class="fa fa-sort-desc float-right ml-2" aria-hidden="true"></i></button>
+                                        <div class="dropdown-content" style="right: 3%">
+                                            <a class="dropdown-item dropdown-link" (click)="classList('1')">New</a>
+                                            <a class="dropdown-item dropdown-link" (click)="classList('2')">In Progress</a>
+                                            <a class="dropdown-item dropdown-link" (click)="classList('3')">Completed</a>
+                                        </div>
+                                    </div>
+
+                                    <div class="dropdown pull-right">
+                                        <button *ngIf="list.notes != ''" type="button" class="btn btn-outline-primary mr-2 {{env.deviceType() ? 'border-radius-5' : ''}}" (click)="showNotes(list.notes);tabShow = 'notes'">
+                                            <i class="fa fa-file-text mr-2"></i>Notes</button>
+                                        <button class="btn btn-outline-primary {{env.deviceType() ? 'border-radius-5' : ''}}" (click)="tabShow = 'curriculum'">
+                                            <i class="fa fa-book mr-2" aria-hidden="true"></i>Curriculum</button>
+<!--                                        <div class="dropdown-content" style="right: 3%">-->
+<!--                                            <a (click)="tabShow = 'curriculum'"><i class="fa fa-book mr-2" style="color:#8F008A" aria-hidden="true"></i>Curriculum</a>-->
+<!--                                            <a (click)="tabShow = 'otherlinks';otherlink(list.video_link)" *ngIf="list.video_link.length != '0'"><i  style="color:#8F008A" class="fa fa-external-link mr-2"></i>Other Links</a>-->
+<!--&lt;!&ndash;                                            <a *ngIf="list.notes != ''" (click)="tabShow = 'notes';showNotes(list.notes)"><i class="fa fa-file-text mr-2" title="Notes" style="color:#8F008A"></i>Notes</a>&ndash;&gt;-->
+<!--                                            <a (click)="tabShow = 'recordings'" *ngIf="videoSource.length != 0"><i class="fa fa-microphone mr-2"  style="color:#8F008A"></i>Recordings</a>-->
+<!--                                            <a *ngIf="list.class_type == '1' && list.schedule_id != ''" (click)="openZoomDialog(list)"><i class="fa fa-video-camera mr-2" style="color:#8F008A" title="Enter Online Class" ></i>Enter Online Class</a>-->
+<!--                                        </div>-->
+                                    </div>
+                                </div>
+<!--                                <div class="col-md-12 mt-5 pt-3">-->
+<!--                                    <i *ngIf="list.notes != ''" class="fa fa-file-text fa-2x pull-right cursor mr-2" title="Notes" style="color:#8F008A" (click)="tabShow = 'notes';showNotes(list.notes)"></i>-->
+<!--                                </div>-->
+                                <div class="col-md-12 mt-5 pt-4 d-flex align-items-center justify-content-end">
+
+                                    <button *ngIf="videoSource.length != 0" type="button" class="btn btn-outline-primary mr-2 {{env.deviceType() ? 'border-radius-5' : ''}}" (click)="tabShow = 'recordings'">
+                                        <i class="fa fa-microphone mr-2"></i>Recordings</button>
+                                    <a *ngIf="list.class_type == '1' && list.schedule_id != ''">
+                                        <button (click)="openZoomDialog(list);" class="btn btn-primary {{env.deviceType() ? 'border-radius-5' : ''}}" type="button">
+                                            <i class="fa fa-video-camera mr-2"></i>Enter Online Class</button>
+                                    </a>
+                                    <span class="ml-2 expand-icon" *ngIf="topicListData.length != 0" (click)="isCollapsed = !isCollapsed;" [attr.aria-expanded]="!isCollapsed"
+                                          aria-controls="collapseCard">
+                                        <i [title]="!isCollapsed ? 'Collapse' : 'Expand'" title="Collapse" class="fa {{!isCollapsed ? 'fa-compress' : 'fa-arrows-alt'}}"
+                                           style="font-size: 24px; cursor: pointer; color: #91048c;" aria-hidden="true"></i>
+                                    </span>
+
+                                    <!--                                    <a>-->
+<!--                                        <button type="button"  class="btn btn-outline-primary mr-2 pull-right {{env.deviceType() ? 'border-radius-5' : ''}}" (click)="otherlink(list.video_link);tabShow = 'otherlinks'">Other links</button>-->
+<!--                                    </a>-->
+<!--                                    <i *ngIf="list.notes != ''" class="fa fa-file-text fa-2x pull-right cursor mr-3" title="Notes" style="color:#8F008A;margin-top: .325rem;" (click)="showNotes(list.notes);tabShow = 'notes'"></i>-->
+<!--                                    <i class="fa fa-microphone mr-2 fa-2x pull-right cursor" title="Recordings" (click)="tabShow = 'recordings'" style="color:#8F008A;margin-top: .35rem;"></i>-->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+<!--    <ul class="nav nav-tabs color-primary">-->
+<!--        <li class="nav-item cursor">-->
+<!--            <a (click)="tabShow = 'assignment'" aria-current="page" class="nav-link {{tabShow == 'assignment' ? 'active' : ''}}"><b>Assignment &nbsp;&nbsp;</b><span class="badge badge-primary" *ngIf="assignData.length != 0">{{assignData.length}}</span></a>-->
+<!--        </li>-->
+<!--        <li class="nav-item cursor">-->
+<!--            <a (click)="tabShow = 'assessment'" class="nav-link {{tabShow == 'assessment' ? 'active' : ''}}"><b>Assessment &nbsp;&nbsp; </b><span class="badge badge-primary" *ngIf="assessData.length != 0">{{assessData.length}}</span></a>-->
+<!--        </li>-->
+<!--        <li class="nav-item cursor">-->
+<!--            <a (click)="tabShow = 'resource'" class="nav-link {{tabShow == 'resource' ? 'active' : ''}}"><b>Resource &nbsp;</b><span class="badge badge-primary" *ngIf="resourceData.length != 0">{{resourceData.length}}</span></a>-->
+<!--        </li>-->
+<!--        <li class="nav-item cursor">-->
+<!--            <a (click)="tabShow = 'record'" class="nav-link {{tabShow == 'record' ? 'active' : ''}}"><b>Recordings</b></a>-->
+<!--        </li>-->
+<!--    </ul>-->
+    <section class="row list-card" *ngIf="tabShow == 'curriculum'">
+<!--        <div *ngIf="tabShow == 'resource'"  class="col-12 col-md-12 mt-3">-->
+<!--            <div class="row">-->
+<!--                &lt;!&ndash;                <div class="col-12 mb-2">&ndash;&gt;-->
+<!--                &lt;!&ndash;                    <div class="card">&ndash;&gt;-->
+<!--                &lt;!&ndash;                        <div class="card-body small-screen-group-btn p-3">&ndash;&gt;-->
+<!--                &lt;!&ndash;                            <div class="row d-flex justify-content-between list-title">&ndash;&gt;-->
+<!--                &lt;!&ndash;                                <div class="col-12 col-xl-12 pt-2">&ndash;&gt;-->
+<!--                &lt;!&ndash;                                    <h4><b>Resource</b></h4>&ndash;&gt;-->
+<!--                &lt;!&ndash;                                </div>&ndash;&gt;-->
+<!--                &lt;!&ndash;                            </div>&ndash;&gt;-->
+<!--                &lt;!&ndash;                        </div>&ndash;&gt;-->
+<!--                &lt;!&ndash;                    </div>&ndash;&gt;-->
+<!--                &lt;!&ndash;                </div>&ndash;&gt;-->
+<!--                <div class="col-md-12 home-sec-scroll">-->
+<!--                    <div class="row">-->
+<!--                        <div class="col d-flex justify-content-center list-card mt-5" *ngIf="resourceData==''">-->
+<!--                            <div class="col-12">-->
+<!--                                <button class="nodataList">No Data Available!</button>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                        <div *ngFor="let class of resourceData ; let i = index" class="col-md-12 mt-1 cursor">-->
+<!--                            <div class="card class-card class-hover">-->
+<!--                                <div (click)="preview(class)" class="card-body">-->
+<!--                                    <div class="row">-->
+<!--                                        <div class="col-4" title="View Resource">-->
+<!--                                            <img *ngIf="class.profile_url != ''" [src]="sanitizer.bypassSecurityTrustResourceUrl(webhost + '/' + class.profile_url)" alt="" class="rounded-circle" style="width: 50px;height: 50px;">-->
+<!--                                            <img *ngIf="class.profile_url == ''" alt="" class="rounded-circle" src="assets/images/ristaschool/Mask Group 35.png" style="width: 50px;height: 50px;">-->
+<!--                                        </div>-->
+<!--                                        <div class="col-4 align-self-center">-->
+<!--                                            <h4 class="t-period mb-0"><span class="font-weight-bold">{{class.content_name}} </span><b class="contenttext">-->
+<!--                                                <small *ngIf="class.content_format == 1">(PDF)</small>-->
+<!--                                                <small *ngIf="class.content_format == 3">(TEXT)</small></b></h4>-->
+<!--                                        </div>-->
+<!--                                        <div class="col-4 align-self-center">-->
+<!--                                            <p><span>Subject: </span> <span class="t-name font-weight-bold">{{class.subject_name}}</span></p>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+
+        <div class="col-12 col-md-12 mt-3 custom-accordion" *ngIf="topicListData.length != 0">
+            <ngb-accordion *ngFor="let item of topicListData; let topicIndex = index" [destroyOnHide]='false'
+                           [closeOthers]="true" activeIds="{{!isCollapsed ? topicIndex : ''}}">
+                <ngb-panel id="{{topicIndex}}">
+                    <ng-template ngbPanelTitle class="header-card">
+                        <div class="row d-flex justify-content-between mb-1">
+                            <h4 class="px-0 viewTopicName d-flex justify-content-between">
+                                {{item.topic
+                                | titlecase}}<span
+                                    *ngIf="item.start_date != '0000-00-00' && item.start_date != '' && item.start_date != null"
+                                    class=" viewTopicName ml-2" style="cursor: move;" >-</span>
+                                <div class="px-0 ml-2"
+                                     *ngIf="item.start_date != '0000-00-00' && item.start_date != '' && item.start_date != null">
+                                    <span *ngIf="item.start_date != '0000-00-00' && item.start_date != ''"
+                                          class="font-weight-bold viewTopicName">({{item.start_date|
+                                        customDateFormat}}</span>
+                                    <span
+                                            *ngIf="item.start_date != '0000-00-00' && item.end_date != '0000-00-00' && item.start_date != '' && item.end_date != '' && item.end_date != null">&nbsp;-&nbsp;</span>
+                                    <span *ngIf="item.end_date != '0000-00-00' && item.end_date != ''"
+                                          class="font-weight-bold viewTopicName">{{item.end_date|
+                                        customDateFormat}})</span>&nbsp;<br />
+                                </div>
+                            </h4>
+                        </div>
+                    </ng-template>
+                    <ng-template ngbPanelContent>
+                        <div class="col-md-12 dropdotted">
+                            <div class="col-12 px-0" *ngFor="let list of item.topicArray; let j = index">
+                                <div class="card class-card class-hover cursor">
+                                    <div (click)="enterCurriculum(list)" class="card-body">
+                                        <div class="row">
+                                            <div class="col-2">
+                                                <img *ngIf="list.profile_url != ''" [src]="sanitizer.bypassSecurityTrustResourceUrl(webhost + '/' + list.profile_url)" alt="" class="rounded-circle" style="width: 50px;height: 50px;">
+                                                <img *ngIf="list.profile_url == ''" alt="" class="rounded-circle" src="assets/images/ristaschool/option-writing-checkbox-concepts-survey.png" style="width: 50px;height: 50px;">
+                                            </div>
+                                            <div class="col-4 align-self-center">
+                                                <h4 class="t-period mb-0"><span class="font-weight-bold">{{list.content_name}} </span><b class="contenttext">
+                                                    <small *ngIf="list.content_format == 1">(PDF)</small>
+                                                    <small *ngIf="list.content_format == 3">(TEXT)</small></b></h4>
+                                                <p>
+                                                    <span *ngIf="list.content_type == '1'"
+                                                          class="badge badge-green font-weight-bold align-self-center">Resource</span>
+                                                    <span *ngIf="list.content_type == '2'"
+                                                          class="badge badge-warning font-weight-bold align-self-center">Assignment</span>
+                                                    <span *ngIf="list.content_type == '3'"
+                                                          class="badge badge-primary font-weight-bold align-self-center">Assessment</span>
+                                                </p>
+                                            </div>
+                                            <div class="col-3 align-self-center">
+                                                <p><span>Subject: </span> <span class="t-name font-weight-bold">{{list.subject_name}}</span></p>
+                                            </div>
+                                            <div class="col-3 align-self-center">
+                                                <p><span>End: </span> <span *ngIf="list.end_date != '0000-00-00'" class="t-name font-weight-bold"> {{list.end_date|date:'MM-dd-yyyy'}}</span> &nbsp; &nbsp;
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 px-0" *ngIf="item.topicArray.length == 0">
+                                <label class="col-12 my-4 custom-label">No Content Avaiable</label>
+                            </div>
+                        </div>
+                    </ng-template>
+                </ngb-panel>
+            </ngb-accordion>
+        </div>
+
+        <div class="col-md-12 mt-{{topicListData.length != 0 ? '5' : '3'}}">
+            <div class="row">
+                <div class="col-12 mb-2 align-self-center">
+                    <h4 class="viewname">{{topicListData.length > 0 ? 'Other Curriculum' : 'Curriculum'}}</h4>
+                </div>
+
+                <div class="col d-flex justify-content-center list-card mt-5" *ngIf="curriculumListWithoutTopic.length == 0">
+                    <div class="col-4">
+                        <button class="nodataList">No Data Available!</button>
+                    </div>
+                </div>
+                <div class="home-sec-scroll col-12 px-0">
+                    <div *ngFor="let curriculum of curriculumListWithoutTopic" class="col-md-12 mt-1 cursor">
+                        <div class="card class-card class-hover">
+                            <div (click)="checkContentTime(curriculum)" class="card-body">
+                                <div class="row">
+                                    <div class="col-2">
+                                        <img *ngIf="curriculum.profile_url != ''" [src]="sanitizer.bypassSecurityTrustResourceUrl(webhost + '/' + curriculum.profile_url)" alt="" class="rounded-circle" style="width: 50px;height: 50px;">
+                                        <img *ngIf="curriculum.profile_url == ''" alt="" class="rounded-circle" src="assets/images/ristaschool/option-writing-checkbox-concepts-survey.png" style="width: 50px;height: 50px;">
+                                    </div>
+                                    <div class="col-4 align-self-center">
+                                        <h4 class="t-period mb-0"><span class="font-weight-bold">{{curriculum.content_name}} </span><b class="contenttext">
+                                            <small *ngIf="curriculum.content_format == 1">(PDF)</small>
+                                            <small *ngIf="curriculum.content_format == 3">(TEXT)</small></b></h4>
+                                        <p>
+                                    <span *ngIf="curriculum.content_type == '1'"
+                                          class="badge badge-green font-weight-bold align-self-center">Resource</span>
+                                            <span *ngIf="curriculum.content_type == '2'"
+                                                  class="badge badge-warning font-weight-bold align-self-center">Assignment</span>
+                                            <span *ngIf="curriculum.content_type == '3'"
+                                                  class="badge badge-primary font-weight-bold align-self-center">Assessment</span>
+                                        </p>
+                                    </div>
+                                    <div class="col-3 align-self-center">
+                                        <p><span>Subject: </span> <span class="t-name font-weight-bold">{{curriculum.subject_name}}</span></p>
+                                    </div>
+                                    <div class="col-3 align-self-center">
+                                        <p><span>End: </span> <span *ngIf="curriculum.end_date != '0000-00-00'" class="t-name font-weight-bold"> {{curriculum.end_date|date:'MM-dd-yyyy'}}</span> &nbsp; &nbsp;
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+<!--        <div *ngIf="tabShow == 'assignment'"  class="col-12 col-md-12 mt-3">-->
+<!--            <ul class="nav nav-tabs color-primary">-->
+<!--                <li class="nav-item cursor">-->
+<!--                    <a (click)="filterAssignmentData('1', 'new')" aria-current="page" class="nav-link {{assignmentFilterType == 'new' ? 'active' : ''}}"><b>New</b></a>-->
+<!--                </li>-->
+<!--                <li class="nav-item cursor">-->
+<!--                    <a (click)="filterAssignmentData('2', 'pending')" aria-current="page" class="nav-link {{assignmentFilterType == 'pending' ? 'active' : ''}}"><b>In-progress</b></a>-->
+<!--                </li>-->
+<!--                <li class="nav-item cursor">-->
+<!--                    <a (click)="filterAssignmentData('3', 'completed')" aria-current="page" class="nav-link {{assignmentFilterType == 'completed' ? 'active' : ''}}"><b>Completed</b></a>-->
+<!--                </li>-->
+<!--            </ul>-->
+<!--            <div class="row">-->
+<!--                <div class="col-md-12 home-sec-scroll">-->
+<!--                    <div class="row">-->
+<!--                        <div class="col d-flex justify-content-center list-card mt-5" *ngIf="assignmentFilteredData.length == 0">-->
+<!--                            <div class="col-12">-->
+<!--                                <button class="nodataList">No Data Available!</button>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                        <div *ngFor="let assign of assignmentFilteredData" class="col-md-12 mt-1 cursor">-->
+<!--                            <div class="card class-card class-hover">-->
+<!--                                <div (click)="assignmentPage(assign)" class="card-body">-->
+<!--                                    <div class="row">-->
+<!--                                        <div class="col-2">-->
+<!--                                            <img *ngIf="assign.profile_url != ''" [src]="sanitizer.bypassSecurityTrustResourceUrl(webhost + '/' + assign.profile_url)" alt="" class="rounded-circle" style="width: 50px;height: 50px;">-->
+<!--                                            <img *ngIf="assign.profile_url == ''" alt="" class="rounded-circle" src="assets/images/ristaschool/option-writing-checkbox-concepts-survey.png" style="width: 50px;height: 50px;">-->
+<!--                                        </div>-->
+<!--                                        <div class="col-4 align-self-center">-->
+<!--                                            <h4 class="t-period mb-0"><span class="font-weight-bold">{{assign.content_name}} </span><b class="contenttext">-->
+<!--                                                <small *ngIf="assign.content_format == 1">(PDF)</small>-->
+<!--                                                <small *ngIf="assign.content_format == 3">(TEXT)</small></b></h4>-->
+<!--                                        </div>-->
+<!--                                        <div class="col-3 align-self-center">-->
+<!--                                            <p><span>Subject: </span> <span class="t-name font-weight-bold">{{assign.subject_name}}</span></p>-->
+<!--                                        </div>-->
+<!--                                        <div class="col-3 align-self-center">-->
+<!--                                            <p><span>End: </span> <span *ngIf="assign.end_date != '0000-00-00'" class="t-name font-weight-bold"> {{assign.end_date|date:'MM-dd-yyyy'}}</span> &nbsp; &nbsp;-->
+<!--                                            </p>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--        <div *ngIf="tabShow == 'assessment'"  class="col-12 col-md-12 mt-3">-->
+<!--            <ul class="nav nav-tabs color-primary">-->
+<!--                <li class="nav-item cursor">-->
+<!--                    <a (click)="filterAssessmentData('1', 'new')" aria-current="page" class="nav-link {{assessmentFilterType == 'new' ? 'active' : ''}}"><b>New</b></a>-->
+<!--                </li>-->
+<!--                <li class="nav-item cursor">-->
+<!--                    <a (click)="filterAssessmentData('2', 'pending')" aria-current="page" class="nav-link {{assessmentFilterType == 'pending' ? 'active' : ''}}"><b>In-progress</b></a>-->
+<!--                </li>-->
+<!--                <li class="nav-item cursor">-->
+<!--                    <a (click)="filterAssessmentData('3', 'completed')" aria-current="page" class="nav-link {{assessmentFilterType == 'completed' ? 'active' : ''}}"><b>Completed</b></a>-->
+<!--                </li>-->
+<!--            </ul>-->
+<!--            <div class="row">-->
+<!--                <div class="col-md-12 home-sec-scroll">-->
+<!--                    <div class="row">-->
+<!--                        <div class="col d-flex justify-content-center list-card mt-5" *ngIf="assessmentFilteredData.length ==0">-->
+<!--                            <div class="col-12">-->
+<!--                                <button class="nodataList">No Data Available!</button>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                        <div *ngFor="let assess of assessmentFilteredData" class="col-md-12 mt-1 cursor">-->
+<!--                            <div class="card class-card class-hover">-->
+<!--                                <div (click)="checkContentTime(assess, 'assess')" class="card-body">-->
+<!--                                    <div class="row">-->
+<!--                                        <div class="col-1">-->
+<!--                                            <img *ngIf="assess.profile_url == ''" alt="" class="rounded-circle" src="assets/images/ristaschool/assessment.png" style="width: 50px;height: 50px;">-->
+<!--                                            <img *ngIf="assess.profile_url != ''" [src]="sanitizer.bypassSecurityTrustResourceUrl(webhost + '/' + assess.profile_url)" alt="" class="rounded-circle" style="width: 50px;height: 50px;">-->
+<!--                                        </div>-->
+<!--                                        <div class="col-4 align-self-center">-->
+<!--                                            <h4 class="t-period mb-0"><span class="font-weight-bold">{{assess.content_name}} </span><b class="contenttext">-->
+<!--                                                <small *ngIf="assess.content_format == 1">(PDF)</small>-->
+<!--                                                <small *ngIf="assess.content_format == 3">(TEXT)</small></b></h4>-->
+<!--                                        </div>-->
+<!--                                        <div class="col-3 align-self-center">-->
+<!--                                            <p><span>Subject: </span> <span class="t-name font-weight-bold">{{assess.subject_name}}</span></p>-->
+<!--                                        </div>-->
+<!--                                        <div class="col-4 align-self-center">-->
+<!--                                            <p><span>Start: </span> <span *ngIf="assess.start_date != '0000-00-00'" class="t-name font-weight-bold">{{assess.start_date|date:'MM-dd-yyyy'}}</span> &nbsp; &nbsp;-->
+<!--                                                <span>End: </span> <span *ngIf="assess.end_date != '0000-00-00'" class="t-name font-weight-bold">{{assess.end_date|date:'MM-dd-yyyy'}}</span>-->
+<!--                                            </p>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+    </section>
+
+    <section class="row list-card" *ngIf="tabShow == 'recordings'">
+        <div class="col-12 col-md-12 mt-3">
+            <div class="row">
+                <div class="col-12 mb-2 align-self-center">
+                    <h4 class="viewname">Recordings</h4>
+                </div>
+                <div class="col-md-12 home-sec-scroll">
+                    <div class="row card py-3">
+                        <div *ngFor="let source of videoSource;let i=index" class="col-md-12 mt-1 cursor">
+                            <div class="card class-card class-hover">
+                                <div (click)="navigateOutsideRecording(source)" class="card-body">
+                                    <div class="row">
+                                        <div class="col-4 align-self-center">
+                                            <p><span>Passcode: </span>
+                                                <span class="t-name font-weight-bold">{{source.passcode}}
+                                            </span> &nbsp; &nbsp;
+                                            </p>
+                                        </div>
+                                        <div class="col-4 align-self-center">
+                                            <p><span>Start: </span> <span *ngIf="source.recording_start != '0000-00-00'" class="t-name font-weight-bold">{{source.recording_start|date:'MM-dd-yyyy'}} &nbsp;{{source.recording_start}}</span>
+                                            </p>
+                                        </div>
+                                        <div class="col-4 align-self-center">
+                                            <p>
+                                                <span>End: </span> <span *ngIf="source.recording_end != '0000-00-00'" class="t-name font-weight-bold">{{source.recording_end|date:'MM-dd-yyyy hh:mm:ss a'}} &nbsp;{{source.recording_end}}</span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div *ngIf="videoSource.length == 0" class="col-md-12 mt-1 cursor">
+                            <div class="card">
+                                <div  class="card-body card-hover2" style="align-self: center;">
+                                    <div class="row">
+                                        <span>No data found</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="row list-card mt-2 px-3" *ngIf="tabShow == 'otherlinks'">
+
+        <div class="col-12 mb-2 px-0 align-self-center">
+            <h4 class="viewname">Other Links</h4>
+        </div>
+
+        <div class="card col-12 py-4 px-5">
+            <div class="row" *ngFor="let item of linkdata; let j = index">
+                <div class="col-md-12 my-1 px-0">
+                    <a class="cursor" href="{{item}}" target="_blank">
+                        <span style="overflow: scroll; overflow-y: hidden" title="{{item}}">{{item}}</span>
+                    </a>
+                    <hr class="mt-1">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="row list-card mt-2 px-3" *ngIf="tabShow == 'notes'">
+
+        <div class="col-12 mb-2 px-0 align-self-center">
+            <h4 class="viewname">Notes</h4>
+        </div>
+
+        <div class="card col-12 py-4 px-5">
+            <div class="row">
+                <div class="col-12 mt-3" *ngFor="let list of notesdata; let i = index">
+                    <div style="flex-direction: row" class="row px-2 py-3 card class-card1 class-hover" *ngIf="list.add_date != '00-00-0000'">
+                        <div class="col-9" style="word-wrap: break-word;">
+                            <p [innerHTML]="list.note"></p>
+                        </div>
+                        <div class="col-3 text-right">
+                            <p class="t-name font-weight-bold">{{list.add_date}}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<ng-template #content let-c="close" let-d="dismiss">
+    <div class="modal-header color-primary">
+        <h4 class="modal-title" id="modal-basic-title">Other links</h4>
+    </div>
+    <div class="modal-body">
+        <!-- Container-fluid starts-->
+        <div class="container-fluid">
+            <div class="row" *ngFor="let item of linkdata; let j = index">
+                <div class="col-md-12">
+                    <a class="cursor" href="{{item}}" target="_blank">
+                        <span style="overflow: scroll; overflow-y: hidden" title="{{item}}">{{item}}</span>
+                    </a>
+                    <hr>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-primary {{env.deviceType() ? 'border-radius-5' : ''}}" (click)="onSave()">Cancel</button>
+    </div>
+</ng-template>
+<ng-template #notesDetail let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h4 class="modal-title color-primary">Notes</h4>
+    </div>
+    <div class="modal-body">
+        <!-- Container-fluid starts-->
+        <div class="container-fluid">
+            <div class="row d-flex justify-content-center">
+                <div class="col-10 mt-2" *ngFor="let list of notesdata; let i = index">
+                    <div class="row p-2 border border-secondary rounded" *ngIf="list.add_date != '00-00-0000'">
+                        <div class="col-9" style="word-wrap: break-word;">
+                            <p [innerHTML]="list.note"></p>
+                        </div>
+                        <div class="col-3 text-right">
+                            <p>{{list.add_date}}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-primary {{env.deviceType() ? 'border-radius-5' : ''}}" (click)="onSave()">Cancel</button>
+    </div>
+</ng-template>
+
+<!-- Container-fluid Ends-->
+<ng-template #throwError>
+    <div class="modal-header">
+        <h4 class="modal-title letter">{{ErrorTitle}}</h4>
+        <i class="fa fa-close cursor" (click)="onSave()" ></i>
+    </div>
+    <div class="modal-body text-center">
+        <p><b>{{message}}</b></p>
+    </div>
+    <div class="modal-footer">
+        <div class="btn-popup pull-right">
+            <button class="btn btn-outline-primary {{env.deviceType() ? 'border-radius-5' : ''}}" (click)="onSave()">ok</button>
+        </div>
+    </div>
+</ng-template>
+
+<!--//zoom confirmation pop-up-->
+
+<ng-template #zoomDialog let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h4 class="modal-title text-center">Zoom Meet</h4>
+        <i class="fa fa-close cursor" (click)="modalRef.close()" ></i>
+    </div>
+    <div class="modal-body d-flex justify-content-right">
+        <div class="col-12 text-center">
+            <h5>Open zoom in </h5>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button  class="btn btn-primary {{env.deviceType() ? 'border-radius-5' : ''}}" (click)="modalRef.close();zoomService.initZoomMeeting(selectedClass)">In App</button>
+        <button (click)="navigateOutsideZoom(zoomResponse)" class="btn btn-outline-primary {{env.deviceType() ? 'border-radius-5' : ''}}" type="button">New Tab</button>
+    </div>
+</ng-template>
+<ng-template #zoomDialog1 let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h4 class="modal-title text-center">Zoom Meet</h4>
+        <i class="fa fa-close cursor" (click)="modalRef.close()" ></i>
+    </div>
+    <div class="modal-body d-flex justify-content-right">
+        <div class="col-12 text-center">
+            <h5>No Zoom Meet Scheduled for this day</h5>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button  class="btn btn-primary {{env.deviceType() ? 'border-radius-5' : ''}}" (click)="modalRef.close();">OK</button>
+    </div>
+</ng-template>
+<ng-template #video let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h4 class="modal-title text-center">Zoom Meet</h4>
+        <i (click)="modalRef.close()" class="fa fa-close cursor" ></i>
+    </div>
+    <div class="modal-body d-flex justify-content-right">
+        <div class="col-12 text-center">
+            <!--            <vg-player>-->
+            <!--                <vg-controls>-->
+            <!--                    <vg-play-pause></vg-play-pause>-->
+            <!--                    <vg-playback-button></vg-playback-button>-->
+
+            <!--                    <vg-time-display vgProperty="current" vgFormat="mm:ss"></vg-time-display>-->
+
+            <!--                    <vg-scrub-bar>-->
+            <!--                        <vg-scrub-bar-current-time></vg-scrub-bar-current-time>-->
+            <!--                        <vg-scrub-bar-buffering-time></vg-scrub-bar-buffering-time>-->
+            <!--                    </vg-scrub-bar>-->
+
+            <!--                    <vg-time-display vgProperty="total" vgFormat="mm:ss"></vg-time-display>-->
+
+            <!--                    <vg-mute></vg-mute>-->
+            <!--                    <vg-volume></vg-volume>-->
+
+            <!--                    <vg-fullscreen></vg-fullscreen>-->
+            <!--                </vg-controls>-->
+
+            <!--                <video #media id="singleVideo" preload="auto" crossorigin>-->
+            <!--                    <source src="http://static.videogular.com/assets/videos/videogular.mp4" type="video/mp4">-->
+            <!--                </video>-->
+            <!--            </vg-player>-->
+            <video controls height="420" width="700">
+                <!--                <source src="http://static.videogular.com/assets/videos/videogular.mp4" type="video/mp4">-->
+                <source src="{{selectedRecording.play_video}}" type="text/html">
+            </video>
+        </div>
+    </div>
+</ng-template>

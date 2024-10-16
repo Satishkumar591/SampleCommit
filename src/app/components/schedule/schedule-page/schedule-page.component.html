@@ -1,0 +1,35 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card tab2-card">
+                <div class="card-header pb-0">
+<!--                    <h5 class="text-capitalize" *ngIf="type == 'add'">Add Books</h5>-->
+<!--                    <h5 class="text-capitalize" *ngIf="type == 'edit'">Edit Books</h5>-->
+<!--                    <label class="text-muted">All fields marked with <span class="text-danger">*</span> are required</label>-->
+                    <ul class="nav nav-tabs mb-0 color-primary">
+                        <li class="nav-item cursor">
+                            <a (click)="page = 'Attendance'" aria-current="page" class="nav-link {{page == 'Attendance' ? 'active' : ''}}"><b>{{auth.getRoleId() == '2' ? 'Schedule' : 'My Schedule'}}</b></a>
+                        </li>
+                        <li class="nav-item cursor">
+                            <a (click)="page = 'Calendar'" class="nav-link {{page == 'Calendar' ? 'active' : ''}}"><b>Calendar</b></a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card-body tab2-card">
+                    <app-daily-schedule [page]="schoolid" *ngIf="page == 'Attendance'"></app-daily-schedule>
+                    <app-my-schedule [page]="schoolid" *ngIf="page == 'Calendar'"></app-my-schedule>
+                </div>
+            </div>
+        </div>
+    </div>
+<!--    <div class="row mt-4" *ngIf="!allowAdd">-->
+<!--        <div class="col-md-12">-->
+<!--            <button class="btn btn-outline-primary pull-right" (click)="backAction()"><i class="fa fa-long-arrow-left fa-1x" aria-hidden="true"></i> Back</button>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--    <div class="row d-flex justify-content-center list-card mt-5" *ngIf="!allowAdd">-->
+<!--        <div class="col-8">-->
+<!--            <button class="nodataList">You Don't Have Permission to add Books for {{schoolName}}</button>-->
+<!--        </div>-->
+<!--    </div>-->
+</div>

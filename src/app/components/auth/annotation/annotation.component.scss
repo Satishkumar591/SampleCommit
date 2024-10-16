@@ -1,0 +1,38 @@
+@keyframes blinkStroke {
+  100%,
+  0% {
+    stroke: #500;
+  }
+  30% {
+    stroke: deeppink;
+  }
+  60% {
+    stroke: yellow;
+  }
+  100% {
+    stroke: black;
+  }
+}
+
+@keyframes blinkFill {
+  100%,
+  0% {
+    fill: #500;
+  }
+  30% {
+    fill: deeppink;
+  }
+  60% {
+    fill: yellow;
+  }
+  100% {
+    fill: black;
+  }
+}
+
+.stickyTool{
+  position: sticky;
+  top: 0;
+  background-color: #f8f8f9;
+  z-index: 3;
+}

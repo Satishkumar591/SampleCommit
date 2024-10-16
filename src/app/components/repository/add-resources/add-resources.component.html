@@ -1,0 +1,371 @@
+<!-- Container-fluid starts-->
+<div class="container-fluid" *ngIf="showPage">
+    <div class="row">
+        <div class="col-12">
+            <div class="card tab2-card">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-6">
+                            <h4 class="text-capitalize" *ngIf="type == 'add'">ADD RESOURCES</h4>
+                            <h4 class="text-capitalize" *ngIf="type == 'edit'">EDIT RESOURCES - <span
+                                    class="color-primary">{{contentName}}</span></h4>
+                            <label class="text-muted">All fields marked with <span class="text-danger">*</span> are
+                                required</label>
+                        </div>
+                        <div class="pdf-assign-btn col-6">
+                            <button class="btn btn-primary pull-right ml-3"
+                                    *ngIf="type == 'add' && draftType == 'update'" (click)="assign('add')">Publish
+                            </button>
+                            <button class="btn btn-primary pull-right ml-3"
+                                    *ngIf="type == 'edit' && draftType == 'publish'" (click)="assign('edit')">Publish
+                            </button>
+                            <button class="btn btn-primary pull-right ml-3"
+                                    *ngIf="type == 'edit' && draftType == 'update'" (click)="assign('edit')">Publish
+                            </button>
+                            <button class="btn btn-primary pull-right" (click)="draft(type)">Save As Draft
+                            </button>
+<!--                            <img (click)="draft('add')" *ngIf="type == 'add'" class="pull-right"-->
+<!--                                 src="assets/images/pdf-icons/floppy-disk.png" alt="">-->
+<!--                            <img (click)="draft('edit')" *ngIf="type == 'edit'" class="pull-right"-->
+<!--                                 src="assets/images/pdf-icons/floppy-disk.png" alt="">-->
+                            <!--                            <input accept=".pdf" style="display: none" type="file" #attachments1 (change)="encodePdfFileAsURL($event, 2)" #hiddenfileinput1>-->
+                            <!--                            <button class="btn btn-primary pull-right mr-3" type="file" aria-describedby="inputGroupFileAddon11"-->
+                            <!--                                    (click)="hiddenfileinput1.click()"><i class="fa fa-upload"></i> Answer Key Upload</button>-->
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body tab2-card">
+                    <form [formGroup]="resourceform" class="needs-validation user-add">
+                        <div class="col-12 col-md-12 d-flex mb-4">
+                            <div class="col-12 col-md-4 px-0">
+                                <div class="image-container-left">
+                                    <img *ngIf="!imagepath" src="assets/images/ristaschool/resource.png" alt="">
+                                    <img *ngIf="imagepath"
+                                         [src]="sanitizer.bypassSecurityTrustResourceUrl(webhost + '/' + imagepath)"
+                                         alt="">
+                                    <i *ngIf="imagepath" class="fa fa-times close-button" title="close"
+                                       (click)="deleteImg()"></i>
+                                    <div class="profileUrl">
+                                        <input style="display: none" type="file" class="custom-upload-input"
+                                               (change)="encodeImageFileAsURL($event)" #addResource
+                                               accept=".png, .jpeg, .jpg">
+                                        <button typw="button" class="btn btn-light btn-circle border-rista"
+                                                title="upload Image" (click)="addResource.click()"><i
+                                                class="fa fa-upload fa-2x mb-3" aria-hidden="true"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="container col-12 col-md-8">
+                                <h5>Created By</h5>
+                                <div class="row">
+                                    <div class="col-md-4 form-group">
+                                        <input class="form-control" formControlName="created" id="validationCustom1"
+                                               type="text" placeholder="Created" readonly>
+                                    </div>
+                                    <div class="col-md-8 form-group">
+                                        <input class="form-control" formControlName="resourceName"
+                                               id="validationCustom12"
+                                               type="text" placeholder="Resource Name *" required="">
+                                        <em class="error"
+                                            *ngIf="!resourceform.get('resourceName').valid && (resourceform.get('resourceName').dirty || resourceform.get('resourceName').touched)">Resource
+                                            Name is required</em>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-4 form-group">
+                                        <ng-select [items]="gradeData"
+                                                   bindLabel="grade_name"
+                                                   bindValue="grade_id"
+                                                   formControlName="grade"
+                                                   placeholder="Select Grade *"
+                                                   typeToSearchText=""
+                                                   multiple="true"
+                                        >
+                                        </ng-select>
+                                        <em class="error"
+                                            *ngIf="!resourceform.get('grade').valid && (resourceform.get('grade').dirty || resourceform.get('grade').touched)">Grade
+                                            is required</em>
+                                    </div>
+                                    <div class="col-md-4 form-group">
+                                        <ng-select [items]="subjectData"
+                                                   bindLabel="subject_name"
+                                                   bindValue="subject_id"
+                                                   formControlName="subject"
+                                                   placeholder="Select Subject *"
+                                                   typeToSearchText=""
+                                                   multiple="true"
+                                        >
+                                        </ng-select>
+                                        <em class="error"
+                                            *ngIf="!resourceform.get('subject').valid && (resourceform.get('subject').dirty || resourceform.get('subject').touched)">Subject
+                                            is required</em>
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <select class="form-control" formControlName="access">
+                                            <option value="" hidden selected>Please Choose *</option>
+                                            <option *ngIf="roleid != '6'" value="1">Private (Within Institution)
+                                            </option>
+                                            <option *ngIf="roleid != '6'" value="2">Private (Only You)</option>
+                                            <option *ngIf="roleid == '6'" value="4">Private (Within Corporate)</option>
+                                            <!-- <option *ngIf="roleid != '6'" value="3">Public</option> -->
+                                        </select>
+                                        <em class="error"
+                                            *ngIf="!resourceform.get('access').valid && (resourceform.get('access').dirty || resourceform.get('access').touched)">Access
+                                            is required</em>
+                                    </div>
+                                </div>
+                                <div class="row d-flex align-items-center mb-3">
+                                    <app-treeview-contentfolder [treeviewHeight]="250"
+                                            [type]="type" [selectedbatch]="type == 'edit' ? editData.batch_id : []">
+                                    </app-treeview-contentfolder>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group col-md-12">
+                                        <textarea name="" id="" placeholder="Enter Description"
+                                                  formControlName="description"
+                                                  style="width: 100%; height: 100px; padding: 4px"></textarea>
+                                        <em class="error"
+                                            *ngIf="!resourceform.get('description').valid && (resourceform.get('description').dirty || resourceform.get('description').touched)">Description
+                                            is required</em>
+                                    </div>
+                                    <div class="col-md-6 form-group align-self-center">
+                                        <div class="col-12" style="position: relative; font-size: 15px; left: 0.4rem">
+                                            <input type="checkbox" class="form-check-input cursor" id="download"
+                                                   formControlName="downloadContent"><label for="download">Download
+                                            Content</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <tag-input
+                                                formControlName="tag"
+                                                [secondaryPlaceholder]="'Enter tags'"
+                                                [placeholder]="'Add tags'"
+                                                [editable]='true'
+                                                [clearOnBlur]="true"
+                                                [addOnPaste]="true"
+                                                [addOnBlur]="true"
+                                                theme='bootstrap'
+                                        ></tag-input>
+                                    </div>
+                                    <!--                                    <div style="max-height: 100px; overflow: hidden" *ngFor="let list of tagData" class="chip mr-1 mb-1">{{list.tag_name}}<span class="closebtn" onclick="this.parentElement.style.display='none'">&times;</span>-->
+                                    <!--                                    </div>-->
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="row">
+                                <h4 class="col-12" style="color: black; font-weight: bold">Resources</h4>
+                                <div class="col-12" *ngIf="pdfpath[0].original_image_url == undefined">
+                                    <div class="col-md-12 d-flex justify-content-center p-4 link-card">
+                                        <a [href]="pdfpath[0].link" target="_blank">{{pdfpath[0].link}}</a>
+                                    </div>
+                                </div>
+                                <div class="col-md-6" *ngIf="pdfpath[0].original_image_url != undefined">
+                                    <div class="form-group card-resource ml-4"
+                                         *ngFor="let file of pdfpath; let i= index">
+                                        <div class="delete-icon w-100" *ngIf="pdfpath.length > 0">
+                                            <img class="img-path" src="assets/images/ristaschool/resource.png"
+                                                 title="{{file.image}}" alt="" (click)="viewDetail(file)">
+                                            <!--                                        <i  class="fa fa-times close-button" title="close" (click)="deletePdf(i)"></i>-->
+                                            <br/>
+                                            <h6 class="mt-2 classresource">{{file.image}}</h6>
+                                        </div>
+                                        <div class="row mt-5">
+                                            <div class="col-md-6">
+                                                <button class="btn btn-primary col-md-12" (click)="pdfUpload()"><i
+                                                        class="fa fa-upload"></i> Upload
+                                                </button>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <button class="btn btn-outline-primary col-md-12"
+                                                        (click)="viewDetail(file)">Preview
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div *ngIf="pdfpath.length == 0">
+                                        <input accept=".pdf" style="display: none" type="file" #attachments
+                                               (change)="encodePdfFileAsURL($event, 1)" #hiddenfileinput>
+                                        <img class="img-path cursor" src="assets/images/pdf-icons/Group 15864@2x.png"
+                                             title="Upload PDF" alt="" type="file"
+                                             aria-describedby="inputGroupFileAddon01"
+                                             (click)="hiddenfileinput.click()"><br/>
+                                        <h6>Upload Files</h6>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mx-3 my-4 resource-link-card">
+                            <div class="col-md-12 d-flex justify-content-between">
+                                <h4 class="font-weight-bold">Additional resource links</h4>
+                                <span>
+                                    <i class="fa fa-edit f-22px ml-3 cursor color-primary" title="Edit Resource Link" (click)="isEditLink = true" *ngIf="resourceArray.length != 0 && !isEditLink"></i>
+                                    <i class="fa fa-plus-circle f-22px ml-3 cursor color-primary" title="Add Resource Link" *ngIf="resourceArray.length == 0 || (resourceArray.length != 0 && isEditLink)" (click)="addLinkArray()"></i>
+                                    <i class="fa fa-times-circle color-red f-22px ml-3 cursor" title="Close" (click)="isEditLink = false;filterEmptyArrayValue()" *ngIf="isEditLink"></i>
+                                </span>
+                            </div>
+                            <div class="col-md-12 d-flex justify-content-center align-items-center" style="height: 20vh" *ngIf="resourceArray.length == 0">
+                                <span class="text-info">No Resource Links available!</span>
+                            </div>
+                            <div class="col-md-12 py-3 d-flex flex-wrap align-items-center" *ngFor="let items of resourceArray; let i = index">
+                                <a [href]="items.link" target="_blank" *ngIf="!isEditLink">
+                                    <img *ngIf="items.type == 'document'" class="size-38px" src="assets/images/icons/doc-icon.png" alt="doc">
+                                    <img *ngIf="items.type == 'audio'" class="size-38px" src="assets/images/icons/audio-icon.png" alt="mp3">
+                                    <img *ngIf="items.type == 'video'" class="size-38px" src="assets/images/icons/video-icon.png" alt="mp4">
+                                    <img *ngIf="items.type == 'ppt'" class="size-38px" src="assets/images/icons/ppt-icon.png" alt="ppt">
+                                    <img *ngIf="items.type == 'Others'" class="size-38px" src="assets/images/icons/others-icon.png" alt="others">
+                                </a>
+                                <div class="col-md-2 px-0" *ngIf="isEditLink">
+                                    <select [(ngModel)]="items.type" class="form-control" [ngModelOptions]="{standalone: true}">
+                                        <option [value]="list" *ngFor="let list of linksType">{{list == 'ppt' ? (list | uppercase) : (list | titlecase)}}</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2 px-0" *ngIf="isEditLink">
+                                    <input type="text" placeholder="{{items.type | titlecase}} Name" *ngIf="isEditLink" [(ngModel)]="items.name" [ngModelOptions]="{standalone: true}" class="form-control ml-2">
+                                </div>
+                                <div class="col-md-{{isEditLink ? '8' : '11'}} d-flex align-items-center">
+                                    <a [href]="items.link" target="_blank" *ngIf="!isEditLink">{{items.name}}&nbsp;&nbsp;-&nbsp;&nbsp;</a>
+                                    <a [href]="items.link" target="_blank" *ngIf="!isEditLink">{{items.link}}</a>
+                                    <input type="text" placeholder="Enter {{items.type | titlecase}} Link {{i + 1}} *"  *ngIf="isEditLink" [(ngModel)]="items.link" [ngModelOptions]="{standalone: true}" class="form-control">
+                                    <i class="fa fa-trash color-red f-22px ml-2 cursor" title="Delete {{items.type | titlecase}} Link" (click)="deleteArray(i)" *ngIf="isEditLink"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<ng-template #pdf let-c="close" let-d="dismiss">
+    <div class="modal-body mb-5">
+        <div class="row">
+            <h3 class="col-md-11 px-3 py-2">Add Resources</h3>
+            <div class="col-md-1 pull-right">
+                <i class="fa fa-close pull-right" aria-hidden="true" style="cursor:pointer" (click)="onsave()"></i>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div style="min-height: 120px">
+                    <h4 style="text-align: center;margin-top: 2rem; font-weight: bold">Upload</h4>
+                    <p style="text-align: center">Upload resources as a Image, Video, Voice or PDF Format and proceed to
+                        assign it to your Students.</p>
+                </div>
+                <div *ngIf="pdflinks == ''" class="d-flex justify-content-center">
+                    <input accept=".pdf" style="display: none" type="file" (change)="encodePdfFileAsURL($event, 1)"
+                           #hiddenfileinput>
+                    <button class="btn btn-primary" type="file" aria-describedby="inputGroupFileAddon01"
+                            (click)="hiddenfileinput.click()">Upload PDF
+                    </button>
+                </div>
+                <!--                <div *ngIf="pdfpath == ''" class="d-flex justify-content-center">-->
+                <!--                    <button type="button" data-toggle="modal" data-target="#myModal" data-dismiss="bulkmodal"  (click)="uploadlink()" class="btn btn-primary mt-3">Link</button>-->
+                <!--                </div>-->
+            </div>
+        </div>
+    </div>
+    <!--    </div>-->
+    <!-- Container-fluid Ends-->
+</ng-template>
+<ng-template #linkArray let-c="close" let-d="dismiss">
+    <!-- Modal content-->
+    <div class="modal-content">
+        <div class="modal-header">
+            <h4 class="modal-title">Add Link</h4>
+            <i class="fa fa-close" style="cursor: pointer" data-dismiss="modal"></i>
+        </div>
+        <form [formGroup]="resourceform">
+            <div class="modal-body" formArrayName="repeatlink"
+                 *ngFor="let list of resourceform.get('repeatlink')['controls']; let i=index">
+                <div [formGroupName]="i">
+                    <div class="input-group">
+                        <input type="link" formControlName="link" class="form-control" aria-label="Recipient's username"
+                               placeholder="Add Link here" aria-describedby="basic-addon2">
+                        <div class="input-group-append">
+                                <span class="input-group-text" id="basic-addon2">
+                                    <i class="fa fa-plus" (click)="addarray()"></i>
+                                </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="submitlink()">Submit
+                </button>
+            </div>
+        </form>
+    </div>
+</ng-template>
+
+<ng-template #viewPdf let-c="close" let-d="dismiss">
+    <div class="modal-body">
+        <!-- Container-fluid starts-->
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12 modal-header">
+                    <h4 class="modal-title">{{pdfName}}</h4>
+                    <p class="text-right">
+                        <i class="fa fa-close fa-2x" aria-hidden="true" style="cursor:pointer" (click)="close()"></i>
+                    </p>
+                </div>
+                <div class="col-md-12">
+                    <pdf-viewer [src]="pdfTemplate" style="display: block;"></pdf-viewer>
+                </div>
+            </div>
+        </div>
+        <!-- Container-fluid Ends-->
+    </div>
+</ng-template>
+<ng-template #uploadPdf let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h5 class="contenttext text-center mb-0">Upload PDF</h5>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-md-12">
+                <h5>Are you sure want to upload because previously uploaded pdf & data will be removed</h5>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn cancel" (click)="close()">Cancel</button>
+        <input accept=".pdf" style="display: none" type="file" #attachmentsnew (change)="encodePdfFileAsURL($event, 1)"
+               #hiddenfileinput>
+        <button class="btn btn-primary" type="file" aria-describedby="inputGroupFileAddon01"
+                (click)="hiddenfileinput.click()">Confirm
+        </button>
+    </div>
+</ng-template>
+
+<ng-template #assignContentToClass let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h5 class="contenttext text-center mb-0">Assign Content</h5>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-md-12">
+                <h5>
+                    <span>Do you want to assign this content to the Class {{contentCreatedForm != 'class' ? 'or Content Folder' : ''}}</span>?
+                </h5>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn cancel" (click)="dontAssign()">No</button>
+        <button class="btn btn-primary" type="submit" (click)="assignContent()"
+        >Yes
+        </button>
+    </div>
+</ng-template>
+
+<ng-template #assignTemplate let-c="close" let-d="dismiss">
+    <app-confirm-content-assign
+            [classData]="classDetails"
+            [contentDetails]="assignData"
+            (closePopUp)="closeAssignPopUp()"
+    >
+    </app-confirm-content-assign>
+</ng-template>

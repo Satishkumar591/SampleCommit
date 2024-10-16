@@ -1,0 +1,19 @@
+<div class="container" style="display: block">
+    <h4 class="mt-5" style="color: #7F3486; text-align: center; font-weight: bold">Select Institution</h4>
+    <div class="row my-5 justify-content-center">
+        <div class="col-md-3" *ngFor="let school of schoolDetails; let i = index">
+            <div class="card pt-4 login-card" (click)="loginIntoSchool(school)">
+                <div class="row fit-image-selection">
+                    <div class="card imghvr-reveal-up school-img py-3" style="">
+                        <img *ngIf="school.profile_url == ''" src="assets/images/ristaschool/school-default.png" alt="" style="border-radius: 0">
+<!--                        <img *ngIf="school.profile_url != ''" class="card-img img-thumbnail"-->
+<!--                             [src]="sanitizer.bypassSecurityTrustResourceUrl(webHost + '/' + school.profile_url)" alt="">-->
+                    </div>
+                </div>
+                <div class="row form-group mt-4">
+                    <h4 class="col-md-12" style="text-align: center; color: #7F3486; font-weight: bold">{{school.name}}</h4>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

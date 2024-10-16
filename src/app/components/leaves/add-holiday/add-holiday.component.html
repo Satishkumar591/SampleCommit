@@ -1,0 +1,168 @@
+<!-- Container-fluid starts-->
+<div *ngIf="schoolStatus.length != 0" class="container-fluid addHolidayModel">
+    <div class="row d-flex justify-content-between">
+        <div class="col-sm-6">
+            <h4 class="letter">Academic Calendar</h4>
+        </div>
+        <div class="col-sm-6 text-right mb-2">
+            <button type="button" class="btn btn-primary" (click)="addHolidays()">Add Holidays</button>
+        </div>
+        <div class="col-12 active2 p-3">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="btn-group">
+                        <div [ngClass]="currentCalendarshow === 'preview' ? 'btn btn-primary' : 'btn btn-outline-primary'"
+                             mwlCalendarPreviousView
+                             [view]="view"
+                             [(viewDate)]="viewDate"
+                             (viewDateChange)="closeOpenMonthViewDay('preview')">
+                            Previous
+                        </div>
+                        <div [ngClass]="currentCalendarshow === 'today' ? 'btn btn-primary' : 'btn btn-outline-primary'"
+                             mwlCalendarToday
+                             [(viewDate)]="viewDate"
+                             (viewDateChange)="closeOpenMonthViewDay('today')">
+                            Today
+                        </div>
+                        <div [ngClass]="currentCalendarshow === 'next' ? 'btn btn-primary' : 'btn btn-outline-primary'"
+                             mwlCalendarNextView
+                             [view]="view"
+                             [(viewDate)]="viewDate"
+                             (viewDateChange)="closeOpenMonthViewDay('next')">
+                            Next
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 text-center">
+                    <h3 class="letter">{{ viewDate | calendarDate:(view + 'ViewTitle'):'en' }}</h3>
+                </div>
+                <div class="col-md-4 text-right">
+                    <div class="btn-group">
+                        <div class="btn btn-outline-primary"
+                             (click)="setView(CalendarView.Month)"
+                             [class.active]="view === CalendarView.Month">
+                            Month
+                        </div>
+                        <div class="btn btn-outline-primary"
+                             (click)="setView(CalendarView.Week)"
+                             [class.active]="view === CalendarView.Week">
+                            Week
+                        </div>
+                        <div class="btn btn-outline-primary"
+                             (click)="setView(CalendarView.Day)"
+                             [class.active]="view === CalendarView.Day">
+                            Day
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 mt-3" [ngSwitch]="view">
+                    <mwl-calendar-month-view
+                            *ngSwitchCase="CalendarView.Month"
+                            [@.disabled]="true"
+                            [viewDate]="viewDate"
+                            [events]="caelenderEvents"
+                            [refresh]="refresh"
+                            [activeDayIsOpen]="activeDayIsOpen"
+                            [cellTemplate]="customCellTemplate"
+                            (dayClicked)="dayClicked($event.day)"
+                            (eventTimesChanged)="eventTimesChanged($event)">
+                    </mwl-calendar-month-view>
+<!--                    (eventClicked)="patchHoliday($event.event)"-->
+                    <mwl-calendar-week-view
+                                *ngSwitchCase="CalendarView.Week"
+                                [viewDate]="viewDate"
+                                [events]="caelenderEvents"
+                                [refresh]="refresh"></mwl-calendar-week-view>
+                        <mwl-calendar-day-view
+                                *ngSwitchCase="CalendarView.Day"
+                                [viewDate]="viewDate"
+                                [events]="caelenderEvents"
+                                [refresh]="refresh"></mwl-calendar-day-view>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div *ngIf="schoolStatus.length == 0">
+    <app-emptyschool>
+    </app-emptyschool>
+</div>
+
+
+<!--/// custom template for calender opens -->
+
+
+<ng-template #customCellTemplate let-day="day" let-locale="locale">
+    <div class="cal-cell-top">
+        <span class="cal-day-number"
+        >{{ day.date | calendarDate:'monthViewDayNumber':locale }}</span
+        >
+    </div>
+    <h5 style="margin: 5px;" *ngIf="day.events.length >0">
+        <span *ngFor="let item of day.events;let i=index">
+            <p class="font-weight-bold letter" *ngIf="i== 0 || i === 1">{{item.title}} {{i != 0 ? ' , ': ''}}</p>
+        </span>
+        <span *ngIf="day.events.length > 2">
+                    {{day.events.length-2 + ' More'}}
+
+        </span>
+    </h5>
+</ng-template>
+
+<!--///-->
+<!-- Container-fluid Ends-->
+<ng-template #modalContent  let-close="close">
+    <div class="modal-header">
+        <h5 class="modal-title" *ngIf="!updateLeaves">Add Holiday</h5>
+        <h5 class="modal-title" *ngIf="updateLeaves">Edit Holiday</h5>
+        <button type="button" class="close" (click)="close()">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <form [formGroup]="addLeaves">
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="row-md-12">
+                        <label>Start Date <span class="text-danger">*</span></label>
+                    </div>
+                    <div class="row-md-12">
+                        <input class="form-control active2" formControlName="fromDate" placeholder="Start Date *"
+                               name="dp" angular-mydatepicker #dp="angular-mydatepicker"
+                               [options]="myDpOptions" (dateChanged)="onDateChanged($event)" (click)="dp.toggleCalendar()"/>
+                    </div>
+                    <em class="errormessage" *ngIf="addLeaves.get('fromDate').invalid && (addLeaves.get('fromDate').dirty || addLeaves.get('fromDate').touched)">
+                        Start Date is invalid
+                    </em>
+                </div>
+                <div class="col-md-6">
+                    <div class="row-md-12">
+                        <label>End Date</label>
+                    </div>
+                    <div class="row-md-12">
+                        <input class="form-control active2" formControlName="toDate" placeholder="End Date"
+                               name="dp" angular-mydatepicker #dp1="angular-mydatepicker"
+                               [options]="myDpOptions1" (dateChanged)="onDateChanged1($event)" (click)="dp1.toggleCalendar()"/>
+                    </div>
+                </div>
+                <div class="col-12 mt-2">
+                    <div class="row-md-12">
+                        <label>Enter Description <span class="text-danger">*</span></label>
+                    </div>
+                    <div class="row-md-12">
+                        <input class="form-control active2" type="text" formControlName="leaves" placeholder="Enter Description *">
+                    </div>
+                    <em class="errormessage" *ngIf="addLeaves.get('leaves').invalid && (addLeaves.get('leaves').dirty || addLeaves.get('leaves').touched)">
+                        Description is required
+                    </em>
+                </div>
+
+            </div>
+        </div>
+        <div class="modal-footer text-right">
+            <button *ngIf="!updateLeaves" type="button" class="btn btn-primary" (click)="addLeavesSave()">Add</button>
+            <button *ngIf="updateLeaves" type="button" class="btn btn-primary" (click)="editHoliday(updateLeavesId)">Update</button>
+        </div>
+    </form>
+</ng-template>

@@ -1,0 +1,199 @@
+
+<div class="container-fluid student-annotation disable-text-selection" *ngIf="showPage" style="padding-right: 0px;padding-left: 0px;margin-right: 0px;margin-left: 0px; width: 100vw !important;">
+    <div class="col-12">
+        <div *ngIf="showAnnotation && annotationType != 'preview'" class="row clearBoth">
+            <div class="col-12 d-flex justify-content-center p-1 mb-0 tools-main-div bg-white" #toolbar>
+                <div class="pdf-assign-btn pdf-tools col-md-8 d-flex justify-content-center flex-wrap">
+
+<!--&lt;!&ndash;                    new items row&ndash;&gt;-->
+                    <ng-select [(ngModel)]="textFontSize"
+                               [items]="fontList"
+                               bindLabel="value"
+                               bindValue="value"
+                               placeholder="Please Select"
+                    >
+                    </ng-select>
+<!--                    <select class="form-control mr-3" style="width: 60px;font-size: 10px!important;" title="Font size" [(ngModel)]="textFontSize">-->
+<!--                        <option value="" selected disabled>--Font Size--</option>-->
+<!--                        <option value="10">10</option>-->
+<!--                        <option value="11">11</option>-->
+<!--                        <option value="12">12</option>-->
+<!--                        <option value="13">13</option>-->
+<!--                        <option value="14">14</option>-->
+<!--                        <option value="15">15</option>-->
+<!--                        <option value="16">16</option>-->
+<!--                        <option value="17">17</option>-->
+<!--                        <option value="18">18</option>-->
+<!--                        <option value="19">19</option>-->
+<!--                        <option value="20">20</option>-->
+<!--                    </select>-->
+                    <img (click)="deleteSvg()" [ngClass]="selectedDeleteIcon ? 'selected-tool-color': ''"  alt="" class="mr-3" src="assets/images/pdf-icons/Icon material-delete-1.png" style="cursor: pointer"  title="Delete">
+                    <img (click)="incrementZoom(-0.1)" alt=""  class="mr-3" src="assets/images/pdf-icons/minus-circle.png" style="cursor: pointer" title="Zoom-out">
+                    <img (click)="incrementZoom(0.1)" alt="" class="mr-3" src="assets/images/pdf-icons/add-circle.png" style="cursor: pointer" title="Zoom-in">
+                    <img (click)="tools('rect', 'crosshair')"  [ngClass]="shapesType == 'rect'? 'selected-tool-color': ''" alt="" class="mr-3" src="assets/images/pdf-icons/stop.png" title="Extract">
+<!--                    <img  class="mr-3" title="Erase" [ngClass]="shapesType == 'rectMask'? 'selected-tool-color': ''"  (click)="tools('rectMask', 'auto')" src="assets/images/pdf-icons/eraser@2x.png" alt="">-->
+                    <img  (click)="tools('eraser', 'auto')" [ngClass]="shapesType == 'eraser'? 'selected-tool-color': ''" alt=""  class="mr-3" src="assets/images/pdf-icons/eraser@2x.png" title="Erase">
+                    <img (click)=" tools('text', 'auto')"  [ngClass]="shapesType == 'text'? 'selected-tool-color': ''" alt=""  class="mr-3"  src="assets/images/pdf-icons/Text.png" title="Text">
+                    <img (click)=" tools('math', 'auto')"  [ngClass]="shapesType == 'math'? 'selected-tool-color': ''" alt=""  class="mr-3"  src="assets/images/pdf-icons/math2.png" title="Math">
+                    <img (click)=" tools('highlight', 'auto')"  [ngClass]="shapesType == 'highlight'? 'selected-tool-color': ''" alt="" class="mr-3" src="assets/images/pdf-icons/highlighter-icon.png" title="Highlighter">
+                    <img (click)="tools('path', 'auto')" [ngClass]="shapesType == 'path'? 'selected-tool-color': ''"  alt=""  class="mr-3" src="assets/images/pdf-icons/Icon awesome-pencil-alt.png" title="Sketch">
+<!--                    <input class="mr-3" title="Color"  style="margin-top: 6px" type="color" [(ngModel)]="svgColor"  name="favcolor">-->
+                    <span (colorPickerChange)="svgColor = color" [(colorPicker)]="color" [style.background]="color" class="mr-3" style="width: 39px;border: solid 2px;height: 19px;margin-top: 6px;"  style="margin-top: 6px"  title="Color"></span>
+<!--                   event {{selectedElement}}-->
+                </div>
+            </div>
+
+
+        </div>
+        <div class="row"  [style.marginTop.px] ="contentHeight? contentHeight : ''">
+
+            <div [ngClass]="selectedDeleteIcon ? 'col-8': 'col-12'" id="pdf-page" class="pdf-mainpage scrollPanel-student" #pdfPage>
+<!--            <div [ngClass]="selectedDeleteIcon ? 'col-8': 'col-8'" id="pdf-page" class="pdf-mainpage scrollPanel-student" #pdfPage>-->
+
+                <pdf-viewer
+                        id="pdf-view" [src]="pdfTemplate" [zoom]="zoom"
+                        (page-rendered)="pageRendered($event)"
+                        (pageChange)="pagechanging($event)"
+                        (pages-initialized)="pagechanging($event)"
+                        [(page)]="pageVariable"
+                        [fit-to-page]="true"
+                        [original-size]="true"
+                        [render-text]="false"  [show-all]="true" [stick-to-page]="true"
+                        style="display: block;height: 100vh;"></pdf-viewer>
+            </div>
+            <div class="col-4 w-50" *ngIf="selectedDeleteIcon" >
+                <div class="row mt-5">
+                    <div class="w-100">
+                        <button type="button" *ngIf="deleteAnnatation" (click)="backToQuestion()" class="btn btn-primary w-100 mb-3">Back</button>
+                    </div>
+                    <ng-container *ngIf="deleteAnnatation">
+                        <app-remove-student-annotation [items]="itemSelect"
+                                               (undoDeleteAnnatation)="undoDeleteAnnatation($event)"
+                                               (hoverremoveItem)="hoverRemoveItemEnter($event)"
+                                               (hoverleaveremoveItem)="hoverLeaveRemoveItemEnter($event)"
+                                               (removeItem)="removeAnnatation($event)"
+                                               (openDeleteDialog)="deleteAction()"
+                                               class="scrollPanel"></app-remove-student-annotation>
+                    </ng-container>
+                </div>
+            </div>
+<!--            <div class="col-4 w-50">-->
+<!--                <div class="row mt-5">-->
+<!--                    <div class="w-100">-->
+<!--                       <p> {{touchEvents | json}}</p>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+        </div>
+    </div>
+</div>
+
+<!--<div class="container">-->
+
+<!--    <div class="row d-flex justify-content-center mt-5">-->
+<!--        <input [(colorPicker)]="svgColor" style="width: 39px;" [(ngModel)]="svgColor" [style.background]="color"/>-->
+<!--        {{'svgColor :' + svgColor}}-->
+<!--    </div>-->
+<!--    <div class="row d-flex justify-content-center mt-5">-->
+<!--        <ng-select [items]="fontList"-->
+<!--                   bindLabel="value"-->
+<!--                   bindValue="value"-->
+<!--                   [(ngModel)]="textFontSize"-->
+<!--                   placeholder="Please Select"-->
+<!--        >-->
+<!--        </ng-select>-->
+<!--    </div>-->
+<!--</div>-->
+<ng-template  #class let-c="close" let-d="dismiss" >
+        <div class="modal-body" style="border: 0px">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-12 text-right">
+                        <i (click)="close()" class="fa fa-close cursor" style="font-size: 1rem"></i>
+                    </div>
+                    <div class="col-12 text-center">
+                        <h3 class="modal-title headerText">Delete All Annotation</h3>
+                    </div>
+
+                    <div class="col-12">
+                        <h5 class="text-center mt-3">Are you sure  want to delete All Annotations ?</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button (click)="deleteAllAnnotation()" class="btn btn-outline-primary" type="button">Yes</button>
+
+<!--            <button type="button" class="btn btn-outline-primary" (click)="deleteCurrentPageAnnotation()">This Page</button>-->
+        </div>
+    </ng-template>
+<ng-template #eraser let-c="close" let-d="dismiss">
+    <div class="modal-body" style="border: 0px">
+        <div class="container-fluid">
+            <div class="row">
+<!--                <div class="col-12 text-right">-->
+<!--                    <i class="fa fa-close cursor" style="font-size: 2rem" (click)="close()"></i>-->
+<!--                </div>-->
+<!--                <div class="col-12 text-center">-->
+<!--                    <h3 class="modal-title headerText">Delete Annotation</h3>-->
+<!--                </div>-->
+                <div class="col-12">
+                    <h5 class="text-center mt-3">Please double click on annotation to erase</h5>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button (click)="close()" class="btn btn-outline-primary" type="button">Got it</button>
+    </div>
+</ng-template>
+<ng-template #delete let-c="close" let-d="dismiss">
+    <div class="modal-body" style="border: 0px">
+        <div class="container-fluid">
+            <div class="row">
+                <!--                <div class="col-12 text-right">-->
+                <!--                    <i class="fa fa-close cursor" style="font-size: 2rem" (click)="close()"></i>-->
+                <!--                </div>-->
+                <!--                <div class="col-12 text-center">-->
+                <!--                    <h3 class="modal-title headerText">Delete Annotation</h3>-->
+                <!--                </div>-->
+                <div class="col-12">
+                    <h5 class="text-center mt-3">Coming Soon</h5>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button (click)="close()" class="btn btn-outline-primary" type="button">Got it</button>
+    </div>
+</ng-template>
+<ng-template #mathShow let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h4>Enter values</h4>
+    </div>
+    <div class="modal-body" style="border: 0px">
+        <div class="container-fluid">
+            <div class="row">
+                <!--                <div class="col-12 text-right">-->
+                <!--                    <i class="fa fa-close cursor" style="font-size: 2rem" (click)="close()"></i>-->
+                <!--                </div>-->
+                <!--                <div class="col-12 text-center">-->
+                <!--                    <h3 class="modal-title headerText">Delete Annotation</h3>-->
+                <!--                </div>-->
+                <div class="col-12">
+                    <app-tiny-mice (emitEditorValue)="mathValue($event)"
+                                   [editorPatchValue]= "editMathValue == '' ? false : editMathValue.rect.text"
+                                   [height]="130"
+                                   [id]="'multiQues'"
+                                   [imageToolHide]="true"
+                                   [showDropBtn]="false"
+                                   [showInputBtn]="false">
+                    </app-tiny-mice>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button (click)="mathAnnotation()" class="btn btn-outline-primary" type="button">{{editMathValue == '' ? 'Done' : 'Update'}}</button>
+    </div>
+</ng-template>

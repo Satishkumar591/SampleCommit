@@ -1,0 +1,304 @@
+<div class="container-fluid">
+    <div class="row mt-3">
+        <div class="col-12 col-sm-12 col-lg-6 align-self-center">
+            <div class="col-md-6 px-0">
+                <div class="d-flex input-group align-items-baseline">
+                    <input #dp="angular-mydatepicker" (click)="dp.toggleCalendar()" (dateChanged)="onDateChanged($event)"
+                           [(ngModel)]="searchDate" [options]="myDpOptions" angular-mydatepicker autocomplete="off"
+                           class="form-control" name="dp" placeholder="mm-dd-yyyy">
+                    <div class="input-group-append">
+                        <button (click)="dp.toggleCalendar()" class="btn btn-primary" type="button">
+                            <i class="fa fa-calendar-o"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-sm-12 col-lg-6 px-0 d-flex justify-content-end">
+            <div class="col-12 col-sm-4 col-lg-4 align-self-center">
+                <div *ngIf="this.auth.getRoleId() != '4'" class="pull-right">
+                    <div class="input-group">
+                        <input (input)="setFilter()" [(ngModel)]="searchTeacher" class="form-control" placeholder="Search Teacher" size="50" style="height:40px" type="text">
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-sm-4 col-lg-4 align-self-center">
+                <div class="pull-right">
+                    <div class="input-group">
+                        <input (input)="setFilter()" [(ngModel)]="searchClass" class="form-control" placeholder="Search Class" size="50" style="height:40px" type="text">
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-sm-4 col-lg-4 align-self-center" *ngIf="this.auth.getRoleId() != '5'">
+                <div class="pull-right">
+                    <div class="input-group">
+                        <input (input)="setFilter()" [(ngModel)]="searchStudent" class="form-control" placeholder="Search Student" size="50" style="height:40px" type="text" >
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row px-3">
+        <div class="col-12 px-0 my-3">
+            <div *ngIf="scheduleData.length == 0" class="row my-3 d-flex justify-content-center align-items-center" style="height: 60vh">
+                <div class="col-4">
+                    <button class="nodataList">No Data Available!</button>
+                </div>
+            </div>
+            <div *ngIf="scheduleData.length != 0" class="col-md-12 my-2 d-flex flex-wrap px-0">
+                <div *ngFor="let item of scheduleData; let j = index" class="col-12 flex-start card schedule-design class-hover cursor">
+                    <div class="row p-3 d-flex flex-wrap" (click)="cardNavigation(item)" [attr.aria-controls]="'#studentCount' + j" [attr.data-target]="'#studentCount' + j" data-toggle="collapse">
+                        <div class="col-md-8 px-0">
+                            <div class="col-md-12 px-0 mb-2 d-flex justify-content-start">
+<!--                                <label class="col-md-4 px-0">Class Name: </label>-->
+                                <label class="mb-0 font-weight-bold px-2 py-1" style="font-size: 0.8rem; border-radius: 3px; color: grey">Class Name :</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                <h4 class="font-weight-bold color-primary align-self-center mb-0">{{item.class_name}}</h4>
+                            </div>
+                            <div *ngIf="this.auth.getRoleId() != '4'" class="col-md-12 px-0 d-flex justify-content-start">
+                                <label class="mb-0 font-weight-bold px-2 py-1" style="font-size: 0.8rem; border-radius: 3px; color: grey;">Teacher Name :</label>
+                                &nbsp;&nbsp;&nbsp;<span class="font-weight-bold color-primary align-self-center">{{item.teacher_name}}</span>
+                            </div>
+                        </div>
+                        <div class="col-md-4 px-0">
+                            <div class="col-md-12 px-0 d-flex justify-content-end mb-2">
+                                <span *ngIf="item.start_time != null" class=" px-1 align-self-center" style="border-radius: 2px; color: grey;">Schedule :</span><span class="font-weight-bold color-primary"> &nbsp;&nbsp;{{item.start_time + ' - ' + item.end_time}}</span>
+                            </div>
+                            <div class="col-md-12 px-0 d-flex justify-content-end">
+                                <button *ngIf="roleId != '5'" [attr.aria-controls]="'#studentCount' + j" [attr.data-target]="'#studentCount' + j" class="btn-sm-view btn-outline-primary px-2 py-1 mr-2" data-toggle="collapse">
+                                    Attendance &nbsp;<small class="badge badge-light cursor align-text-bottom" style="min-width: 1.4rem">{{item.student_details.length}}</small></button>
+                                <div class="dropdown" (click)="$event.stopPropagation()">
+                                    <button class="btn-sm-i btn-outline-primary">Action <i class="fa fa-sort-desc float-right ml-2" aria-hidden="true"></i></button>
+                                    <div class="dropdown-content" style="right: 1px">
+                                        <a *ngIf="item.class_type == '1' && item.schedule_id != '' && auth.getRoleId() == '5'" (click)="openZoomDialog(item)"><i class="fa fa-video-camera mr-2" style="color:#8F008A" title="Enter Online Class" ></i>Enter Online Class</a>
+                                        <a (click)="openZoomDialog(item)"
+                                           *ngIf="item.class_type == '1' && ['2','4'].includes(auth.getRoleId())">
+                                            <span *ngIf="!customLoader"><i class="fa fa-video-camera" aria-hidden="true"></i> Start online class</span>
+                                            <span *ngIf="customLoader" style="width: 1rem;height: 1rem" class="spinner-border text-secondary" role="status">
+                                                        <span class="sr-only">Loading...</span>
+                                                    </span></a>
+                                        <a (click)="editClass(item)" *ngIf="allowEditCompleted"><i class="fa fa-pencil" aria-hidden="true"></i> Edit class</a>
+                                        <a (click)="curriculum(item)"><i class="fa fa-book" aria-hidden="true"></i> Curriculum</a>
+                                        <a (click)="reportDetails(item)" *ngIf="roleId != '5'"><i class="fa fa-file-text-o" aria-hidden="true"></i> View class reports</a>
+                                        <a (click)="openClassNotes(j, item)" *ngIf="roleId != '5'"><i class="fa fa-newspaper-o" aria-hidden="true"></i> Edit Notes</a>
+                                        <a (click)="shareEmail(item)" *ngIf="roleId != '5'"><i class="fa fa-share-alt" aria-hidden="true"></i> Share Class Code</a>
+                                        <a (click)="showInformation(item)"><i class="fa fa-info pl-1 pr-1" aria-hidden="true"></i> Information</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="collapse my-3" id="studentCount{{j}}" *ngIf="roleId != '5'">
+                        <div *ngIf="item.student_details.length == 0" class="row d-flex justify-content-center align-items-center" style="min-height: 25vh">
+                            <div class="col-6 align-self-center customize-card4 text-center font-weight-bold p-3">No student Found</div>
+                        </div>
+                        <table *ngIf="item.student_details.length != 0" class="table table-hover mt-2">
+                            <thead class="thead-light">
+                            <tr>
+                                <th class="d-flex align-items-center">Student Name <small class="badge badge-success ml-2">{{item.student_details.length}}</small></th>
+                                <th class="text-center border-0">Present</th>
+                                <th class="text-center border-0">Absent</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr *ngFor="let list of item.student_details; let i = index">
+                                <th class="d-flex justify-content-between">
+                                    <span (click)="getStudentFullDetail(list)" class="cursor name-hover">{{list.student_name}}</span>
+                                    <i (click)="openNotes(item, list)" class="fa fa-newspaper-o align-self-center color-primary cursor" title="Add notes"></i></th>
+                                <th class="radial-bar-primary text-center">
+                                    <input (click)="clickEve(list, 'true')" *ngIf="currentDate == searchDate1" [checked]="list.attendance == '1'" name="{{j}}attendence{{i}}" type="radio">
+                                    <i *ngIf="currentDate != searchDate1 && list.attendance == '1'" class="fa fa-check-circle color-green"></i>
+                                </th>
+                                <th class="radial-bar-primary text-center">
+                                    <input (click)="clickEve(list, 'false')" *ngIf="currentDate == searchDate1" [checked]="list.attendance == '0'" name="{{j}}attendence{{i}}" type="radio">
+                                    <i *ngIf="currentDate != searchDate1 && list.attendance == '0'" class="fa fa-times-circle color-red"></i>
+                                </th>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <div *ngIf="searchDate1 == currentDate && item.student_details.length != 0" class="col-12 px-0">
+                            <button (click)="updateStudentAnnotate(item)" class="btn-sm btn-primary pull-right">Update Attendance</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<ng-template #viewoveralldetails let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h4 class="modal-title color-primary" id="modal-basic-title">{{studentName}} Overall details</h4>
+        <i (click)="closeOverAll()" aria-hidden="true"
+           class="fa fa-close fa-lg mt-1" style="color:#7F3486; cursor: pointer; float: right;"></i>
+    </div>
+    <div class="modal-body">
+        <app-overalldetails
+                [studentdata]="viewdetail"
+        >
+        </app-overalldetails>
+    </div>
+</ng-template>
+<ng-template #zoomDialog let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h4 class="modal-title text-center">Zoom Meet</h4>
+        <i (click)="modalRef.close()" class="fa fa-close cursor" ></i>
+    </div>
+    <div class="modal-body d-flex justify-content-right">
+        <div class="col-12 text-center">
+            <h5>Open zoom in </h5>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button  (click)="modalRef.close();zoomService.initZoomMeeting(selectedClass)" class="btn btn-primary">In App</button>
+        <button (click)="navigateOutsideZoom(this.selectedClass.availabilityDate[0])" class="btn btn-outline-primary" type="button">New Tab</button>
+    </div>
+</ng-template>
+<ng-template #zoomDialog1 let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h4 class="modal-title text-center">Zoom Meet</h4>
+        <i (click)="modalRef.close()" class="fa fa-close cursor" ></i>
+    </div>
+    <div class="modal-body d-flex justify-content-right">
+        <div class="col-12 text-center">
+            <h5>No Zoom Meet Scheduled for this day</h5>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button  (click)="modalRef.close();" class="btn btn-primary">OK</button>
+    </div>
+</ng-template>
+<ng-template #reports>
+    <div class="modal-header">
+        <h4 class="modal-title">Report</h4>
+        <i (click)="modalRef.close()" class="fa fa-close cursor" ></i>
+    </div>
+    <div class="modal-body">
+        <app-missed-work-report
+                [classShow] = "true"
+                [contentNameValue]= "contentNameValue"
+                [showContent]= "'other'"
+                [studentView]= "false"
+                [timeView]= "true"
+        >
+        </app-missed-work-report>
+    </div>
+
+</ng-template>
+<ng-template #notes let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h4 class="modal-title text-center">Add Notes</h4>
+        <i (click)="this.modalRef.close()" class="fa fa-close cursor"></i>
+    </div>
+    <div class="modal-body">
+        <div class="row d-flex justify-content-center">
+
+            <div class="col-11 mt-2 card class-card1 class-hover w-99" *ngFor="let list of notesList; let i = index">
+                <div class="row" *ngIf="list.created_date != '00-00-0000'">
+                    <div class="col-9" style="word-wrap: break-word;">
+                        <p class="py-2"><span class="letter" *ngIf="list.created_by != '' && list.created_date != ''"><strong>{{list.created_by}}</strong> - <small>{{list.created_date | customDateFormat}}</small><br></span></p>
+                        <p><span [innerHTML]="list.notes" class="mb-0 mt-3"></span></p>
+                    </div>
+                    <div class="col-3 d-flex align-items-center justify-content-end">
+                        <i class="fa fa-trash fa-1x text-danger" aria-hidden="true" style="cursor:pointer" (click)="deleteNotes(list)"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-11 mt-2">
+                <app-tiny-mice  (emitEditorValue)="getEditorValue($event)"
+                                [editorPatchValue]="false"
+                                [height]="300"
+                                [id]="'notes'"
+                                [showDropBtn]="false"
+                                [showInputBtn]="false">
+                </app-tiny-mice>
+            </div>
+            <div class="col-11 text-right mt-2">
+                <button (click)="addNotes()" class="btn btn-primary" type="button">Add</button>
+            </div>
+        </div>
+    </div>
+</ng-template>
+<ng-template #writeNoteOpen let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h4 class="modal-title text-center">Add Notes</h4>
+        <i class="fa fa-close cursor" (click)="this.modalRef.close()" ></i>
+    </div>
+    <div class="modal-body">
+        <div class="row d-flex justify-content-center">
+            <div class="col-11 mt-2 card class-card1 class-hover w-99" *ngFor="let list of classNotesList; let i = index">
+                <div class="row" *ngIf="list.add_date != '00-00-0000'">
+                    <div class="col-9" style="word-wrap: break-word;">
+                        <p class="py-2"><span class="letter" *ngIf="list.created_by != '' && list.add_date != ''"><strong>{{list.created_by}}</strong> - <small>{{list.add_date | customDateFormat}}</small><br></span></p>
+                        <p><span [innerHTML]="list.note" class="mb-0 mt-3"></span></p>
+                    </div>
+                    <div class="col-3 d-flex align-items-center justify-content-end">
+                        <i class="fa fa-trash fa-1x text-danger" aria-hidden="true" style="cursor:pointer" (click)="deleteClassNote(list)"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-11 mt-2">
+                <app-tiny-mice  (emitEditorValue)="getEditorValue($event)"
+                                [editorPatchValue]="false"
+                                [height]="300"
+                                [id]="'notes'"
+                                [showDropBtn]="false"
+                                [showInputBtn]="false">
+                </app-tiny-mice>
+            </div>
+            <div class="col-11 text-right mt-2">
+                <button type="button" (click)="this.modalRef.close()" class="btn btn-outline-primary mr-2">Close</button>
+                <button type="button" (click)="addClassNote()" class="btn btn-primary">Add</button>
+            </div>
+        </div>
+    </div>
+</ng-template>
+<ng-template #addMultipleEmailDialog let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h4 class="modal-title text-center">Add Student Code</h4>
+        <i class="fa fa-close cursor" (click)="modalRef.close()" ></i>
+    </div>
+    <div class="modal-body">
+        <div class="col-sm-12">
+            <form [formGroup]="studentEmailForm">
+                <mat-form-field class="col-12">
+                    <mat-chip-list #chipList formArrayName="emails">
+                        <mat-chip [color]="(item.invalid)?'warn':''" selected *ngFor="let item of emailList; let i=index" [selectable]="true" [removable]="removable"
+                                  (removed)="removeEmail(item)" required name="chips">{{item.value}}
+                            <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+                        </mat-chip>
+                        <input placeholder="Enter Email Id" [matChipInputFor]="chipList" [matChipInputSeparatorKeyCodes]="separatorKeysCodes" [matChipInputAddOnBlur]="true"
+                               (matChipInputTokenEnd)="add($event)" />
+
+                    </mat-chip-list>
+                </mat-form-field>
+                <mat-error class="col-12" *ngIf="!validationEmail && emailList.length != 0">Invalid email ID</mat-error>
+                <!-- {{studentEmailForm.invalid}} {{studentEmailForm.get('emails').hasError('incorrectEmail')}} {{validationEmail}}  -->
+                <!-- {{!validationEmail && emailList.length != 0}} -->
+                <div class="modal-footer">
+                    <button class="btn btn-outline-primary" type="button" (click)="bulkMail()" [disabled]="!validationEmail && emailList.length != 0">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <!-- <div class="modal-footer">
+        <button class="btn btn-outline-primary" type="button" (click)="bulkMail()">Submit</button>
+    </div> -->
+</ng-template>
+<ng-template #showInform>
+    <div class="modal-header">
+        <h4 class="modal-title">Info</h4>
+        <i class="fa fa-close cursor" (click)="this.modalRef.close()" ></i>
+    </div>
+    <div class="modal-body">
+        <p class="p-0" *ngIf="classInfo?.class_start_date != ''"><small class="letter">Start Date: </small> <span class="t-name font-weight-bold">{{classInfo.class_start_date}}</span></p>
+        <p class="p-0" *ngIf="classInfo?.class_end_date != ''"><small class="letter">End Date: </small> <span class="t-name font-weight-bold">{{classInfo.class_end_date}}</span></p>
+        <p class="p-0" *ngIf="classInfo?.subject_name != ''"><small class="letter">Subject: </small> <span class="t-name font-weight-bold">{{classInfo.subject_name}}</span></p>
+        <p class="p-0" *ngIf="classInfo?.grade_name != ''"><small class="letter">Grade: </small> <span class="t-name capital font-weight-bold">{{classInfo.grade_name}}</span></p>
+<!--        <p class="p-0" *ngIf="teacherType != 1 || auth.getRoleId() == '2' || auth.getRoleId() == '6' && classInfo?.classroom_name != ''"><span><small class="font-weight-bold">Content Folder: </small> <span class="t-name capital font-weight-bold">{{classInfo.classroom_name}}</span></span></p>-->
+        <!--        <p class="p-0" ><span class="letter">class code: </span> <span class="t-name font-weight-bold">{{classInfo.class_code}}</span></p>-->
+<!--        <p class="p-0"><span class="letter">Assessment: </span> <span class="t-name">{{classInfo.no_of_assessments}}</span></p>-->
+<!--        <p class="p-0"><span class="letter">Assignment: </span> <span class="t-name">{{classInfo.no_of_assignments}} </span></p>-->
+<!--        <p class="p-0"><span class="letter">Resources: </span> <span class="t-name">{{classInfo.no_of_resources}} </span></p>-->
+    </div>
+
+</ng-template>

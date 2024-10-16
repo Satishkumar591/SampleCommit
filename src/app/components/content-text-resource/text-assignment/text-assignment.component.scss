@@ -1,0 +1,78 @@
+.custom-upload-input {
+  color: transparent;
+}
+.custom-upload-input::-webkit-file-upload-button {
+  visibility: hidden;
+}
+.custom-upload-input::before {
+  content: 'Choose files';
+  color: black;
+  display: inline-block;
+  background: #1d6aa5;
+  border-radius: 3px;
+  padding: 12px 15px;
+  outline: none;
+  white-space: nowrap;
+  -webkit-user-select: none;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 11pt;
+  color: #fff;
+}
+
+.container {
+  display: block;
+}
+.custom-upload-input:hover::before {
+  border-color: black;
+}
+.custom-upload-input:active {
+  outline: 0;
+}
+.custom-upload-input:active::before {
+  background: -webkit-linear-gradient(top, #e3e3e3, #f9f9f9);
+}
+
+
+/////////
+
+.telemedicineaAddAvailability{
+  .buttonStyle{
+    width: 109px;
+    border-radius: 3px;
+    background: forestgreen;
+    color: white;
+  }
+
+  .timer{
+    margin-top: -31px;
+    width: 134px;
+  }
+
+
+
+  .BtnNonSelected{
+    background: white;
+    color: deepskyblue;
+    width: 115px;
+    border-color: deepskyblue;
+    border-radius: 10px;
+    border-width: 1px;
+  }
+
+  .BtnSelected{
+    background: #007bff;
+    color: white;
+    width: 115px;
+    border-color: deepskyblue;
+    border-radius: 10px;
+    border-width: 1px;
+  }
+
+  .badge{
+    width: 115px;
+    font-size: 14px;
+    height: 28px;
+    padding: 7px;
+  }
+}

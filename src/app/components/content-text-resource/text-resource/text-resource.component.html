@@ -1,0 +1,208 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card tab2-card">
+                <div class="card-header">
+                    <div class="row justify-content-end">
+                        <div class="col-md-6">
+                            <h4 class="text-capitalize" *ngIf="type == 'add' && !openContent">ADD RESOURCES</h4>
+                            <h4 class="text-capitalize" *ngIf="type == 'edit' && !openContent">EDIT RESOURCES - <span class="color-primary">{{contentName}}</span></h4>
+                            <h4 *ngIf="openContent" class="font-weight-bold" style="font-size: 20px" >Add Description</h4>
+                            <label class="text-muted">All fields marked with <span class="text-danger">*</span> are required</label>
+                        </div>
+                        <div class="pdf-assign-btn col-md-6">
+                            <button class="btn btn-primary pull-right ml-3" *ngIf="type != 'edit' && openContent" (click)="assign('add')">Publish</button>
+                            <button class="btn btn-primary pull-right ml-3" *ngIf="type == 'edit' && openContent" (click)="assign('edit')">Publish</button>
+                            <img *ngIf="type != 'edit' && openContent" class="pull-right" (click)="draft('add')" src="assets/images/pdf-icons/floppy-disk.png" alt="">
+                            <img *ngIf="type == 'edit' && openContent" class="pull-right" (click)="draft('edit')" src="assets/images/pdf-icons/floppy-disk.png" alt="">
+                            <button (click)="openContent = false; saveEditorVal()" *ngIf="openContent" class="btn btn-primary pull-right mr-3"><i aria-hidden="true" class="fa fa-long-arrow-left fa-1x"></i> Back</button>
+                        </div>
+<!--                        <div class="col-4 col-xl-2 d-lg-block d-xl-none" *ngIf="openContent">-->
+<!--                                <select class="form-control" *ngIf="type != 'edit'"  [(ngModel)]="showTextEditor" (change)="getEditorValue($event.target.value)">-->
+<!--                                    <option value="1">&#xf179; keyboard</option>-->
+<!--                                    <option value="2"><i class="fa fa-pencil" aria-hidden="true"></i> Text </option>-->
+<!--                                    <option value="3"><i class="fa fa-pencil" aria-hidden="true"></i> Maths</option>-->
+<!--                                </select>-->
+<!--                        </div>-->
+                    </div>
+                </div>
+                <div class="card-body tab2-card" *ngIf="!openContent">
+                    <form [formGroup]="resourceform" class="needs-validation user-add">
+                        <div class="col-md-12 d-flex mb-4">
+                            <div class="col-sm-12 col-md-4 px-0">
+                                <div class="image-container-left">
+                                    <img *ngIf="(imagepath == undefined || imagepath?.length == 0)" src="assets/images/ristaschool/resource.png" alt="">
+                                    <img  *ngIf="imagepath != undefined && imagepath?.length != 0"  [src]="sanitizer.bypassSecurityTrustResourceUrl(webhost + '/' + imagepath)" alt="">
+                                    <i *ngIf="imagepath != undefined && imagepath?.length != 0" class="fa fa-times close-button" title="close" (click)="deleteImg()" ></i>
+                                    <div class="profileUrl">
+                                        <input style="display: none" type="file" class="custom-upload-input" (change)="encodeImageFileAsURL($event)" #addAssignment #myInput accept=".png, .jpeg, .jpg">
+                                        <button type="button" class="btn btn-light btn-circle border-rista" title="upload Image" (click)="addAssignment.click()"> <i class="fa fa-upload fa-2x mb-3" aria-hidden="true"></i> </button>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="container col-sm-12 col-md-8">
+                                <h5>Created By</h5>
+                                <div class="row">
+                                    <div class="col-md-4 form-group">
+                                        <input class="form-control" formControlName="created" id="validationCustom1"
+                                               type="text" placeholder="Created" required="" readonly>
+                                    </div>
+                                    <div class="col-md-8 form-group">
+                                        <input class="form-control" formControlName="resourceName" id="validationCustom12"
+                                               type="text" placeholder="Resource Name *" required="">
+                                        <em class="error" *ngIf="!resourceform.get('resourceName').valid && (resourceform.get('resourceName').dirty || resourceform.get('resourceName').touched)">Resource Name is required</em>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div  class="col-md-4 form-group">
+                                        <ng-select id="grade-ng-select"  [items]="gradeData"
+                                                   bindLabel="grade_name"
+                                                   bindValue="grade_id"
+                                                   formControlName="grade"
+                                                   placeholder="Select Grade"
+                                                   typeToSearchText=""
+                                                   multiple="true"
+                                        >
+                                        </ng-select>
+                                        <em class="error" *ngIf="!resourceform.get('grade').valid && (resourceform.get('grade').dirty || resourceform.get('grade').touched)">Grade is required</em>
+                                    </div>
+                                    <div class="col-md-4 form-group">
+                                        <ng-select id="subject-ng-select"  [items]="subjectData"
+                                                   bindLabel="subject_name"
+                                                   bindValue="subject_id"
+                                                   formControlName="subject"
+                                                   placeholder="Select Subject"
+                                                   typeToSearchText=""
+                                                   multiple="true"
+                                        >
+                                        </ng-select>
+                                        <em class="error" *ngIf="!resourceform.get('subject').valid && (resourceform.get('subject').dirty || resourceform.get('subject').touched)">Subject is required</em>
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <select class="form-control" formControlName="access">
+                                            <option value="" hidden selected>Please Choose....</option>
+                                            <option *ngIf="roleid != '6'" value="1">Private (Within Institution)</option>
+                                            <option *ngIf="roleid != '6'" value="2">Private (Only You)</option>
+                                            <option *ngIf="roleid == '6'" value="4">Private (Within Corporate)</option>
+                                        </select>
+                                        <em class="error" *ngIf="!resourceform.get('access').valid && (resourceform.get('access').dirty || resourceform.get('access').touched)">Access is required</em>
+                                    </div>
+                                </div>
+                                <div class="row d-flex align-items-center mb-3">
+                                    <app-treeview-contentfolder [treeviewHeight]="250"
+                                            [type]="type" [selectedbatch]="type == 'edit' ? editData.batch_id : batchId">
+                                    </app-treeview-contentfolder>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group col-md-12">
+                                        <textarea class="form-control" name="" id="" placeholder="Enter Description" formControlName="description" style="width: 100%; height: 100px"></textarea>
+                                        <em class="error" *ngIf="!resourceform.get('description').valid && (resourceform.get('description').dirty || resourceform.get('description').touched)">Description is required</em>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <tag-input formControlName="tag"
+                                                   [secondaryPlaceholder]="'Enter tags'"
+                                                   [placeholder]="'Add tags'"
+                                                   [editable]='true'
+                                                   [clearOnBlur]="true"
+                                                   [addOnPaste]="true"
+                                                   [addOnBlur]="true"
+                                                   theme='bootstrap'
+                                        ></tag-input>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+                        <div class="mx-3 mb-4 resource-link-card">
+                            <div class="col-md-12 d-flex justify-content-between">
+                                <h4 class="font-weight-bold">Additional resource links</h4>
+                                <span>
+                                    <i class="fa fa-edit f-22px ml-3 cursor color-primary" title="Edit Resource Link" (click)="isEditLink = true" *ngIf="resourceArray.length != 0 && !isEditLink"></i>
+                                    <i class="fa fa-plus-circle f-22px ml-3 cursor color-primary" title="Add Resource Link" *ngIf="resourceArray.length == 0 || (resourceArray.length != 0 && isEditLink)" (click)="addLink()"></i>
+                                    <i class="fa fa-times-circle color-red f-22px ml-3 cursor" title="Close" (click)="isEditLink = false;filterEmptyArrayValue()" *ngIf="isEditLink"></i>
+                                </span>
+                            </div>
+                            <div class="col-md-12 d-flex justify-content-center align-items-center" style="height: 20vh" *ngIf="resourceArray.length == 0">
+                                <span class="text-info">No Resource Links available!</span>
+                            </div>
+                            <div class="col-md-12 py-3 d-flex flex-wrap align-items-center" *ngFor="let items of resourceArray; let i = index">
+                                <a [href]="items.link" target="_blank" *ngIf="!isEditLink">
+                                    <img *ngIf="items.type == 'document'" class="size-38px" src="assets/images/icons/doc-icon.png" alt="doc">
+                                    <img *ngIf="items.type == 'audio'" class="size-38px" src="assets/images/icons/audio-icon.png" alt="mp3">
+                                    <img *ngIf="items.type == 'video'" class="size-38px" src="assets/images/icons/video-icon.png" alt="mp4">
+                                    <img *ngIf="items.type == 'ppt'" class="size-38px" src="assets/images/icons/ppt-icon.png" alt="ppt">
+                                    <img *ngIf="items.type == 'Others'" class="size-38px" src="assets/images/icons/others-icon.png" alt="others">
+                                </a>
+                                <div class="col-md-2 px-0" *ngIf="isEditLink">
+                                    <select [(ngModel)]="items.type" class="form-control" [ngModelOptions]="{standalone: true}">
+                                        <option [value]="list" *ngFor="let list of linksType">{{list == 'ppt' ? (list | uppercase) : (list | titlecase)}}</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2 px-0" *ngIf="isEditLink">
+                                    <input type="text" placeholder="{{items.type | titlecase}} Name" [(ngModel)]="items.name" [ngModelOptions]="{standalone: true}" class="form-control ml-2">
+                                </div>
+                                <div class="col-md-{{isEditLink ? '8' : '11'}} d-flex align-items-center">
+                                    <a [href]="items.link" target="_blank" *ngIf="!isEditLink">{{items.name}}&nbsp;&nbsp;-&nbsp;&nbsp;</a>
+                                    <a [href]="items.link" target="_blank" *ngIf="!isEditLink">{{items.link}}</a>
+                                    <input type="text" placeholder="Enter {{items.type | titlecase}} Link {{i + 1}} *"  *ngIf="isEditLink" [(ngModel)]="items.link" [ngModelOptions]="{standalone: true}" class="form-control">
+                                    <i class="fa fa-trash color-red f-22px ml-2 cursor" title="Delete {{items.type | titlecase}} Link" (click)="deleteArray(i)" *ngIf="isEditLink"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="col-md-12 mt-5">
+                        <button class="btn btn-primary pull-right" (click)="textResoruceNext()">Next <i class="fa fa-long-arrow-right fa-1x" aria-hidden="true"></i></button>
+                    </div>
+                </div>
+                <div class="p-2" *ngIf="openContent">
+<!--                    <ck-editor name="editor1"-->
+<!--                               [(ngModel)]="content" skin="moono-lisa" language="en" [fullPage]="true"></ck-editor>-->
+<!--                    <textarea [(ngModel)]="content" class="form-control capital" cols="30" rows="10" *ngIf="showTextEditor == '1'"></textarea>-->
+                    <app-tiny-mice
+                            (emitEditorValue)="getHandwriting($event)"
+                            *ngIf="showTextEditor == '1'"
+                            [editorPatchValue]="resourceVal == '' ? false : resourceVal"
+                            [height]="300"></app-tiny-mice>
+<!--                    <app-text-handwriting [editorTextHandwritingValue]="content" (emitTextHandwriting)="getHandwriting($event)" *ngIf="showTextEditor == '2'"></app-text-handwriting>-->
+<!--                    <app-math-handwriting [editorMathHandwritingValue]="content" (emitMathHandwriting)="getHandwriting($event)" *ngIf="showTextEditor == '3'"></app-math-handwriting>-->
+                    <!--<app-diagram-handwriting *ngIf="showTextEditor == '4'"></app-diagram-handwriting>-->
+                    <!--<quill-editor [(ngModel)]="content"></quill-editor>-->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<ng-template #assignContentToClass let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h5 class="contenttext text-center mb-0">Assign Content</h5>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-md-12">
+                <h5>
+                    <span>Do you want to assign this content to the Class {{contentCreatedForm != 'class' ? 'or Content Folder' : ''}}</span>?</h5>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn cancel" (click)="dontAssign()">No</button>
+        <button class="btn btn-primary" type="submit" (click)="assignContent()"
+        >Yes</button>
+    </div>
+</ng-template>
+
+<ng-template #assignTemplate let-c="close" let-d="dismiss">
+    <app-confirm-content-assign
+            [classData]="classDetails"
+            [contentDetails]="assignData"
+            (closePopUp)="closeAssignPopUp()"
+    >
+    </app-confirm-content-assign>
+</ng-template>
+
+

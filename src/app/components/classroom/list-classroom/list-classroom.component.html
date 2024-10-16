@@ -1,0 +1,39 @@
+<!-- Container-fluid starts-->
+
+<div *ngIf="schoolStatus.length != 0" class="container-fluid">
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-12 py-2 d-flex justify-content-end">
+                    <div class="dropdown col-2">
+                        <button class="col-11 float-right btn btn-outline-primary">{{filterType}} <i class="fa fa-sort-desc float-right pl-2" aria-hidden="true"></i></button>
+                        <div class="dropdown-content" style="z-index: 2; top: 38px;">
+                            <a (click)="filterType = 'Latest'" class="cursor">Latest</a>
+                            <a (click)="filterType = 'Oldest'" class="cursor">Oldest</a>
+                            <a (click)="filterType = 'A - Z'" class="cursor">A - Z</a>
+                            <a (click)="filterType = 'Z - A'" class="cursor">Z - A</a>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary pull-right" [routerLink]="'/repository/content-home'">Content Library</button>
+                </div>
+                <div class="col-md-12 my-3" style="z-index: 1">
+                    <app-treeview-contentfolder [selectedbatch]="[]" [treeviewHeight]="getScreenHeight" [filterType]="filterType"
+                                                [type]="'add'" [calledForm]="'contentFolder'" [schoolId]="schoolID"
+
+                    ></app-treeview-contentfolder>
+                </div>
+            </div>
+<!--            <div id="batchDelete" class="category-table custom-datatable transcation-datatable user-image">-->
+<!--                <div class="table-responsive">-->
+<!--                    <ng2-smart-table [settings]="settings" [source]="listData" (custom)="onCustomAction($event)"></ng2-smart-table>-->
+<!--                </div>-->
+<!--            </div>-->
+
+        </div>
+    </div>
+</div>
+<div *ngIf="schoolStatus.length == 0">
+    <app-emptyschool>
+    </app-emptyschool>
+</div>
+<!-- Container-fluid Ends-->

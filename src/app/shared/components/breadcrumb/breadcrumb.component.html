@@ -1,0 +1,38 @@
+<div [ngClass]="sideNavStatus == true ? 'container' : 'container-fluid'">
+    <div class="page-header">
+        <div class="row">
+            <div class="col-6 col-lg-6">
+                <div class="page-header-left">
+                    <h3>{{title}}
+                       <small> </small>
+                    </h3>
+                </div>
+            </div>
+            <div class="col-6 col-lg-6">
+                <ol class="breadcrumb float-right">
+                    <li class="breadcrumb-item">
+                        <a *ngIf="roleid == '2' || roleid == '6' " title="Home-Page" [routerLink]="'/schedule/schedule-page'">
+                            <app-feather-icons [icon]="'home'"></app-feather-icons>
+                        </a>
+                        <a *ngIf="roleid == '3'" title="Home-Page" [routerLink]="'/repository/content-home'">
+                            <app-feather-icons [icon]="'home'"></app-feather-icons>
+                        </a>
+                        <a *ngIf="roleid == '4'" title="Home-Page" [routerLink]="'schedule/schedule-page'">
+                            <app-feather-icons [icon]="'home'"></app-feather-icons>
+                        </a>
+                        <a *ngIf="roleid == '5'" title="Home-Page" [routerLink]="'/studentlogin/list-home'">
+                            <app-feather-icons [icon]="'home'"></app-feather-icons>
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item" *ngIf="breadcrumbs?.parentBreadcrumb && breadcrumbs?.childBreadcrumb != 'Passage Details'">{{breadcrumbs?.parentBreadcrumb}}
+                    </li>
+                    <li class="breadcrumb-item" *ngIf="breadcrumbs?.parentBreadcrumb == 'Content Text Resource' && breadcrumbs?.childBreadcrumb == 'Passage Details'">{{breadcrumbs?.childBreadcrumb}}
+                    </li>
+<!--                    <li class="breadcrumb-item active" *ngIf="breadcrumbs?.childBreadcrumb">-->
+<!--                        {{breadcrumbs?.childBreadcrumb}}-->
+<!--                    </li>-->
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>

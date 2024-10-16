@@ -1,0 +1,352 @@
+<!-- Container-fluid starts-->
+<ng-template #bulkmodal let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h3>Bulk Upload</h3>
+        <p class="text-right">
+            <i class="fa fa-close" aria-hidden="true" style="cursor:pointer" (click)="close()"></i>
+        </p>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="card-body pt-2">
+                    <div class="row">
+                        <div class="col-md-12 text-right pull-right" style="padding-top: 25px">
+                            <div (click)="downloadExcel()" style="cursor: pointer"> Download Sample Excel <i
+                                    class="fa fa-download" aria-hidden="true" style="color:#329688"></i></div>
+                        </div>
+
+                        <div class="custom-file" style="margin-top: 19px;">
+                            <input #fileUploader type="file" class="custom-file-input" id="inputGroupFile02"
+                                   aria-describedby="inputGroupFileAddon01"
+                                   accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+                                   name="file" (click)="fileUploader.value = null " (change)="readUrl($event)">
+                            <label *ngIf="filetype == ''" class="custom-file-label">Upload Excel</label>
+                            <label *ngIf="filetype != ''" class="custom-file-label">{{filetype[0]}}
+                                .{{filetype[1]}}</label>
+                        </div>
+                        <div class="mt-3">
+                            <span style="color: firebrick">*</span><small>Note: Upload format should be same as Sample
+                            Excel Format</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <div class="btn-popup pull-right">
+            <button class="btn btn-primary" (click)="onUploadFinished('upload')">Submit</button>
+        </div>
+    </div>
+
+
+    <!--                    <h5 class="text-center mt-3">Are you sure you want to delete School details '{{deleteUser.brand_name}}'?</h5>-->
+
+
+</ng-template>
+<ng-template #emailmodal let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h3>Email Invite</h3>
+        <p class="text-right">
+            <i class="fa fa-close" aria-hidden="true" style="cursor:pointer" (click)="close()"></i>
+        </p>
+    </div>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12 pl-4 pr-4 pt-4">
+                <div class="form-group row">
+                    <label class="col-md-12"><span class="text-danger">*</span>
+                        Grade Name</label>
+                    <div class="col-sm-12">
+                        <ng-select [items]="gradeData"
+                                   bindLabel="grade_name"
+                                   bindValue="grade_id"
+                                   placeholder="Please Select"
+                                   typeToSearchText=""
+                                   [(ngModel)]="grade"
+                        >
+                        </ng-select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-12">
+                <div class="modal-body">
+                    <tag-input [(ngModel)]='studentBlukEmail'
+                               name="studentBlukEmail"
+                               #email="ngModel"
+                               [errorMessages]="errorMessages"
+                               [validators]="validators"
+                               [editable]='true'
+                               [separatorKeyCodes]="[32,188,186,13,9]"
+                               [placeholder]="'Add email'"
+                               [secondaryPlaceholder]="'Enter email address'"
+                               [clearOnBlur]="true"
+                               [addOnPaste]="true"
+                               [addOnBlur]="true"
+                               theme='bootstrap'
+                               required>
+                    </tag-input>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+        </div>
+        <!--        </form>-->
+
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-primary" (click)="emailInviteUpload('email')">Submit</button>
+    </div>
+</ng-template>
+<div class="container-fluid px-0" *ngIf="schoolStatus.length != 0">
+    <div class="card pt-1">
+        <div class="card-header">
+            <h5>Student Details</h5>
+        </div>
+        <div class="card-body">
+            <div class="row my-4">
+                <div class="col-12">
+                    <a class="btn btn-primary pull-right ml-2" (click)="this.auth.setSessionData('UsersRedirection', 'Student')"
+                       [routerLink]="'/student/create-student/add'">Add Student</a>
+
+                    <div class="dropdown pull-right" *ngIf="allowAdd">
+                        <button class="btn btn-outline-primary">Invite <i class="fa fa-sort-desc float-right ml-2" aria-hidden="true"></i></button>
+                        <div class="dropdown-content" style="right: 1px">
+                            <a class="cursor" (click)="bulkModal()"> Bulk Upload</a>
+                            <a class="cursor" (click)="emailModal()"> Invite By Email</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="batchDelete" class="category-table custom-datatable transcation-datatable user-image">
+                <div class="table-responsive">
+                    <ng2-smart-table [settings]="settings" [source]="listData"
+                                     (custom)="onCustomAction($event)"></ng2-smart-table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div *ngIf="schoolStatus.length == 0">
+    <app-emptyschool>
+    </app-emptyschool>
+</div>
+<ng-template #content1 let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h4 class="modal-title col-12 text-center"><b>Reset Password Using E-Mail</b></h4>
+    </div>
+    <div class="modal-body">
+        <!-- Container-fluid starts-->
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-12">
+                    <h5 class="text-center mt-3">Are you sure want to reset password
+                        for {{resetPassword.first_name}}</h5>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-primary" (click)="close()">Cancel</button>
+        <button type="button" class="btn btn-primary" (click)="change(1)">Confirm</button>
+    </div>
+</ng-template>
+<ng-template #contentnow let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h4 class="modal-title col-12 text-center"><b>Reset Password Now</b></h4>
+    </div>
+    <div class="modal-body">
+        <!-- Container-fluid starts-->
+        <div class="container-fluid">
+            <form [formGroup]="studentPassword">
+                <div class="row form-group auth-form">
+                    <input required="" readonly class="form-control" type="text" placeholder="Email"
+                           formControlName="email">
+                    <em class="error"
+                        *ngIf="!studentPassword.get('email').valid && (studentPassword.get('email').dirty || studentPassword.get('email').touched)">Email
+                        is required</em>
+                </div>
+                <div class="row form-group auth-form">
+                    <div class="input-group">
+                        <input required="" type="text" formControlName="password"
+                               class="form-control" placeholder="Password" aria-label="Recipient's username"
+                               aria-describedby="basic-addon1" [type]="conps ? 'password' : 'text'">
+                        <div class="input-group-append">
+                                     <span class="input-group-text" id="basic-addon3">
+                                            <i [class]="conps ? 'fa fa-eye-slash' : 'fa fa-eye'" style="color: #7F3486"
+                                               aria-hidden="true" (click)="conps = !conps"></i>
+                                     </span>
+                        </div>
+                    </div>
+                    <em class="error"
+                        *ngIf="studentPassword.get('password').hasError('required') && (studentPassword.get('password').dirty || studentPassword.get('password').touched)">Password
+                        is required</em>
+                    <em *ngIf="studentPassword.get('password').hasError('minlength')" class="error help-block">Minimum 5
+                        characters required</em>
+                </div>
+                <div class="row form-group auth-form">
+                    <div class="input-group">
+                        <input required="" type="text" formControlName="confirmpassword"
+                               class="form-control" placeholder="Confirm Password" aria-label="Recipient's username"
+                               aria-describedby="basic-addon1" [type]="conps1 ? 'password' : 'text'">
+                        <div class="input-group-append">
+                           <span class="input-group-text" id="basic-addon2">
+                               <i [class]="conps1 ? 'fa fa-eye-slash' : 'fa fa-eye'" style="color: #7F3486"
+                                  aria-hidden="true" (click)="conps1 = !conps1"></i>
+                           </span>
+                        </div>
+                    </div>
+                    <em class="error"
+                        *ngIf="studentPassword.get('confirmpassword').hasError('required') && (studentPassword.get('confirmpassword').dirty || studentPassword.get('confirmpassword').touched)">Confirm
+                        Password is required</em>
+                    <div *ngIf="checkPasswords()">
+                        <em class="error help-block">
+                            Enter same password as above
+                        </em>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-primary" (click)="cancel()">Cancel</button>
+        <button type="button" class="btn btn-primary" (click)="change(2)">Confirm</button>
+    </div>
+</ng-template>
+
+<ng-template #studentChange let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h4 class="modal-title col-12 text-center">Transfer Class</h4>
+    </div>
+    <div class="modal-body">
+        <div class="container-fluid" *ngIf="classStudentList != ''">
+            <form [formGroup]="studentClassChange">
+                <div class="form-group row">
+                    <label class="col-xl-4 col-md-5 align-self-center"><span class="text-danger">*</span>
+                        From Class</label>
+                    <div class="col-xl-8 col-md-7">
+                        <ng-select [items]="classStudentList"
+                                   bindLabel="class_name"
+                                   bindValue="class_id"
+                                   placeholder="Please Select"
+                                   typeToSearchText=""
+                                   formControlName="formClass"
+                                   required=""
+                        >
+                        </ng-select>
+                        <em class="error"
+                            *ngIf="!studentClassChange.get('formClass').valid && (studentClassChange.get('formClass').dirty || studentClassChange.get('formClass').touched)">Select
+                            the From Class</em>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-xl-4 col-md-5 align-self-center"><span class="text-danger">*</span>
+                        To Class</label>
+                    <div class="col-xl-8 col-md-7">
+                        <ng-select [items]="allClassList"
+                                   bindLabel="fromClassLabel"
+                                   bindValue="class_id"
+                                   placeholder="Please Select"
+                                   typeToSearchText=""
+                                   formControlName="toClass"
+                                   (change)="selectedClass($event)"
+                                   required=""
+                        >
+                        </ng-select>
+                        <em class="error"
+                            *ngIf="!studentClassChange.get('toClass').valid && (studentClassChange.get('toClass').dirty || studentClassChange.get('toClass').touched)">Select
+                            the To Class</em>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-xl-4 col-md-5 align-self-center"><span class="text-danger">*</span>
+                        Effective Date</label>
+                    <div class="col-xl-8 col-md-7 form-group">
+                        <div class="d-flex align-items-baseline">
+                            <input class="form-control" placeholder="mm-dd-yyyy"
+                                   name="dp2" formControlName="from_startdate" angular-mydatepicker
+                                   #dp2="angular-mydatepicker"
+                                   [options]="myDpOptions1" (dateChanged)="onDateChanged($event)" autocomplete="off">
+                            <div class="input-group-append">
+                                <button type="button" class="btn btn-primary" (click)="dp2.toggleCalendar()">
+                                    <i class="fa fa-calendar-o"></i></button>
+                            </div>
+                        </div>
+                        <em *ngIf="!studentClassChange.get('from_startdate').valid && (studentClassChange.get('from_startdate').dirty || studentClassChange.get('from_startdate').touched)"
+                            class="error">Please Enter Effective Date</em>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="container-fluid" *ngIf="classStudentList == ''">
+            <div class="row d-flex justify-content-center">
+                <div class="col-12">
+                    <button class="nodataList">Currently, Not enrolled for any classes!</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-outline-primary" (click)="onSave()">Close</button>
+        <button class="btn btn-primary" *ngIf="classStudentList != ''" (click)="submitChangeClass()">Save</button>
+    </div>
+</ng-template>
+<ng-template #allNotes let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h4 class="modal-title text-center">All Notes</h4>
+        <i (click)="close()" class="fa fa-close cursor"></i>
+    </div>
+    <div class="modal-body">
+        <div class="col-md-12 d-flex justify-content-between">
+            <div *ngIf="listClass.length != 0" class="col-md-6">
+                <ng-select (change)="changeNotes($event, 'class')"
+                           [items]="listClass"
+                           bindLabel="class_name"
+                           bindValue="class_id"
+                           placeholder="Select Class"
+                           typeToSearchText=""
+                >
+                </ng-select>
+            </div>
+            <div *ngIf="classId != 0" class="col-md-6">
+                <ng-select (change)="changeNotes($event, 'content')"
+                           [(ngModel)]="specificData"
+                           [items]="contentData"
+                           bindLabel="content_name"
+                           bindValue="content_id"
+                           id="contentDrop"
+                           placeholder="Select Content"
+                           typeToSearchText=""
+                >
+                </ng-select>
+            </div>
+        </div>
+        <div class="row d-flex justify-content-center">
+            <div *ngFor="let list of listNotes; let i = index" class="col-10 mt-2">
+                <div class="row p-2 border-secondary rounded grey-border">
+                    <div class="col-9 d-flex" style="word-wrap: break-word">
+                        <i *ngIf="list.notes_type == '2'"
+                           class="fa fa-envelope-square align-self-center mr-2 color-primary"></i>
+                        <i *ngIf="list.notes_type == '1'"
+                           class="fa fa-bookmark align-self-center mr-2 color-secondary"></i>
+                        <p [innerText]="list.notes" class="mb-0"></p>
+                    </div>
+                    <div class="col-3 px-0 align-self-center">
+                        <small class="mb-0">{{list.created_date | customDateFormat}}</small>
+                    </div>
+                </div>
+            </div>
+            <div *ngIf="listNotes.length == 0" class="col-md-12 align-self-center my-2">
+                <p class="mb-0">No Records Found</p>
+            </div>
+            <!--            <div class="col-11 mt-2">-->
+            <!--                <textarea [(ngModel)]="notes" class="form-control" placeholder="Enter Notes" style="width: 100%; height: 100px; padding: 4px"></textarea>-->
+            <!--            </div>-->
+            <!--            <div class="col-11 text-right mt-2">-->
+            <!--                <button (click)="close()" class="btn btn-outline-primary mr-2" type="button">Close</button>-->
+            <!--            </div>-->
+        </div>
+    </div>
+</ng-template>
+<!-- Container-fluid Ends-->

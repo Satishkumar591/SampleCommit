@@ -1,0 +1,88 @@
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-header">
+            <div class="row mt-2 px-3">
+                <div class="col-6">
+                    <!--                    <h5>Content Folder List</h5>-->
+                </div>
+                <div class="col-6 d-flex justify-content-end">
+                    <div class="col-6">
+                        <div class="input-group">
+                            <input class="form-control" placeholder="Search Content" [(ngModel)]="searchContent" (input)="updateFilter()" size="50" style="height:40px" type="text" >
+                            <div class="input-group-append">
+                                <button class="btn btn-primary {{env.deviceType() ? 'py-0 border-radius-2' : ''}}" type="submit"><i aria-hidden="true" class="fa fa-search"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="btn-popup pull-right">
+                        <a (click)="back()" class="btn btn-primary ml-3 {{env.deviceType() ? 'py-0 border-radius-2' : ''}}">Back</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-body align-content-center" style="min-height: 80vh">
+            <div *ngFor="let item of assignedContentDetails; let i = index" class="col-md-12 mb-2">
+                <div class="customize-card5 col-md-12 d-flex px-0">
+                    <div class="col-md-8 d-flex flex-wrap">
+                        <div class="col-md-12 d-flex flex-wrap">
+                            <span>Content Name: </span>&nbsp;&nbsp;&nbsp;<h4 (click)="previewContent(item)" class="mb-0 color-primary font-weight-bold cursor">{{item.name}}</h4>
+                        </div>
+                        <div class="col-md-3 mt-2">
+                            <span class="badge {{item.status == '1' ? 'badge-green' : 'badge-danger'}}">{{item.status == '1' ? 'Active' : 'In-Active'}}</span>
+                        </div>
+                        <div *ngIf="item.grade_name != ''" class="col-md-4 px-0 d-flex mt-2">
+                            <small class="color-grey mb-0 align-self-center">Grade: </small>&nbsp;&nbsp;<span class="mb-0">{{item.grade_name}}</span>
+                        </div>
+                        <div *ngIf="item.subject_name != ''" class="col-md-5 d-flex pr-0 mt-2">
+                            <small class="color-grey mb-0 align-self-center">Subject: </small>&nbsp;&nbsp;<span class="mb-0">{{item.subject_name}}</span>
+                        </div>
+                    </div>
+                    <div class="col-md-4 d-flex justify-content-end">
+                        <ng-select (change)="openShareTemplate($event)"
+                                   *ngIf="item.isShowClass"
+                                   [items]="classList"
+                                   bindLabel="class_name"
+                                   bindValue="class_id"
+                                   class="flex-fill align-self-center mr-3"
+                                   placeholder="Select Class *"
+                        >
+                        </ng-select>
+                        <i (click)="showClassDropdown(item)" aria-hidden="true" title="Share to Class" class="fa fa-share-alt-square color-primary align-self-center cursor" style="font-size: 2rem"></i>
+                    </div>
+                </div>
+            </div>
+            <div *ngIf="assignedContentDetails.length == 0" class="d-flex justify-content-center align-content-center">
+                <div class="nodataList col-6 d-flex justify-content-center my-3">
+                    <span>No Contents found</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<ng-template #preview let-c="close" let-d="dismiss">
+    <div class="modal-header d-flex justify-content-between">
+        <h4 class="color-primary font-weight-bold">{{previewDetail.name}}</h4><i (click)="this.modalRef.close()" class="fa fa-times-circle cursor" style="font-size: 1.2rem"></i>
+    </div>
+    <div class="modal-body" style="border: 0px">
+        <div class="container-fluid">
+            <div class="col-md-12">
+                <pdf-viewer  [src]="pdfTemplate" style="display: block;"></pdf-viewer>
+            </div>
+        </div>
+    </div>
+</ng-template>
+<ng-template #shareTemplate let-c="close" let-d="dismiss">
+    <div class="modal-header d-flex justify-content-between">
+        <span class="mb-0 d-flex flex-wrap font-weight-bold">Share Content to <span class="font-weight-bold color-primary">&nbsp;{{shareClassDetail.class_name}}</span></span><i (click)="this.modalRef.close()" class="fa fa-times-circle cursor" style="font-size: 1.2rem"></i>
+    </div>
+    <div class="modal-body" style="border: 0px">
+        <div class="container-fluid">
+            <div class="col-md-12 mt-2 px-0">
+                <textarea [(ngModel)]="this.remarks" class="form-control" cols="30" placeholder="Enter Remarks here" rows="7"></textarea>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button (click)="assignToClass()" class="btn btn-primary pull-right {{env.deviceType() ? 'py-0 border-radius-2' : ''}}">Assign</button>
+    </div>
+</ng-template>

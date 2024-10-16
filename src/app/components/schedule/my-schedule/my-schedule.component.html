@@ -1,0 +1,132 @@
+<!-- Container-fluid starts-->
+<div class="container-fluid" *ngIf="schoolStatus.length != 0">
+    <div class="row">
+<!--        <div class="col-4 col-lg-2">-->
+<!--            <h4 class="letter" *ngIf="rollId == '2' || rollId == '6'">Schedule</h4>-->
+<!--            <h4 class="letter" *ngIf="rollId == '4'">My Schedule</h4>-->
+<!--        </div>-->
+        <div class="col-4 col-lg-3 form-group" *ngIf="rollId != '4'">
+            <ng-select [items]="teacherData"
+                       bindLabel="teacher_name"
+                       bindValue="teacher_id"
+                       [(ngModel)]="selectTeacher"
+                       placeholder="Select Teacher"
+                       typeToSearchText=""
+                       (change)="scheduleDetails('teacher')">
+            </ng-select>
+        </div>
+        <div class="col-4 col-lg-3 form-group">
+            <ng-select [items]="classData"
+                       bindLabel="class_name"
+                       bindValue="class_id"
+                       [(ngModel)]="selectClass"
+                       placeholder="Select Class"
+                       typeToSearchText=""
+                       (change)="scheduleDetails('class')">
+                <ng-template ng-option-tmp let-item="item">
+                    <div [title]="item.class_name">{{item.class_name}}</div>
+                </ng-template>
+            </ng-select>
+        </div>
+        <div class="col-12 active2 p-3">
+            <div class="row d-flex justify-content-between">
+                <div class="col-4">
+                    <div class="btn-group">
+                        <div [ngClass]="currentCalendarshow === 'preview' ? 'btn btn-primary' : 'btn btn-outline-primary'"
+                             mwlCalendarPreviousView
+                             [view]="view"
+                             [(viewDate)]="viewDate"
+                             (viewDateChange)="closeOpenMonthViewDay('preview')">
+                            Previous
+                        </div>
+                        <div [ngClass]="currentCalendarshow === 'today' ? 'btn btn-primary' : 'btn btn-outline-primary'"
+                             mwlCalendarToday
+                             [(viewDate)]="viewDate"
+                             (viewDateChange)="closeOpenMonthViewDay('today')">
+                            Today
+                        </div>
+                        <div [ngClass]="currentCalendarshow === 'next' ? 'btn btn-primary' : 'btn btn-outline-primary'"
+                             mwlCalendarNextView
+                             [view]="view"
+                             [(viewDate)]="viewDate"
+                             (viewDateChange)="closeOpenMonthViewDay('next')">
+                            Next
+                        </div>
+                    </div>
+                </div>
+                <div class="col-4 text-center">
+                    <h3 class="letter">{{ viewDate | calendarDate:(view + 'ViewTitle'):'en' }}</h3>
+                </div>
+                <div class="col-md-4 text-right">
+                    <div class="btn-group">
+                        <div class="btn btn-outline-primary"
+                             (click)="setView(CalendarView.Month)"
+                             [class.active]="view === CalendarView.Month">
+                            Month
+                        </div>
+                        <div class="btn btn-outline-primary"
+                             (click)="setView(CalendarView.Week)"
+                             [class.active]="view === CalendarView.Week">
+                            Week
+                        </div>
+                        <div class="btn btn-outline-primary"
+                             (click)="setView(CalendarView.Day)"
+                             [class.active]="view === CalendarView.Day">
+                            Day
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 mt-3" [ngSwitch]="view">
+                    <mwl-calendar-month-view
+                            *ngSwitchCase="CalendarView.Month"
+                            [@.disabled]="true"
+                            [viewDate]="viewDate"
+                            [events]="caelenderEvents"
+                            [refresh]="refresh"
+                            [activeDayIsOpen]="activeDayIsOpen"
+                            [cellTemplate]="customCellTemplate"
+                            (dayClicked)="dayClicked($event.day)"
+                            (eventClicked)="handleEvent('Clicked', $event.event)">
+                    </mwl-calendar-month-view>
+                    <mwl-calendar-week-view
+                                *ngSwitchCase="CalendarView.Week"
+                                [viewDate]="viewDate"
+                                [events]="caelenderDayEvents"
+                                [refresh]="refresh"
+                                (eventClicked)="handleEvent('Clicked', $event.event)"
+                                >
+                    </mwl-calendar-week-view>
+                    <mwl-calendar-day-view
+                                *ngSwitchCase="CalendarView.Day"
+                                [viewDate]="viewDate"
+                                [events]="caelenderDayEvents"
+                                [refresh]="refresh"
+                                (eventClicked)="handleEvent('Clicked', $event.event)">
+                    </mwl-calendar-day-view>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div *ngIf="schoolStatus.length == 0">
+    <app-emptyschool>
+    </app-emptyschool>
+</div>
+<ng-template #customCellTemplate let-day="day" let-locale="locale">
+    <div class="cal-cell-top">
+    <span class="cal-day-badge" *ngIf="day.badgeTotal > 0"
+    >{{ day.badgeTotal }}</span>
+        <span class="cal-day-number">
+            {{ day.date | calendarDate:'monthViewDayNumber':locale }}
+        </span>
+    </div>
+    <small style="margin: 5px;" *ngIf="day.events.length >0">
+        <span *ngFor="let item of day.events;let i=index">
+            <p *ngIf="i== 0 || i === 1 || i ==2 " class="letter">{{item.teacher_name}} : {{item.titleName}} at {{item.slotstarttime + ' ' + item.slotendtime}}{{i != 0 ? ' , ': ''}}</p>
+        </span>
+        <span *ngIf="day.events.length > 3">
+                    {{day.events.length-3 + ' More'}}
+
+        </span>
+    </small>
+</ng-template>

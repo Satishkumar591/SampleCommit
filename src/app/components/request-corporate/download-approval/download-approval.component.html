@@ -1,0 +1,119 @@
+<div class="container-fluid">
+    <div class="row mb-3">
+        <div class="col-md-6 btn-group">
+            <button (click)="filterType = '1'; requestList('1')" [ngClass]="{'active1': filterType == '1'}" class="btn btn-outline-primary">Pending &nbsp;<span class="badge badge-warning align-self-center">{{listData.pending_count}}</span></button>
+            <button (click)="filterType = '3'; requestList('3')" [ngClass]="{'active1': filterType == '3'}" class="btn btn-outline-primary">Approved &nbsp;<span class="badge badge-success align-self-center">{{listData.accepted_count}}</span></button>
+            <button (click)="filterType = '2'; requestList('2')"  [ngClass]="{'active1': filterType == '2'}" class="btn btn-outline-primary">Rejected &nbsp;<span class="badge badge-danger align-self-center">{{listData.rejected_count}}</span></button>
+        </div>
+    </div>
+    <div class="row mb-0">
+<!--        <div class="col-md-3 form-group align-self-center">-->
+<!--            <select class="custom-select col-md-12">-->
+<!--                <option value="0">All</option>-->
+<!--            </select>-->
+<!--        </div>-->
+<!--        <div class="col-md-3 form-group align-self-center">-->
+<!--            <select class="custom-select col-md-12" id="content">-->
+<!--                <option value="2">Assignment</option>-->
+<!--                <option value="3">Assessment</option>-->
+<!--            </select>-->
+<!--        </div>-->
+        <div class="form-group col-6 col-md-3 mb-0">
+            <div class="col-xl-12 col-md-12 form-group px-0 mb-0">
+                <div class="input-group">
+                    <input #dp="angular-mydatepicker" (dateChanged)="onDateChanged($event)" [options]="myDpOptions" angular-mydatepicker
+                           class="form-control" name="fromdate" placeholder="From Date">
+                    <div class="input-group-append">
+                        <button (click)="dp.toggleCalendar()" class="btn btn-primary" type="button">
+                            <i class="fa fa-calendar-o"></i>
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="form-group col-6 col-md-3 mb-0">
+            <div class="col-xl-12 col-md-12 form-group px-0 mb-0">
+                <div class="input-group">
+                    <input #dp1="angular-mydatepicker" (dateChanged)="onDateChanged1($event)" [options]="myDpOptions1"
+                           angular-mydatepicker class="form-control" name="todate" placeholder="To Date"/>
+                    <div class="input-group-append">
+                        <button (click)="dp1.toggleCalendar()" class="btn btn-primary" type="button">
+                            <i class="fa fa-calendar-o"></i>
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="btn-popup pull-right mb-0">
+                <div class="input-group">
+                    <input (input)="setFilter()" [(ngModel)]="searchStudent" class="form-control" placeholder="Search Student" size="50" style="height:40px" type="text">
+                    <div class="input-group-append">
+                        <button class="btn btn-primary" type="submit"><i aria-hidden="true" class="fa fa-search"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="btn-popup pull-right mb-0">
+                <div class="input-group">
+                    <input (input)="setFilter()" [(ngModel)]="searchContent" class="form-control" placeholder="Search Content" size="50" style="height:40px" type="text">
+                    <div class="input-group-append">
+                        <button class="btn btn-primary" type="submit"><i aria-hidden="true" class="fa fa-search"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div *ngIf="requestData == ''" class="row d-flex justify-content-center mt-5">
+        <div class="col-4">
+            <button class="nodataList">No Data Available!</button>
+        </div>
+    </div>
+    <div *ngIf="!functionCalled" id="custom-pdf-loader" style="height: 60vh;">
+        <img alt="" src="assets/images/pre-loader/loader-01.svg">
+    </div>
+    <section class="row list-card mt-3">
+        <div class="scrollPanel1">
+            <div (scrolled)="onScrollDown($event)"
+                 *ngIf="requestData != ''"
+                 [fromRoot]="true"
+                 [infiniteScrollContainer]="'.scrollPanel1'"
+                 [infiniteScrollDistance]="2"
+                 [infiniteScrollThrottle]="50"
+                 class="search-results col-md-12"
+                 infiniteScroll>
+                <div class="col-md-12 px-0">
+                    <div *ngFor="let list of requestData; let i = index" class="card">
+                        <div class="card-body">
+                            <div class="row">
+<!--                                <div class="col-1 d-flex justify-content-center align-items-center">-->
+<!--                                    <figure *ngIf="this.list.student_profile == ''">-->
+<!--                                        <img alt="" class="rounded-circle img-50 border" src="assets/images/digital-product/student.png">-->
+<!--                                    </figure>-->
+<!--                                    <figure *ngIf="this.list.student_profile != ''">-->
+<!--                                        <img class="rounded-circle img-50" [src]="sanitizer.bypassSecurityTrustResourceUrl(webhost + '/' + list.student_profile)" alt="">-->
+<!--                                    </figure>-->
+<!--                                </div>-->
+                                <div class="col-md-10">
+                                    <h4>
+                                        <span class="t-period font-weight-bold color-primary">{{list.student_name}}</span>
+                                    </h4>
+                                    <p><small class="font-weight-bold">Class Name: </small> <span class="t-name capital font-weight-bold">{{list.class_name}}</span>&nbsp;
+                                        &nbsp; <small class="font-weight-bold">Content Name: </small> <span class="t-name font-weight-bold">{{list.content_name}}</span>
+                                    </p>
+                                </div>
+                                <div class="col-md-2 d-flex justify-content-end align-self-center">
+                                    <i (click)="updateRequest(list, '3')" *ngIf="filterType != '2'" class="fa fa-2x cursor fa-check mr-3 color-green"></i>
+                                    <i (click)="updateRequest(list, '2')" *ngIf="filterType != '3'" class="fa fa-2x cursor fa-times mr-3 color-red"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>

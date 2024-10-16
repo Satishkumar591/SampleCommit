@@ -1,0 +1,70 @@
+<div class="container-fluid">
+    <ng-container *ngIf="items?.length !== 0">
+        <div class="" *ngFor="let item of items | sortPipe : items; let i = index">
+
+            <div class="card" *ngIf="i == 0">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-12  d-flex justify-content-between" (mouseenter)="hoverRemoveItem(item)" (mouseleave)="mouseLeaveremoveItem(item)">
+<!--                            <div class=" d-flex justify-content-between">-->
+<!--                                <div class="col-md-12" *ngIf="i == 0">-->
+                                    <p class="d-flex justify-content-start shapeFontSize">Page No: {{item.pageNumber}}</p>
+                                    <a class="cursor d-flex justify-content-end shapeFontSize" (click)="openDelete()">Clear All</a>
+<!--                                </div>-->
+<!--                            </div>-->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mt-2">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-12" (mouseenter)="hoverRemoveItem(item)" (mouseleave)="mouseLeaveremoveItem(item)">
+                            <div class="row">
+                                <!--                            <div class="col-md-12" *ngIf="i == 0">-->
+                                <!--                                <p>Page No: {{item.pageNumber}}</p>-->
+                                <!--                            </div>-->
+                                <div class="col-md-3">
+                                    <span style="line-height: 4"
+                                          class="multichoice-option3">{{i + 1}}</span>
+
+<!--                                    <p>No: {{i + 1}}</p>-->
+                                </div>
+                                <div class="col-md-7 " style="place-self: center;">
+                                    <p class="contenttext shapeFontSize  font-weight-bold text-capitalize" *ngIf="item.shape == 'rect'">Extract</p>
+                                    <p class="contenttext shapeFontSize font-weight-bold text-capitalize" *ngIf="item.shape == 'rectMask'">Erase</p>
+                                    <p class="contenttext shapeFontSize font-weight-bold text-capitalize" *ngIf="item.shape == 'text'">Text</p>
+                                    <p class="contenttext shapeFontSize font-weight-bold text-capitalize" *ngIf="item.shape == 'highlight'">Highlight</p>
+                                    <p class="contenttext shapeFontSize font-weight-bold text-capitalize" *ngIf="item.shape == 'path'">Drawing</p>
+                                    <p class="contenttext shapeFontSize text-capitalize" *ngIf="!['rect' ,'path' , 'highlight' , 'text' , 'rectMask'].includes(item.shape)">{{item.shape}}</p>
+                                </div>
+                                <div class="col-md-2" *ngIf="!item.isDelete" style="place-self: center;font-size: 2rem">
+                                    <i class="fa fa-trash-o" title="Delete" aria-hidden="true" (click)="deleteItem(item)"
+                                       style="cursor: pointer"></i>
+                                </div>
+                                <div class="col-md-2" title="Undo" *ngIf="item.isDelete" style="place-self: center;font-size: 2rem">
+                                    <i class="fa fa-undo" aria-hidden="true" style="cursor: pointer" (click)="undoDeleteItem(item)"></i>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </ng-container>
+    <ng-container *ngIf="items?.length === 0">
+
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-12 text-center">
+                    <p><em>No annotation found in this page</em></p>
+                </div>
+            </div>
+        </div>
+
+    </ng-container>
+</div>

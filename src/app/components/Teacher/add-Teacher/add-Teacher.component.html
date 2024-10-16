@@ -1,0 +1,358 @@
+<!-- Container-fluid starts-->
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card tab2-card">
+                <div class="card-header">
+                    <h5 class="text-capitalize" *ngIf="type == 'add'">Add Teacher</h5>
+                    <h5 class="text-capitalize" *ngIf="type == 'edit'">Edit Teacher</h5>
+                    <label class="text-muted">All fields marked with <span class="text-danger">*</span> are required</label>
+                </div>
+                <div class="card-body tab2-card">
+                    <form [formGroup]="teacherForm" class="needs-validation user-add" novalida>
+                        <div class="form-group row">
+                            <label for="validationCustom0" class="col-xl-3 col-md-4"><span>*</span>
+                                First Name</label>
+                            <div class="col-xl-8 col-md-7">
+                                <input class="form-control " formControlName="firstName" id="validationCustom0"
+                                       type="text" placeholder="First Name" required="">
+                                <em class="error" *ngIf="!teacherForm.get('firstName').valid && (teacherForm.get('firstName').dirty || teacherForm.get('firstName').touched)">First name is required</em>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="validationCustom1" class="col-xl-3 col-md-4"><span>*</span>
+                                Last Name</label>
+                            <div class="col-xl-8 col-md-7">
+                                <input class="form-control " formControlName="lastName" id="validationCustom1"
+                                       type="text" placeholder="Last Name" required="">
+                                <em class="error" *ngIf="!teacherForm.get('lastName').valid && (teacherForm.get('lastName').dirty || teacherForm.get('lastName').touched)">Last name is required</em>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="validationCustom2" class="col-xl-3 col-md-4"><span>*</span>
+                                Email Address</label>
+                            <div class="col-xl-8 col-md-7">
+                                <input class="form-control " formControlName="email_id" id="validationCustom2" pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-z]{2,4}$"
+                                       type="email" placeholder="Email" required="">
+                                <em class="error" *ngIf="teacherForm.get('email_id').hasError('required') && (teacherForm.get('email_id').dirty || teacherForm.get('email_id').touched)">Email is required</em>
+                                <em class="error" *ngIf="teacherForm.get('email_id').hasError('pattern')">Invalid Email-Id</em>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="validationCustom3" class="col-xl-3 col-md-4"><span>*</span>
+                                Contact Number</label>
+                            <div class="col-xl-8 col-md-7">
+                                <input class="form-control " formControlName="mobile" id="validationCustom3"
+                                       type="text" placeholder="Contact Number" (keypress)="numberPattern($event)" maxlength="15" minlength="10" required="">
+                                <em class="error" *ngIf="!teacherForm.get('mobile').valid && (teacherForm.get('mobile').dirty || teacherForm.get('mobile').touched)">Contact Number is required</em>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="validationCustom4" class="col-xl-3 col-md-4"><span style="visibility: hidden">*</span>
+                                Teacher ID</label>
+                            <div class="col-xl-8 col-md-7">
+                                <input class="form-control " formControlName="teacherId" id="validationCustom4"
+                                       type="text" placeholder="Teacher ID" >
+                                <em class="error" *ngIf="!teacherForm.get('teacherId').valid && (teacherForm.get('teacherId').dirty || teacherForm.get('teacherId').touched)">Teacher ID is required</em>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-xl-3 col-md-4"><span style="visibility: hidden">*</span>
+                                Grade</label>
+                            <div class="col-xl-8 col-md-7">
+                                <ng-select [items]="gradeData"
+                                           bindLabel="grade_name"
+                                           bindValue="grade_id"
+                                           formControlName="grade"
+                                           placeholder="Please Select"
+                                           typeToSearchText=""
+                                           multiple="true"
+                                >
+                                </ng-select>
+                                <em class="error" *ngIf="!teacherForm.get('grade').valid && (teacherForm.get('grade').dirty || teacherForm.get('grade').touched)">Grade is required</em>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label  class="col-xl-3 col-md-4"><span style="visibility: hidden">*</span>
+                                Subject</label>
+                            <div class="col-xl-8 col-md-7">
+                                <ng-select [items]="subjectData"
+                                           bindLabel="subject_name"
+                                           bindValue="subject_id"
+                                           formControlName="subject"
+                                           placeholder="Please Select"
+                                           typeToSearchText=""
+                                           multiple="true"
+                                >
+                                </ng-select>
+                                <em class="error" *ngIf="!teacherForm.get('subject').valid && (teacherForm.get('subject').dirty || teacherForm.get('subject').touched)">Subject is required</em>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="validationCustom4" class="col-xl-3 col-md-4"><span style="visibility: hidden">*</span>
+                                Designation</label>
+                            <div class="col-xl-8 col-md-7">
+                                <input class="form-control " formControlName="Designation" id="validationCustom5"
+                                       type="text" placeholder="Designation">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-xl-3 col-md-4" style="position: relative;left: 9px" >
+                                Date Of Joining</label>
+                            <div class="col-xl-8 col-md-7 form-group">
+                                <div class="input-group">
+                                    <!-- input box -->
+                                    <input class="form-control" name="mydate" placeholder="mm-dd-yyyy" (keypress)="datePattern($event)"
+                                           formControlName="doj" angular-mydatepicker #dp="angular-mydatepicker" [options]="myDpOptions" (inputFieldChanged)="checkDoj($event)"
+                                           (dateChanged)="onDateChanged($event)"/>
+                                    <div class="input-group-append">
+                                        <button type="button" class="btn btn-primary" (click)="dp.toggleCalendar()">
+                                            <i class="fa fa-calendar-o"></i>
+                                        </button>
+                                    </div>
+
+                                </div>
+                                <em class="error" *ngIf="!teacherForm.get('doj').valid && (teacherForm.get('doj').dirty || teacherForm.get('doj').touched)">Please enter Valid Date</em>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-xl-3 col-md-4" ><span style="visibility: hidden">*</span>
+                                Date Of Birth</label>
+                            <div class="col-xl-8 col-md-7 form-group">
+                                <div class="input-group">
+                                    <!-- input box -->
+                                    <input class="form-control" name="mydate" placeholder="mm-dd-yyyy" (keypress)="datePattern($event)"
+                                           formControlName="dob" angular-mydatepicker #dp1="angular-mydatepicker" [options]="myDpOptions1"
+                                           (dateChanged)="onDateChanged($event)"/>
+                                    <div class="input-group-append">
+                                        <button type="button" class="btn btn-primary" (click)="dp1.toggleCalendar()">
+                                            <i class="fa fa-calendar-o"></i>
+                                        </button>
+                                    </div>
+
+                                </div>
+                                <em class="error" *ngIf="!teacherForm.get('dob').valid && (teacherForm.get('dob').dirty || teacherForm.get('dob').touched)">Date of Birth is required</em>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="validationCustom7" class="col-xl-3 col-md-4"><span style="visibility: hidden">*</span>
+                                Gender</label>
+                            <div class="col-xl-8 col-md-7">
+                                <select class="form-control"  formControlName="gender" id="validationCustom7">
+                                    <option value="">Select Gender</option>
+                                    <option value="male">Male</option>
+                                    <option value="female">Female</option>
+                                    <option value="n/a">Do not want to disclose</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="validationCustom8" class="col-xl-3 col-md-4"><span style="visibility: hidden">*</span>
+                                Address 1</label>
+                            <div class="col-xl-8 col-md-7">
+                                <input class="form-control" formControlName="address1" id="validationCustom8"
+                                       type="text" placeholder="Address1">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="validationCustom9" class="col-xl-3 col-md-4" style="position: relative;left: 9px" >
+                                Address 2</label>
+                            <div class="col-xl-8 col-md-7">
+                                <input class="form-control" formControlName="address2" id="validationCustom9"
+                                       type="text"placeholder="Address2">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="validationCustom10" class="col-xl-3 col-md-4"><span style="visibility: hidden">*</span>
+                                City</label>
+                            <div class="col-xl-8 col-md-7">
+                                <input class="form-control" formControlName="city" id="validationCustom10"
+                                       type="text" placeholder="City">
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-xl-3 col-md-4"><span style="visibility: hidden">*</span>
+                                State</label>
+                            <div class="col-xl-8 col-md-7">
+                                <ng-select [items]="stateListData"
+                                           bindLabel="name"
+                                           bindValue="state_id"
+                                           formControlName="state"
+                                           placeholder="Please Select"
+                                >
+                                </ng-select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-xl-3 col-md-4"><span style="visibility: hidden">*</span>
+                                Country</label>
+                            <div class="col-xl-8 col-md-7">
+                                <ng-select [items]="countryListData"
+                                           bindLabel="name"
+                                           bindValue="country_id"
+                                           formControlName="country"
+                                           placeholder="Please Select"
+                                           (change)="stateList($event.country_id)"
+
+                                >
+                                </ng-select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="validationCustom13" class="col-xl-3 col-md-4"><span style="visibility: hidden">*</span>
+                                Zip </label>
+                            <div class="col-xl-8 col-md-7">
+                                <input class="form-control" multiple formControlName="postalCode" id="validationCustom13"
+                                       type="text" placeholder="Enter Zip" (keypress)="numberPattern($event)" minlength="3" maxlength="9">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-xl-3 col-md-4"><span>*</span>
+                                Status</label>
+                            <div class="col-xl-8 col-md-7">
+                                <select class="form-control " formControlName="status">
+                                    <option value="1">Active</option>
+                                    <option value="2">Inactive</option>
+                                    <option *ngIf="type =='edit'" value="3">Suspended</option>
+                                    <option *ngIf="type =='edit'" value="4">Deleted</option>
+                                </select>
+                                <em class="error" *ngIf="!teacherForm.get('status').valid && (teacherForm.get('status').dirty || teacherForm.get('status').touched)">status is required</em>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-xl-3 col-md-4 ">Profile Photo</label>
+                            <div class="col-xl-8 col-md-7">
+                                <input #myInput type="file" class="custom-upload-input" (change)="encodeImageFileAsURL($event)" accept=".png, .jpeg, .jpg" >
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-xl-3 col-md-4"  style="position: relative;left: 25%">
+                                <div  class="files-list fit-image" *ngFor="let file of imagepath;let i= index">
+                                    <img *ngIf="imagepath != ''" [src]="sanitizer.bypassSecurityTrustResourceUrl(webhost + '/' + file)" alt="">
+                                    <i *ngIf="imagepath != ''" class="fa fa-times" style="position: relative; right: 26px; bottom: 85px; cursor: pointer;  background: #eeeeee;
+       padding: 10px; border-radius: 45px;" title="close" (click)="deleteImg()" ></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12 mt-4">
+                                <h3 style="color: #000; font-weight: 800;">Permissions</h3>
+                                <hr>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="row">
+                                    <div class="col-12 mb-2" style="position: relative; left: 1.5rem">
+                                        <input type="checkbox" class="form-check-input" id="selectAll" formControlName="selectAll" (change)="checkValue1()"><label for="selectAll"><b>Select All</b></label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-3">
+                                <h4>Manage Content Creator</h4>
+                                <div class="row">
+                                    <div class="col-12" style="position: relative; left: 1.5rem">
+                                        <input type="checkbox" class="form-check-input" id="addContent" formControlName="addContent" (change)="checkValue()"><label for="addContent">Add Content Creator</label>
+                                    </div>
+                                    <div class="col-12" style="position: relative; left: 1.5rem">
+                                        <input type="checkbox" class="form-check-input" id="updateContent" formControlName="updateContent" (change)="checkValue()" ><label for="updateContent">Update Content Creator</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <h4>Manage Student</h4>
+                                <div class="row">
+                                    <div class="col-12" style="position: relative; left: 1.5rem">
+                                        <input type="checkbox" class="form-check-input" id="addStudent" formControlName="addStudent"  (change)="checkValue()" ><label for="addStudent">Add Student</label>
+                                    </div>
+                                    <div class="col-12" style="position: relative; left: 1.5rem">
+                                        <input type="checkbox" class="form-check-input" id="updateStudent" formControlName="updateStudent" (change)="checkValue()" ><label for="updateStudent">Update Student</label>
+                                    </div>
+                                    <div class="col-12" style="position: relative; left: 1.5rem">
+                                        <input type="checkbox" class="form-check-input" id="emailIdStudent" formControlName="displayEmailId" (change)="checkValue()" ><label for="updateStudent">Display Student Email-Id</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <h4>Manage Subject</h4>
+                                <div class="row">
+                                    <div class="col-12" style="position: relative; left: 1.5rem">
+                                        <input type="checkbox" class="form-check-input" id="addSubject" formControlName="addSubject" (change)="checkValue()" ><label for="addSubject">Add Subject</label>
+                                    </div>
+                                    <div class="col-12" style="position: relative; left: 1.5rem">
+                                        <input type="checkbox" class="form-check-input" id="updateSubject" formControlName="updateSubject" (change)="checkValue()" ><label for="updateSubject">Update Subject</label>
+                                    </div>
+                                </div>
+                            </div>
+<!--                            <div class="col-3">-->
+<!--                                <h4>Manage Books</h4>-->
+<!--                                <div class="row">-->
+<!--                                    <div class="col-12" style="position: relative; left: 1.5rem">-->
+<!--                                        <input type="checkbox" class="form-check-input" id="addBooks" formControlName="addBooks" (change)="checkValue()" ><label for="addBooks">Add Books</label>-->
+<!--                                    </div>-->
+<!--                                    <div class="col-12" style="position: relative; left: 1.5rem">-->
+<!--                                        <input type="checkbox" class="form-check-input" id="updateBooks" formControlName="updateBooks" (change)="checkValue()"><label for="updateBooks">Update Books</label>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </div>-->
+                            <div class="col-3">
+                                <h4>Manage Content Folder</h4>
+                                <div class="row">
+                                    <div class="col-12" style="position: relative; left: 1.5rem">
+                                        <input type="checkbox" class="form-check-input" id="addRoom" (change)="checkValue()" formControlName="addRoom"><label for="addRoom">Add Content Folder</label>
+                                    </div>
+                                    <div class="col-12" style="position: relative; left: 1.5rem">
+                                        <input type="checkbox" class="form-check-input" id="updateRoom" (change)="checkValue()" formControlName="updateRoom"><label for="updateRoom">Update Content Folder</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-3 mt-3">
+                                <h4>Manage Content</h4>
+                                <div class="row">
+                                    <div class="col-12" style="position: relative; left: 1.5rem">
+                                        <input type="checkbox" class="form-check-input" id="addContents" formControlName="addContents" (change)="checkValue()" ><label for="addContents">Add Content</label>
+                                    </div>
+                                    <div class="col-12" style="position: relative; left: 1.5rem">
+                                        <input type="checkbox" class="form-check-input" id="updateContents" formControlName="updateContents" (change)="checkValue()"><label for="updateContents">Update Content</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-3 mt-3">
+                                <h4>Manage Class</h4>
+                                <div class="row">
+                                    <div class="col-12" style="position: relative; left: 1.5rem">
+                                        <input type="checkbox" class="form-check-input" id="addRoom1" formControlName="addClass" (change)="checkValue(); selectClass();"><label for="addRoom1">Add/Update Class</label>
+                                    </div>
+                                    <div class="col-12" style="position: relative; left: 1.5rem">
+                                        <input type="checkbox" class="form-check-input" id="addRoom2" formControlName="addCurriculum" (change)="checkValue(); selectCurriculum();"><label for="addRoom2">Only Curriculum</label>
+                                    </div>
+                                    <!-- <div class="col-12" style="position: relative; left: 1.5rem">
+                                        <input type="checkbox" class="form-check-input" id="updateCompleteClass" formControlName="updateCompletedClass" (change)="checkValue();"><label for="updateCompleteClass">Update Completed Class</label>
+                                    </div> -->
+                                </div>
+                            </div>
+                            <div class="col-3 mt-3">
+                                <h4>Transfer Class</h4>
+                                <div class="row">
+                                    <div class="col-12" style="position: relative; left: 1.5rem">
+                                        <input (change)="checkValue(); selectClass();" class="form-check-input" formControlName="transferClass" id="transferClass" type="checkbox"><label for="transferClass">Transfer Class</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="pull-right">
+                        <button type="button" *ngIf="type == 'add'" (click)="addTeacher('add')" class="btn btn-primary mt-3" >Save</button>
+                        <button type="button" *ngIf="type == 'edit'" (click)="addTeacher('edit')"  class="btn btn-primary mt-3" >Update</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Container-fluid Ends-->

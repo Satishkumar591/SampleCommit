@@ -1,0 +1,21 @@
+.userTable table td:nth-child(1) {
+  width: 15%;
+}
+
+.userTable table td:nth-child(2) {
+  width: 35%;
+}
+
+.userTable table td:nth-child(3) {
+  width: 15%;
+}
+
+.userTable table td:nth-child(4) {
+  width: 35%;
+}
+
+student-profile {
+  .table td {
+    color: #8F008AFF !important;
+  }
+}

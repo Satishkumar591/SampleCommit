@@ -1,0 +1,175 @@
+<!doctype html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+  <meta charset="utf-8">
+  <title>Loading</title>
+  <base href="/">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta content="AqdBFyvYNxg1cFtZGnZGIuav9bPdKQEspkNy06DjkryixRO7ifwXjU33hW2KFQA/8jlyS5hlYL3PTmb9iDN42gUAAABgeyJvcmlnaW4iOiJodHRwOi8vbG9jYWxob3N0OjgyMTEiLCJmZWF0dXJlIjoiVW5yZXN0cmljdGVkU2hhcmVkQXJyYXlCdWZmZXIiLCJleHBpcnkiOjE2NTg4Nzk5OTl9" http-equiv="origin-trial" />
+  <meta content="AjkpBPNKQtjH6NAYTpMbsOLk/v66LLEsXHxuytOpscy0yTOHC1L9XfjHvX9pWS/9rkjt7lNuKRKv4g62w2DYSQcAAAB0eyJvcmlnaW4iOiJodHRwczovL3V0aGthbC5jb206NDQzIiwiZmVhdHVyZSI6IlVucmVzdHJpY3RlZFNoYXJlZEFycmF5QnVmZmVyIiwiZXhwaXJ5IjoxNjU4ODc5OTk5LCJpc1N1YmRvbWFpbiI6dHJ1ZX0=" http-equiv="origin-trial" />
+  <meta content="AldFw5M+XdVPtZAFhKqpTQHLmJNi0TLEqFMwXKjcXBXutI2JCIrdp+POu7AgcBReOKOk4lq+z8361xbcDNV5lQAAAACEeyJvcmlnaW4iOiJodHRwczovL3h0cmFjdXJyaWN1bHVtLmVkcXVpbGwuY29tOjQ0MyIsImZlYXR1cmUiOiJVbnJlc3RyaWN0ZWRTaGFyZWRBcnJheUJ1ZmZlciIsImV4cGlyeSI6MTY1ODg3OTk5OSwiaXNTdWJkb21haW4iOnRydWV9" http-equiv="origin-trial" />
+  <link href="assets/favicon-Web-32.ico" id="appIcon" rel="icon" type="image/x-icon">
+  <script type="text/javascript" src="https://sandbox.forte.net/checkout/v1/js"></script>
+  <script src="https://code.jquery.com/jquery-1.11.0.min.js"></script>
+  <script src="//cdn.ckeditor.com/4.7.1/full/ckeditor.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js"></script>
+  <script src="//code.jquery.com/pep/0.4.3/pep.js"></script>
+  <script type="text/javascript" src="assets/js/jsxgraphcore.js"></script>
+<!--  <script type="text/javascript" src="src/assets/js/mathjs2.js"></script>-->
+  <script type="text/javascript" src="assets/js/jsxgraph.css"></script>
+
+  <script src="https://www.wiris.net/demo/plugins/app/WIRISplugins.js?viewer=image"></script>
+<!--  <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>-->
+  <script src="https://cdn.tiny.cloud/1/ku7lmhqp5kuubc17r132kleoxa4430oz1tb13q81fwj148yb/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/signature_pad/1.5.3/signature_pad.min.js"></script>
+  <script src="./js/sig_pad.js" type="text/javascript"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css">
+  <style>
+    /*destop to all device*/
+    @media only screen and (min-width: 1000px) {
+      #Myproject{
+        display: block;
+      }
+      #showContent{
+        display: none;
+      }
+    }
+    /*tab view*/
+    @media only screen and (min-width: 700px) and (max-width: 900px) {
+      body {
+        font-family: Georgia, serif;
+        display: flex;
+        height: 100%;
+        justify-content: center;
+        align-items: center;
+      }
+      @keyframes changeLetter {
+        0% {
+          content: "Rotate Your Tab in Landscape";
+        }
+        50% {
+          color: white;
+        }
+        100% {
+          content: "Rotate Your Tab in Landscape";
+        }
+      }
+      #showContent {
+        display: block;
+        text-align: center;
+        justify-content: center;
+        display: flex;
+        align-items: center;
+        min-height: 100vh;
+      }
+      #showContent:after {
+        animation: changeLetter 3s linear infinite alternate;
+        display: block;
+        content: "Rotate Your Tab in Landscape";
+        font-size: 80px;
+      }
+      #Myproject{
+        display: none;
+      }
+    }
+    /*mobile view only*/
+    @media only screen and (max-width: 575px) {
+      #Myproject{
+        display: block;
+      }
+      #showContent{
+        display: none;
+      }
+    }
+    /*@media only screen and (max-width: 768px) {*/
+    /*  #Myproject{*/
+    /*    display: block;*/
+    /*  }*/
+    /*  #showContent{*/
+    /*    display: none;*/
+    /*  }*/
+    /*}*/
+  </style>
+  <script type="text/javascript" async="async"
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=MML_CHTML">
+  </script>
+<!--  <script type="text/javascript" async="async"-->
+<!--  src="src/assets/js/MathJax.js?config=MML_CHTML">-->
+<!--  </script>-->
+
+</head>
+<body oncontextmenu="return false;">
+<!--<div id="showContent">-->
+<!--</div>-->
+<!--<div id="Myproject">-->
+<!--  <app-root></app-root>-->
+<!--</div>-->
+<app-root></app-root>
+
+<p id="myDiv" style="position: absolute"></p>
+<script type="text/javascript">
+  document.onkeydown = function(e) {
+    if(event.keyCode === 123) {
+      return false;
+    }
+    if(e.ctrlKey && e.shiftKey && (e.keyCode === 'I'.charCodeAt(0) || e.keyCode === 'i'.charCodeAt(0))){
+      return false;
+    }
+    if(e.ctrlKey && e.shiftKey && (e.keyCode === 'J'.charCodeAt(0) || e.keyCode === 'j'.charCodeAt(0))){
+      return false;
+    }
+    if(e.ctrlKey && e.shiftKey && (e.keyCode === 'C'.charCodeAt(0) || e.keyCode === 'C'.charCodeAt(0))){
+      return false;
+    }
+    if(e.ctrlKey && (e.keyCode === 'U'.charCodeAt(0) || e.keyCode === 'u'.charCodeAt(0))){
+      return false;
+    }
+    if(e.ctrlKey && e.key === 'Alt' && (e.keyCode === 'C'.charCodeAt(0) || e.keyCode === 'c'.charCodeAt(0))){
+        return false;
+    }
+    if(e.ctrlKey && e.key === 'Alt' && (e.keyCode === 'I'.charCodeAt(0) || e.keyCode === 'i'.charCodeAt(0))){
+        return false;
+    }
+    if(e.ctrlKey && e.key === 'Alt' && (e.keyCode === 'J'.charCodeAt(0) || e.keyCode === 'j'.charCodeAt(0))){
+        return false;
+    }
+  };
+  // MathJax.Hub.Config({
+  //   // extensions: ["http://cs.jsu.edu/mathjax-ext/contrib/forminput/forminput.js"],
+  //   // tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]},
+  //   // TeX: {extensions: ["AMSmath.js","AMSsymbols.js"]}
+  // });
+  // document.body.addEventListener('change' , )
+  // const tinymceBind = window.tinymce.DOM.bind;
+  // window.tinymce.DOM.bind = (target, name, func, scope) => {
+  //   // TODO This is only necessary until https://github.com/tinymce/tinymce/issues/4355 is fixed
+  //   if (name === 'mouseup' && func.toString().includes('throttle()')) {
+  //     return func;
+  //   } else {
+  //     return tinymceBind(target, name, func, scope);
+  //   }
+  // };
+  // document.getElementById('myDiv');
+  document.getElementById('myDiv').addEventListener("click", ()=> {
+
+    MathJax.Hub.Typeset();
+  });
+  // document.addEventListener("mouseover", ()=> {
+  //   // MathJax.Hub.Update();
+  //   MathJax.Hub.Typeset();
+  // });
+
+</script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+    MathML: {
+    extensions: ["mml3.js" , "content-mathml.js"]
+  }
+  });
+</script>
+</body>
+</html>

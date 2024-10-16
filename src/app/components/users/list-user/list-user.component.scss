@@ -1,0 +1,19 @@
+.nav-tabs {
+
+  border-bottom: 1px solid #8F008A;
+
+  .nav-link {
+    margin-bottom: -2px;
+    &:hover {
+      border: 1px solid #8F008A;
+      border-bottom: none #fff;
+    }
+  }
+
+  .nav-link.active, .nav-tabs .nav-item.show .nav-link {
+    color: #8F008A;
+    background-color: #fff;
+    border: 1px solid #8F008A;
+    border-bottom: none #fff;
+  }
+}

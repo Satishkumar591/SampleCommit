@@ -1,0 +1,71 @@
+<!-- Container-fluid starts-->
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card tab2-card">
+                <div class="card-header">
+                    <h5 class="text-capitalize" *ngIf="type == 'add'">Add Grade</h5>
+                    <h5 class="text-capitalize" *ngIf="type == 'edit'">Edit Grade</h5>
+                    <label class="text-muted">All fields marked with <span class="text-danger">*</span> are required</label>
+                </div>
+                <div class="card-body tab2-card">
+                    <form [formGroup]="gradeform" class="needs-validation user-add" novalida>
+                        <div class="form-group row">
+                            <label for="validationCustom1" class="col-xl-3 col-md-4"><span>*</span>
+                                Grade </label>
+                            <div class="col-xl-8 col-md-7">
+                                <input class="form-control" formControlName="gradename" id="validationCustom1"
+                                       type="text" placeholder="Enter Grade" required="">
+                                <em class="error" *ngIf="!gradeform.get('gradename').valid && (gradeform.get('gradename').dirty || gradeform.get('gradename').touched)">Grade is required</em>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="validationCustom2" class="col-xl-3 col-md-4"><span style="visibility: hidden">*</span>
+                                Description</label>
+                            <div class="col-xl-8 col-md-7">
+                                <textarea class="form-control " rows="3" formControlName="description" id="validationCustom2"
+                                          type="email" placeholder="Description"></textarea>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="validationCustom3" class="col-xl-3 col-md-4"><span>*</span>
+                                Sort Order</label>
+                            <div class="col-xl-8 col-md-7">
+                                <input class="form-control " formControlName="sortNo" id="validationCustom3"
+                                       type="text" placeholder="Sort Order" (keypress)="numberPattern($event)" maxlength="15" required="">
+                                <em class="error" *ngIf="!gradeform.get('sortNo').valid && (gradeform.get('sortNo').dirty || gradeform.get('sortNo').touched) && (gradeCount >= gradeform.controls.sortNo.value)">Sort Order is required, Enter {{gradeCount}} less then or equall value only accepted.</em>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="validationCustom5" class="col-xl-3 col-md-4"><span>*</span>
+                                Status</label>
+                            <div class="col-xl-8 col-md-7">
+                                <select class="form-control" formControlName="status" id="validationCustom5">
+                                    <option selected disabled>&#45;&#45;Select&#45;&#45;</option>
+                                    <option value="1">Active</option>
+                                    <option value="2">In-Active</option>
+                                    <option value="3">Suspended</option>
+                                    <option value="4">Deleted</option>
+                                </select>
+                                <em class="error" *ngIf="!gradeform.get('status').valid && (gradeform.get('status').dirty || gradeform.get('status').touched)">Status is required</em>
+                            </div>
+                        </div>
+<!--                        <div class="form-group row">-->
+<!--                            <label class="col-xl-3 col-md-4"><span>*</span>-->
+<!--                                Institution Name</label>-->
+<!--                            <div class="col-xl-8 col-md-7">-->
+<!--                                <input readonly class="form-control" formControlName="schoolId" id="validationCustom8"-->
+<!--                                       type="text" placeholder="Institution Name" required="">-->
+<!--                            </div>-->
+<!--                        </div>-->
+                    </form>
+                    <div class="pull-right">
+                        <button type="button" *ngIf="type == 'add'" (click)="addgrade('add')"  class="btn btn-primary">Save</button>
+                        <button type="button" *ngIf="type == 'edit'" (click)="addgrade('edit')"  class="btn btn-primary">Update</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Container-fluid Ends-->

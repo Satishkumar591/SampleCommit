@@ -1,0 +1,172 @@
+<div class="modal-header">
+    <h4 class="contenttext">{{contentDetails?.name}}</h4>
+</div>
+<div class="modal-body">
+    <form [formGroup]="assignForm">
+        <div>
+            <div class="row form-group" *ngIf="contentAssignedForm == undefined">
+                <div class="col-md-12">
+                    <label>Assign Resource For</label>
+                </div>
+                <div class="col-md-12">
+                    <select id="selectBox" class="form-control"  formControlName="typeSelection" (change)="typeSelection()" >
+                        <option  value="n/a" disabled>Select type</option>
+                        <option value="1">Class</option>
+                        <option value="2">Content Folder</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row form-group" *ngIf="showClassRelatedField">
+                <div class="col-md-12">
+                    <label> Class</label>
+                </div>
+                <div class="col-md-12" *ngIf="contentAssignedForm == 'class'">
+                    <input class="form-control" formControlName="class" readonly type="text" placeholder="Enter the Class Name" value="{{classData[0]?.class_name}}">
+                </div>
+                <div class="col-md-6" *ngIf="showClassRelatedField && assignForm.controls.typeSelection.value == '1'">
+<!--                <div class="col-md-6" *ngIf="contentAssignedForm != 'class' && assignForm.controls.typeSelection.value == '1'">-->
+                    <ng-select  [items]="classListData"
+                                formControlName="classSelect"
+                                bindValue="class_id"
+                                bindLabel="class_name"
+                                placeholder="Select Class *"
+                                typeToSearchText=""
+                                (change)="selectStudent($event)">
+                    </ng-select>
+                </div>
+                <div class="col-md-6" *ngIf="showClassRelatedField && assignForm.controls.typeSelection.value == '1'">
+<!--                <div class="col-md-6" *ngIf="contentAssignedForm != 'class' && assignForm.controls.typeSelection.value == '1'">-->
+                    <ng-select  (change)="teacherFilter($event)"
+                                [items]="teacherListData"
+                                bindLabel="teacher_name"
+                                bindValue="teacher_id"
+                                formControlName="teacherSelect"
+                                placeholder="Teacher Filter"
+                                typeToSearchText=""
+                    >
+                    </ng-select>
+                </div>
+            </div>
+            <div class="row form-group" *ngIf="showContentFolderRelatedField">
+                <div class="col-md-12">
+                    <label>Content Folder</label>
+                </div>
+                <div class="col-md-12 popup">
+                    <app-treeview-contentfolder [type]="'add'" [selectedbatch]="[]" [treeviewHeight]="200"
+                        [calledForm]="'confirmPopUp'"></app-treeview-contentfolder>
+                </div>
+            </div>
+
+            <div class="row form-group" *ngIf="showClassRelatedField">
+                <div class="col-md-8">
+                    <label>Selected Students</label>
+                    <div class="col-md-12">
+                        <input class="mr-2" type="radio" formControlName="radio" value="1" (change)="showStudentList = !showStudentList"><label class="mr-4"> All Students in selected class</label>
+                        <input class="mr-2" type="radio" formControlName="radio"  value="0" (change)="showStudentList = !showStudentList" ><label class="mr-2"> Specific Students</label>
+                    </div>
+                </div>
+                <div class="col-md-8" *ngIf="showStudentList">
+                    <ng-select  [items]="studentData"
+                                formControlName="specificstudent"
+                                bindValue="student_id"
+                                bindLabel="name"
+                                placeholder="Select Student"
+                                typeToSearchText=""
+                                multiple="true">
+                    </ng-select>
+                </div>
+            </div>
+<!--            <div class="row form-group" *ngIf="resourcetype && contentDetaildata?.download != '0'">-->
+            <div class="row form-group" *ngIf="showClassRelatedField && contentDetails?.download != '0'">
+                <div class="col-md-3">
+                    <div class="col-12" style="position: relative; font-size: 15px; left: 0.4rem">
+                        <input type="checkbox" class="form-check-input cursor" id="download" formControlName="downloadcontent"><label for="download">Download Content</label>
+                    </div>
+                </div>
+            </div>
+            <div class="row form-group" *ngIf="showClassRelatedField && allowScore">
+                <div class="col-md-12">
+                    <label>Release Score</label>
+                </div>
+                <div class="col-md-12">
+                    <select  class="form-control" formControlName="releaseScore">
+                        <option  value="n/a" disabled>Select Response type</option>
+                        <option value="0">Do not release scores or response</option>
+                        <option value="1">Release scores and correct answers after the test is complete</option>
+                        <option value="2" *ngIf="contentFormat == '3'">Release scores and correct answers after each question</option>
+                    </select>
+                </div>
+            </div>
+<!--            <div *ngIf="!checkAutoRelease" class="col-12 px-0">-->
+<!--                <p class="assign-error text-center">Auto score release is not applicable for this content</p>-->
+<!--            </div>-->
+            <div class="row form-group" *ngIf="startdate && endDate && showClassRelatedField">
+                <div class="col-md-12">
+                    <div class="row contenttext">
+                        <div class="col-md-4">
+                            <label>Class Start Date: {{startdate | customDateFormat}}</label>
+                        </div>
+                        <div class="col-md-4">
+                            <label>Class End Date: {{endDate | customDateFormat}}</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row form-group" *ngIf="showClassRelatedField">
+                <div class="col-md-2">
+                    <div class="row-md-12">
+                        <label>Start Date</label>
+                    </div>
+                    <div class="row-md-12">
+                        <input class="form-control" formControlName="startDate" placeholder="Start Date"
+                               name="dp" angular-mydatepicker #dp="angular-mydatepicker" autocomplete="off"
+                               [options]="myDpOptions2" (dateChanged)="onDateChanged($event)" (click)="dp.toggleCalendar()">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="row-md-12">
+                        <label>Start Time</label>
+                    </div>
+                    <div class="row-md-12">
+                        <ngb-timepicker (keypress)="changeStartTime()" formControlName="startTime" [meridian]="meridian" [spinners]="spinner"></ngb-timepicker>
+                    </div>
+                    <em class="error" *ngIf="assignForm.get('startTime').invalid && (assignForm.get('startTime').dirty || assignForm.get('startTime').touched)">
+                        StartTime is invalid
+                    </em>
+                    <div class="small form-text text-danger" *ngIf="timeErr">
+                        <div *ngIf="timeErr">Select valid Time Period</div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="row-md-12">
+                        <label>End Date</label>
+                    </div>
+                    <div class="row-md-12">
+                        <input class="form-control" formControlName="endDate" placeholder="End Date"
+                               name="dp1" angular-mydatepicker #dp1="angular-mydatepicker" autocomplete="off"
+                               [options]="myDpOptions1" (dateChanged)="onDateChanged1($event)" (click)="dp1.toggleCalendar()">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="row-md-12">
+                        <label>End Time</label>
+                    </div>
+                    <div class="row-md-12">
+                        <ngb-timepicker (keypress)="changeStartTime()" [meridian]="meridian" formControlName="endTime" [spinners]="spinner"></ngb-timepicker>
+                    </div>
+                    <em class="error" *ngIf="assignForm.get('endTime').invalid && (assignForm.get('endTime').dirty || assignForm.get('endTime').touched)">
+                        EndTime is invalid
+                    </em>
+                    <div class="small form-text text-danger" *ngIf="timeErr">
+                        <div *ngIf="timeErr">Select valid Time Period</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-outline-primary" (click)="close()">Cancel</button>
+    <button class="btn btn-primary" *ngIf="showClassRelatedField || showContentFolderRelatedField"
+            (click)="submitAssign('1')">Submit</button>
+</div>

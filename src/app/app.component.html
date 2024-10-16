@@ -1,0 +1,27 @@
+<div *ngIf="allow && zoomAllow" class="internet" [ngClass]="!isInternet ? 'no-internet' : 'internet'">
+    <router-outlet></router-outlet>
+</div>
+
+<div class="floating" *ngIf="allow  && zoomAllow">
+<!--    <div class="row">-->
+<!--        <div class="column">-->
+            <div id="meetingSDKElement"></div>
+<!--        </div>-->
+<!--        <div class="column">-->
+            <div id="meetingSDKChatElement"></div>
+<!--        </div>-->
+<!--    </div>-->
+<!--</div>-->
+</div>
+<div   [ngClass]="!isInternet ? 'no-internet overlay' : 'internet overlay-hidden'">
+    <div class="row w-100" style="background: red;justify-content: center;">
+        <span>Your Internet Connection is Unstable</span>
+    </div>
+</div>
+<div *ngIf="!allow" class="internet" [ngClass]="isInternet ? 'no-internet' : 'internet'">
+    <div   [ngClass]="isInternet ? 'no-internet overlay' : 'internet overlay-hidden'">
+        <div class="row w-100" style="background: red;justify-content: center;">
+            <span>Your Internet Connection is Unstable</span>
+        </div>
+    </div>
+</div>

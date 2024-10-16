@@ -1,0 +1,190 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12 d-flex flex-rows align-items-center justify-content-between">
+            <div class="form-group col-3 col-md-3 pl-0 mb-0">
+                <label class="col-xl-12 col-md-12 pl-0 font-weight-bold" style="font-size: 16px">Content Type</label>
+                <select class="custom-select col-md-12" [(ngModel)]="contentType"  (change)="searchContent = '';studentContentDetails($event)">
+                    <option value="0">All</option>
+                    <option value="1">Resource</option>
+                    <option value="2">Assignment</option>
+                    <option value="3">Assessment</option>
+                </select>
+            </div>
+
+            <div class="col-3 col-md-3 pr-0 form-group">
+                <label class="col-xl-12 col-md-12 pl-0 font-weight-bold" style="visibility: hidden">Content Type</label>
+                <div class="pull-right">
+                    <div class="input-group">
+                        <input type="text" class="form-control" style="height:40px" size="50" placeholder="Search Content" [(ngModel)]="searchContent" (input)="updateFilter(searchContent)">
+                        <div class="input-group-append">
+                            <button class="btn btn-primary" style="padding: 6px 12px 6px 12px" type="submit"><i class="fa fa-search" aria-hidden="true"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 my-2 py-2">
+            <div class="row align-items-center">
+                <div class="col-4">
+                    <label style="font-size: 16px" class="col-xl-12 col-md-12 pl-0 font-weight-bold">{{contentType == '2' ? 'Assignment' : contentType == '2' ? 'Assessment' : contentType == '1' ? 'Resource' : 'All'}} Type</label>
+                </div>
+                <div class="col-8 d-flex justify-content-end align-items-center">
+                    <p class="px-3 mb-0">
+                        <small class="ml-3"><i class="fa fa-square yet-to-start-color-bg p-1"></i> - UpComing</small>
+                        <small class="ml-3"><i class="fa fa-square in-progress-color-bg p-1"></i> - In Progress</small>
+                        <small class="ml-3"><i class="fa fa-square completed-color-bg p-1"></i> - Completed</small>
+                        <small class="ml-3"><i class="fa fa-square pending-color-bg p-1"></i> - Pending</small>
+                        <small class="ml-3"><i class="fa fa-square over-due-bg p-1"></i> - Overdue</small>
+                        <small class="ml-3"><i class="fa fa-square never-bg p-1"></i> - Not Started</small>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12">
+            <ngx-datatable
+                    class="bootstrap"
+                    [rows]="studentContentDetailsData"
+                    [columnMode]="'force'"
+                    [headerHeight]="50"
+                    [footerHeight]="50"
+                    [rowHeight]="50"
+                    [scrollbarV]="false"
+            >
+                <ngx-datatable-column name="Content Name">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                        <span class="color-primary cursor"><strong>{{row.content_name}}</strong></span>
+                    </ng-template>
+                </ngx-datatable-column>
+                <ngx-datatable-column name="Content Type" *ngIf="contentType == '0'">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                        <span><strong>{{row.content_type == '1' ? 'Resource' : row.content_type == '2' ? 'Assignment' : 'Assessment'}}</strong></span>
+                    </ng-template>
+                </ngx-datatable-column>
+                <ngx-datatable-column name="Start Date">
+                    <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                        <span>{{row?.start_date != '0000-00-00' ? (row?.start_date | customDateFormat) : '-'}}</span>
+                    </ng-template>
+                </ngx-datatable-column>
+                <ngx-datatable-column name="End Date">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                        <span>{{row.end_date != '0000-00-00' ? (row.end_date | customDateFormat) : '-'}}</span>
+                    </ng-template>
+                </ngx-datatable-column>
+                <ngx-datatable-column name="Score" *ngIf="contentType != '1'">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                        <span *ngIf="row.content_type != '1'" style="border: none; padding: 2px 8px">{{row.student_score != '' ? row.student_score : '0'}}</span>/<span style="border: none; padding: 2px 8px">{{row.total_score}}</span>
+                        <span *ngIf="row.content_type == '0'" style="border: none; padding: 2px 8px">-</span>
+                    </ng-template>
+                </ngx-datatable-column>
+                <ngx-datatable-column name="Percentage" *ngIf="contentType != '1'">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                        <div *ngIf="row.content_type != '1'">
+                            <span *ngIf="row.status == '0' || row.status == ''" class="cursor">-</span>
+                            <span (click)="studentCorrectionDetail(row)" *ngIf="row.status == '1'" class="yet-to-start-color cursor">{{row.student_average_score}}</span>
+                            <span (click)="studentCorrectionDetail(row)" *ngIf="row.status == '2' || row.status == '6'" class="in-progress-color cursor">{{row.student_average_score}}</span>
+                            <span (click)="studentCorrectionDetail(row)" *ngIf="row.status == '3'" class="completed-color cursor">{{row.student_average_score}}</span>
+                            <span (click)="studentNotAnswer(row)" *ngIf="row.status == '5'" class="never cursor">{{row.student_average_score}}</span>
+                            <span (click)="studentCorrectionDetail(row)" *ngIf="row.status == '7'" class="pending-color cursor">{{row.student_average_score}}</span>
+                        </div>
+                        <div *ngIf="row.content_type == '0'">-</div>
+                    </ng-template>
+                </ngx-datatable-column>
+                <ngx-datatable-column name="Action">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+
+                        <i (click)="openNotes(classData, row)" style="font-size: 16px" aria-hidden="true" class="color-primary cursor fa fa-newspaper-o mr-2" title="Add Notes"></i>
+                        <i style="font-size: 16px" *ngIf="['1', '2', '3', '5', '6,', '7'].indexOf(row.status) > -1 " class="color-primary fa fa-eye cursor mr-2" title="View Content" aria-hidden="true" (click)="row.status == '5' ? studentNotAnswer(row) : studentCorrectionDetail(row)"></i>
+                        <i style="font-size: 16px" class="color-primary fa fa-bell cursor" title="Notify Parent" aria-hidden="true" *ngIf="row.status == '4' || row.status == '6'" (click)="notifyParent(row)"></i>
+
+                    </ng-template>
+                </ngx-datatable-column>
+            </ngx-datatable>
+        </div>
+    </div>
+</div>
+
+<ng-template #writeNoteOpen let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h4 class="modal-title text-center">Add Notes</h4>
+        <i (click)="close()" class="fa fa-close cursor" ></i>
+    </div>
+    <div class="modal-body">
+        <div class="row px-3 d-flex justify-content-center">
+            <div *ngFor="let list of showNotes; let i = index" class="col-12 mt-2">
+                <div class="row border border-secondary rounded">
+                    <div class="col-8 d-flex" style="word-wrap: break-word;">
+                        <i *ngIf="list.notes_type == '2'" class="fa fa-envelope-square align-self-center mr-2 color-primary"></i>
+                        <i *ngIf="list.notes_type == '1'" class="fa fa-bookmark align-self-center mr-2 color-secondary"></i>
+                        <span [innerHTML]="list.notes" class="mb-0 mt-3"></span>
+                    </div>
+                    <div class="col-3 px-0 d-flex justify-content-end align-self-center">
+                        <small class="mb-0">{{list.created_date | customDateFormat}}</small>
+                    </div>
+                    <div class="col-1 d-flex justify-content-end align-self-center">
+                        <i (click)="deleteNotes(list)" aria-hidden="true" class="fa fa-close fa-1x text-danger" style="cursor:pointer"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 px-0 mt-2">
+                <app-tiny-mice  (emitEditorValue)="getEditorValue($event)"
+                                [editorPatchValue]="false"
+                                [height]="300"
+                                [id]="'addNotes'"
+                                [showDropBtn]="false"
+                                [showInputBtn]="false">
+                </app-tiny-mice>
+            </div>
+            <div class="col-12 px-0 text-right mt-2">
+                <button (click)="addNotes('2')" class="btn btn-outline-primary mr-2" type="button">Send as Email</button>
+                <button (click)="addNotes('1')" class="btn btn-primary" type="button">Add</button>
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+
+<ng-template #contentnow let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h4 class="modal-title col-12 text-center"><b>Notify Parent</b></h4>
+    </div>
+    <div class="modal-body">
+        <!-- Container-fluid starts-->
+        <div class="container-fluid">
+            <h5 class="text-center">Are You Sure want to notify {{studentname[0].student_name}} parents?</h5>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn cancel" (click)="close()">Cancel</button>
+        <button type="button" class="btn btn-primary" (click)="confirmNotifiy()">Confirm</button>
+    </div>
+</ng-template>
+
+<ng-template #notStarted let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h4 class="modal-title col-12 text-center"><b>Not Started</b></h4>
+    </div>
+    <div class="modal-body">
+        <div class="container-fluid">
+            <h5 class="text-center"> Not submitted the
+                <span *ngIf="this.contentType == '2'">Assignment</span>
+                <span *ngIf="this.contentType == '3'">Assessment</span> yet.</h5>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-primary" (click)="closeNotstarted()">Ok</button>
+    </div>
+</ng-template>
+
+<ng-template #viewStudentDetails let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h4 class="modal-title">Student Answer Report</h4>
+        <i class="fa fa-close cursor" (click)="onSave()" ></i>
+    </div>
+    <div class="modal-body">
+        <app-answer-sheet [answerShow]="true" [contentId]="contentId" [contentFormat]="contentFormat" [studentContentId]="studentContentId"
+                          [classId]="classData.class_id" [studentReportId]="studentId" [backStatus]="false" ></app-answer-sheet>
+    </div>
+</ng-template>
+

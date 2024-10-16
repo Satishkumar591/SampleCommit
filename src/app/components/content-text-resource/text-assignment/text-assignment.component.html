@@ -1,0 +1,707 @@
+<div class="container-fluid" *ngIf="showPage">
+    <div class="row">
+        <div class="col-md-5">
+            <h4 class="text-uppercase" *ngIf="!openContent">{{type + ' ' + textType}} {{type == 'edit' ? '-' : ''}}   <span *ngIf="type == 'edit'" class="color-primary">{{contentName}}</span></h4>
+            <h4 *ngIf="openContent" class="font-weight-bold" style="font-size: 20px" >Add Description</h4>
+            <label class="text-muted">All fields marked with <span class="text-danger">*</span> are required</label>
+        </div>
+        <div class="pdf-assign-btn col-md-7">
+            <button class="btn btn-primary pull-right ml-3" *ngIf="openContent" (click)="assignNext('edit', 'addQuestion')">Add Questions</button>
+            <button (click)="assign('add')" *ngIf="type != 'edit' && openContent" [disabled]="detailData.length == 0" class="btn btn-primary pull-right ml-3">Publish</button>
+            <button (click)="assign('edit')" *ngIf="type == 'edit' && openContent" [disabled]="detailData.length == 0" class="btn btn-primary pull-right ml-3">Publish</button>
+            <img *ngIf="type != 'edit' && openContent" class="pull-right" (click)="draft('add')" src="assets/images/pdf-icons/floppy-disk.png" alt="">
+            <img *ngIf="type == 'edit' && openContent" class="pull-right" (click)="draft('edit')" src="assets/images/pdf-icons/floppy-disk.png" alt="">
+            <button class="btn btn-primary pull-right mr-3" *ngIf="openContent" (click)="assignNext('edit', 'backButton')"><i class="fa fa-long-arrow-left fa-1x" aria-hidden="true"></i> Back</button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card tab2-card">
+                <div class="card-body tab2-card" *ngIf="!openContent">
+                    <form [formGroup]="assignmentform" class="needs-validation user-add">
+                        <div class="col-md-12 d-flex mb-4">
+                            <div class="col-sm-12 col-md-4 px-0">
+                                <div class="image-container-left">
+                                    <img *ngIf="(imagepath == undefined || imagepath?.length == 0) && this.textType == 'assignment'" src="assets/images/ristaschool/assignment.png" alt="">
+                                    <img *ngIf="(imagepath == undefined || imagepath?.length == 0) && this.textType == 'assessment'" src="assets/images/ristaschool/assessment.png" alt="">
+                                    <img  *ngIf="imagepath != undefined && imagepath?.length != 0"  [src]="sanitizer.bypassSecurityTrustResourceUrl(webhost + '/' + imagepath)" alt="">
+                                    <i *ngIf="imagepath != undefined && imagepath?.length != 0" class="fa fa-times close-button" title="close" (click)="deleteImg()" ></i>
+                                    <div class="profileUrl">
+                                        <input style="display: none" type="file" class="custom-upload-input" (change)="encodeImageFileAsURL($event)" #addAssignment #myInput accept=".png, .jpeg, .jpg">
+                                        <button type="button" class="btn btn-light btn-circle border-rista" title="upload Image" (click)="addAssignment.click()"> <i class="fa fa-upload fa-2x mb-3" aria-hidden="true"></i> </button>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="container col-sm-12 col-md-8">
+                                <h5>Created By</h5>
+                                <div class="row">
+                                    <div class="col-md-4 form-group">
+                                        <input class="form-control" formControlName="created" id="validationCustom1"
+                                               type="text" placeholder="Created" required="" readonly>
+                                    </div>
+                                    <div class="col-md-8 form-group">
+                                        <input class="form-control" formControlName="resourceName" id="validationCustom12"
+                                               placeholder="Resource Name*" required="" type="text">
+                                        <em class="error" *ngIf="!assignmentform.get('resourceName').valid && (assignmentform.get('resourceName').dirty || assignmentform.get('resourceName').touched)">Resource Name is required</em>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div  class="col-md-4 form-group">
+                                        <ng-select [items]="gradeData"
+                                                   bindLabel="grade_name"
+                                                   bindValue="grade_id"
+                                                   formControlName="grade"
+                                                   placeholder="Select Grade*"
+                                                   typeToSearchText=""
+                                                   multiple="true"
+                                        >
+                                        </ng-select>
+                                        <em class="error" *ngIf="!assignmentform.get('grade').valid && (assignmentform.get('grade').dirty || assignmentform.get('grade').touched)">Grade is required</em>
+                                    </div>
+                                    <div class="col-md-4 form-group">
+                                        <ng-select [items]="subjectData"
+                                                   bindLabel="subject_name"
+                                                   bindValue="subject_id"
+                                                   formControlName="subject"
+                                                   placeholder="Select Subject*"
+                                                   typeToSearchText=""
+                                                   multiple="true"
+                                        >
+                                        </ng-select>
+                                        <em class="error" *ngIf="!assignmentform.get('subject').valid && (assignmentform.get('subject').dirty || assignmentform.get('subject').touched)">Subject is required</em>
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <select class="form-control" formControlName="access">
+                                            <option value="" hidden selected>Please Choose....</option>
+                                            <option *ngIf="roleid != '6'" value="1">Private (Within Institution)</option>
+                                            <option *ngIf="roleid != '6'" value="2">Private (Only You)</option>
+                                            <option *ngIf="roleid == '6'" value="4">Private (Within Corporate)</option>
+                                        </select>
+                                        <em class="error" *ngIf="!assignmentform.get('access').valid && (assignmentform.get('access').dirty || assignmentform.get('access').touched)">Access is required</em>
+                                    </div>
+                                </div>
+                                <div class="row d-flex align-items-center mb-3">
+                                    <app-treeview-contentfolder [treeviewHeight]="250"
+                                            [type]="type" [selectedbatch]="batchId">
+                                    </app-treeview-contentfolder>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group col-md-12">
+                                        <textarea class="form-control" name="" id="" placeholder="Enter Description" formControlName="description" style="width: 100%; height: 100px"></textarea>
+                                        <em class="error" *ngIf="!assignmentform.get('description').valid && (assignmentform.get('description').dirty || assignmentform.get('description').touched)">Description is required</em>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <tag-input formControlName="tag"
+                                                   [secondaryPlaceholder]="'Enter tags'"
+                                                   [placeholder]="'Add tags'"
+                                                   [editable]='true'
+                                                   [clearOnBlur]="true"
+                                                   [addOnPaste]="true"
+                                                   [addOnBlur]="true"
+                                                   theme='bootstrap'
+                                        ></tag-input>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mx-3 mb-4 resource-link-card">
+                            <div class="col-md-12 d-flex justify-content-between">
+                                <h4 class="font-weight-bold">Additional resource links</h4>
+                                <span>
+                                    <i class="fa fa-edit f-22px ml-3 cursor color-primary" title="Edit Resource Link" (click)="isEditLink = true" *ngIf="resourceArray.length != 0 && !isEditLink"></i>
+                                    <i class="fa fa-plus-circle f-22px ml-3 cursor color-primary" title="Add Resource Link" *ngIf="resourceArray.length == 0 || (resourceArray.length != 0 && isEditLink)" (click)="addLink()"></i>
+                                    <i class="fa fa-times-circle color-red f-22px ml-3 cursor" title="Close" (click)="isEditLink = false;filterEmptyArrayValue()" *ngIf="isEditLink"></i>
+                                </span>
+                            </div>
+                            <div class="col-md-12 d-flex justify-content-center align-items-center" style="height: 20vh" *ngIf="resourceArray.length == 0">
+                                <span class="text-info">No Resource Links available!</span>
+                            </div>
+                            <div class="col-md-12 py-3 d-flex flex-wrap align-items-center" *ngFor="let items of resourceArray; let i = index">
+                                <a [href]="items.link" target="_blank" *ngIf="!isEditLink">
+                                    <img *ngIf="items.type == 'document'" class="size-38px" src="assets/images/icons/doc-icon.png" alt="doc">
+                                    <img *ngIf="items.type == 'audio'" class="size-38px" src="assets/images/icons/audio-icon.png" alt="mp3">
+                                    <img *ngIf="items.type == 'video'" class="size-38px" src="assets/images/icons/video-icon.png" alt="mp4">
+                                    <img *ngIf="items.type == 'ppt'" class="size-38px" src="assets/images/icons/ppt-icon.png" alt="ppt">
+                                    <img *ngIf="items.type == 'Others'" class="size-38px" src="assets/images/icons/others-icon.png" alt="others">
+                                </a>
+                                <div class="col-md-2 px-0" *ngIf="isEditLink">
+                                    <select [(ngModel)]="items.type" class="form-control" [ngModelOptions]="{standalone: true}">
+                                        <option [value]="list" *ngFor="let list of linksType">{{list == 'ppt' ? (list | uppercase) : (list | titlecase)}}</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2 px-0" *ngIf="isEditLink">
+                                    <input type="text" placeholder="{{items.type | titlecase}} Name" *ngIf="isEditLink" [(ngModel)]="items.name" [ngModelOptions]="{standalone: true}" class="form-control ml-2">
+                                </div>
+                                <div class="col-md-{{isEditLink ? '8' : '11'}} d-flex align-items-center">
+                                    <a [href]="items.link" target="_blank" *ngIf="!isEditLink">{{items.name}}&nbsp;&nbsp;-&nbsp;&nbsp;</a>
+                                    <a [href]="items.link" target="_blank" *ngIf="!isEditLink">{{items.link}}</a>
+                                    <input type="text" placeholder="Enter {{items.type | titlecase}} Link {{i + 1}} *"  *ngIf="isEditLink" [(ngModel)]="items.link" [ngModelOptions]="{standalone: true}" class="form-control">
+                                    <i class="fa fa-trash color-red f-22px ml-2 cursor" title="Delete {{items.type | titlecase}} Link" (click)="deleteArray(i)" *ngIf="isEditLink"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="col-md-12 mt-5">
+                        <button *ngIf="type == 'add' || type == 'edit'" class="btn btn-primary pull-right" (click)="assignNext(type, 'nextButton')">Next <i class="fa fa-long-arrow-right fa-1x" aria-hidden="true"></i></button>
+                        <button *ngIf="type == 'edit' && detailData?.length != 0" class="btn btn-outline-primary mr-2 pull-right" (click)="saveAndExit()">Save </button>
+                    </div>
+                </div>
+                <div class="p-2" *ngIf="openContent">
+                    <app-tiny-mice (emitEditorValue)="getEditorValue($event)"
+                                   [editorPatchValue]="editorVal != '' ? editorVal : false"
+                                   [height]="380"
+                    ></app-tiny-mice>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div *ngIf="openContent">
+        <div class="row" *ngIf="detailData != ''">
+            <div class="col-12 mt-5 mb-3 justify-content-between d-flex">
+                <h4 class="letter">Questions & Answer</h4>
+                <button class="btn btn-primary" [ngClass]="{'selectColor' : showPreview}" (click)="showPreview = !showPreview;showpre()">{{!showPreview ? 'Show' : 'Hide'}} Preview</button>
+            </div>
+            <div *ngIf="!showPreview" class="col-12 mt-2">
+                <div *ngFor="let list of detailData; let i = index" class="col-12 d-flex mt-4 p-2 question-view">
+                    <div class="col-md-10 d-flex align-self-center pt-3">
+                        <span>{{i+1}}. </span><h6 class="letter ml-2" id="{{'question'+i}}"></h6>
+                    </div>
+                    <div class="col-md-2 cursor d-flex justify-content-center align-self-center">
+                        <img (click)="editdetail(list)" alt="" class="view-detail-icon1 pull-right mr-2" src="assets/images/pdf-icons/Icon awesome-pencil-alt@2x.png" title="Edit-Question">
+                        <img (click)="viewdetail(list.question_type_id, list)" alt="" class="view-detail-icon pull-right mr-2" src="assets/images/ristaschool/eye.png" title="Question-Preview">
+                        <span><i class="fa fa-trash float-right delete-detail-icon letter fa-2x" aria-hidden="true" (click)="deleteContent(list.question_id, list)" style="cursor:pointer"></i></span>
+                    </div>
+                </div>
+            </div>
+            <div *ngIf="showPreview" class="col-12 mt-2">
+                <div *ngFor="let list of detailData; let i = index" class="col-12 card">
+                    <div class="card-body pb-4">
+                        <div class="row mt-2">
+                            <div class="px-2" style="width: 5% !important;">
+                                <h5 class="mb-0 question-no">{{i + 1}}</h5>
+                            </div>
+                            <div class="pl-2 align-self-center" style="width: 80%">
+                                <div *ngIf="list.question_type_id != 24"><span [innerHTML]="list.question | sanitizeHtml" class="mb-0 overflow-auto"></span></div>
+                                <div class="overflow-auto p-3" style="max-height: 40vh; border: 3px solid #e6baea !important;border-radius: 8px"  *ngIf="list.question_type_id == 24"><span [innerHTML]="list.editor_context | sanitizeHtml"></span></div>
+                            </div>
+                            <div class="cursor d-flex justify-content-center" style="width: 15%" >
+                                <img (click)="editdetail(list)" alt="" class="view-detail-icon1 pull-right mr-2" src="assets/images/pdf-icons/Icon awesome-pencil-alt@2x.png" title="Edit-Question">
+                                <img (click)="viewdetail(list.question_type_id, list)" alt="" class="view-detail-icon pull-right mr-2" src="assets/images/ristaschool/eye.png" title="Question-Preview">
+                                <span><i class="fa fa-trash float-right delete-detail-icon letter fa-2x" aria-hidden="true" (click)="deleteContent(list.question_id, list)" style="cursor:pointer"></i></span>
+                            </div>
+                        </div>
+                        <!--                    ////multiple choice preview-->
+                        <div class="col-12 mt-2" *ngIf="list.question_type_id == 1 || list.question_type_id == 2">
+                            <div *ngFor="let item of list.answer; let j=index" class="mb-2 multiSelectCard d-flex p-2">
+                                <!-- [ngClass]="{'question-page-selected' : item.correctActive === 1}" -->
+                                <span [ngClass]="{'selectColor' : item.correctActive === 1}" class="multichoice-option1 mr-2">{{((j+1) + 9).toString(36).toLowerCase()}}</span>
+                                <span class="mt-1 ml-2 paragraph-space" [innerHTML]="list.options[j].options  | sanitizeHtml"></span>
+                            </div>
+                        </div>
+                        <div *ngIf="list.question_type_id == 5 || list.question_type_id == 7" class="col-12 mt-5 table-flexible">
+                            <table class="table table-bordered text-center div-disable">
+                                <thead>
+                                <tr>
+                                    <th>Questions</th>
+                                    <th *ngFor="let item of list.answer; let j=index" [innerHTML]="item | sanitizeHtml"></th>
+                                </tr>
+                                </thead>
+                                <tbody *ngIf="list.question_type_id == 5">
+                                <tr  *ngFor="let item of list.heading_option; let j=index">
+                                    <td [innerHTML]="list.options[j].options | sanitizeHtml"></td>
+                                    <td *ngFor="let answer of list.answer; let k=index">
+                                        <input [checked]="item.correctActive == k" class="radio_animated" name="{{i}}choose{{j}}" type="radio">
+                                    </td>
+                                </tr>
+                                </tbody>
+                                <tbody *ngIf="list.question_type_id == 7">
+                                <tr  *ngFor="let item of list.options; let j=index">
+                                    <td [innerHTML]="item.options | sanitizeHtml"></td>
+                                    <td *ngFor="let chk of list.answer; let k=index">
+                                        <input id="checkMulti{{i}}{{j}}{{k}}" type="checkbox">
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-8 mt-5" *ngIf="list.question_type_id == 9">
+                            <div *ngFor="let item of list.answer; let j = index" class="col-md-12 mb-3 d-flex">
+                                <div class="question-no-small">
+                                    <h6 class="mb-0">{{j+1}}</h6>
+                                </div>
+                                <div class="col-md-11">
+                                    <div class="col-md-12 innerhtml-margin-clear p-2 dropdown-border dropdown-toggle d-flex justify-content-between" data-toggle="dropdown" id="{{i}}dropdownPreview{{j}}"></div>
+                                    <div class="col-md-11 dropdown-menu">
+                                        <span class="dropdown-item dropdown-link">Select Answer</span>
+                                        <span *ngFor="let option of item.options; let k = index" [innerHTML]="option.listOption | sanitizeHtml" class="dropdown-item dropdown-link innerhtml-margin-clear"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-8 mt-5" *ngIf="list.question_type_id == 10">
+                            <div *ngFor="let item of list.answer; let j = index" class="mb-3 d-flex">
+                                <div class="question-no-small">
+                                    <h6 class="mb-0">{{j+1}}</h6>
+                                </div>
+                                <!--                            <input class="form-control ml-3" type="text" [value]="item.value" disabled>-->
+                                <span [innerHTML]="item.options[0].value  | sanitizeHtml" class="form-span ml-3"></span>
+                            </div>
+                        </div>
+                        <div class="col-12 mt-3" *ngIf="list.question_type_id == 20 || list.question_type_id == 21 || list.question_type_id == 22">
+                            <span [innerHTML]="list.answer[0].correctAnswer | sanitizeHtml"></span>
+                        </div>
+                        <div class="col-12 mt-3" *ngIf="list.question_type_id == 28">
+                            <span [innerHTML]="list.answer[0].correctAnswer | sanitizeHtml"></span>
+                        </div>
+                        <div *ngIf="list.question_type_id == 40 || list.question_type_id == 41" class="col-12 mt-3">
+                            <app-graph-component [editMode]="false" [editPatchValue]="parseVal(list.answer)" [graphId]="'preview'+i" [questionType]="list.question_type_id"></app-graph-component>
+                            <div *ngIf="list.editor_answer != ''" class="col-md-12 mt-4">
+                                <h4 [innerHTML]="list.editor_answer | sanitizeHtml" class="graphEditorDiv"></h4>
+                            </div>
+                        </div>
+                        <div *ngIf="list.question_type_id == 16" class="col-12 mt-3 d-flex">
+                            <div class="col-6">
+                                <h6 *ngIf="list.source != ''" class="text-center"><b>{{list.source}}</b></h6>
+                                <h6 *ngIf="list.source == ''" class="text-center"><b>Source</b></h6>
+                                <!--                            <span [innerHTML]="option.options[k]" *ngFor="let option of list.options; let k = index"></span>-->
+                                <div *ngFor="let option of list.options; let k = index" class="col-12 form-group">
+                                    <div class="input-group mb-3 mt-3 inputMenu">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><img class="img-fluid" src="assets/images/pdf-icons/equal@2x.png" style="width: 25px; height: 25px;"></span>
+                                        </div>
+                                        <div [innerHTML]="option.options | sanitizeHtml"  class="w-75 p-3 border border-dark">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <h6 *ngIf="list.target != ''" class="text-center"><b>{{list.target}}</b></h6>
+                                <h6 *ngIf="list.target == ''" class="text-center"><b>Target</b></h6>
+                                <!--                            <span [innerHTML]="ans.correctAnswer[k]" *ngFor="let ans of list.answer; let k = index" class=""></span>-->
+                                <div *ngFor="let ans of list.answer; let k = index" class="col-12 form-group">
+                                    <div class="input-group mb-3 mt-3 inputMenu">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><img class="img-fluid" src="assets/images/pdf-icons/equal@2x.png" style="width: 25px; height: 25px;"></span>
+                                        </div>
+                                        <div [innerHTML]="ans.correctAnswer | sanitizeHtml" class="w-75 p-3 border border-dark">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 mt-3" *ngIf="list.question_type_id == 24">
+                            <div *ngFor="let item of list.subQuestions; let j = index" class="mb-3 mt-3">
+                                <div class="question-no-small mt-3" style="background-color: #bc46c7">
+                                    <h6 class="mb-0" style="color: white">{{j+1}}</h6>
+                                </div>
+                                <!--                            <span [innerHTML]="list.subQuestions[j].question" class="mt-3"></span>-->
+                                <span [innerHTML]="item.question | sanitizeHtml" class="col-12 mt-3"></span>
+                                <div *ngIf="item.question_type_id == 1 || item.question_type_id == 2" class="mt-2">
+                                    <div *ngFor="let answer of item.answer; let k=index" class="mb-2 multiSelectCard d-flex p-2">
+                                        <!-- [ngClass]="{'question-page-selected' : answer.correctActive === 1}" -->
+                                        <span [ngClass]="{'selectColor' : answer.correctActive === 1}" class="multichoice-option1 mr-2">{{((k+1) + 9).toString(36).toLowerCase()}}</span>
+                                        <span class="ml-3 mt-1 paragraph-space" [innerHTML]="item.options[k].options  | sanitizeHtml"></span>
+                                    </div>
+                                </div>
+                                <div *ngIf="item.question_type_id == 5 || item.question_type_id == 7" class="col-12 table-flexible">
+                                    <table class="table table-bordered text-center col-12 mt-2">
+                                        <thead>
+                                        <tr>
+                                            <th>Questions</th>
+                                            <th *ngFor="let answer of item.answer; let k=index" [innerHTML]="answer | sanitizeHtml" class="innerhtml-margin-clear"></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody *ngIf="item.question_type_id == 5">
+                                        <tr  *ngFor="let answer of item.heading_option; let k=index">
+                                            <td [innerHTML]="item.options[k].options | sanitizeHtml" class="innerhtml-margin-clear"></td>
+                                            <td *ngFor="let term of item.answer; let l=index">
+                                                <input [checked]="answer.correctActive === l" class="radio_animated" name="{{i}}choose{{k}}passage{{j}}" type="radio">
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                        <tbody *ngIf="item.question_type_id == 7">
+                                        <tr  *ngFor="let answer of item.options; let k=index">
+                                            <td [innerHTML]="answer.options | sanitizeHtml" class="innerhtml-margin-clear"></td>
+                                            <td *ngFor="let chk of item.answer; let l=index">
+                                                <input id="checkMultiPassage{{i}}{{j}}{{k}}{{l}}" type="checkbox">
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div *ngIf="item.question_type_id == 10" class="col-7 mt-2">
+                                    <div *ngFor="let ans of item.answer; let k = index" class="mb-3 d-flex justify-content-center">
+                                        <div class="question-no-small">
+                                            <h6 class="mb-0">{{k+1}}</h6>
+                                        </div>
+                                        <!--<input class="form-control ml-3" type="text" [value]="item.value" disabled>-->
+                                        <span [innerHTML]="ans.options[0].value | sanitizeHtml" class="form-span ml-3"></span>
+                                    </div>
+                                </div>
+                                <div *ngIf="item.question_type_id == 20" class="col-md-12 mt-2 form-span">
+                                    <span [innerHTML]="item.answer[0].correctAnswer | sanitizeHtml" class="innerhtml-margin-clear"></span>
+
+                                </div>
+<!--                                <div class="col-12 mt-3 d-flex" *ngIf="item.question_type_id == 16">-->
+<!--                                    <div class="col-6">-->
+<!--                                        <h6 class="text-center" *ngIf="item.source != ''"><b>{{item.source}}</b></h6>-->
+<!--                                        <h6 class="text-center" *ngIf="item.source == ''"><b>Source</b></h6>-->
+<!--                                        &lt;!&ndash;                            <span [innerHTML]="option.options[k]" *ngFor="let option of list.options; let k = index"></span>&ndash;&gt;-->
+<!--                                        <div class="col-12 form-group" *ngFor="let option of item.options; let k = index">-->
+<!--                                            <div class="input-group mb-3 mt-3 inputMenu" cdkDrag  [cdkDragDisabled]="true">-->
+<!--                                                <div class="input-group-prepend">-->
+<!--                                                    <span class="input-group-text"><img src="assets/images/pdf-icons/equal@2x.png" class="img-fluid" style="width: 25px; height: 25px;"></span>-->
+<!--                                                </div>-->
+<!--                                                <div class="w-75 p-3 border border-dark">{{option.options}}-->
+<!--                                                </div>-->
+<!--                                            </div>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                    <div class="col-6">-->
+<!--                                        <h6 class="text-center" *ngIf="item.target != ''"><b>{{item.target}}</b></h6>-->
+<!--                                        <h6 class="text-center" *ngIf="item.target == ''"><b>Target</b></h6>-->
+<!--                                        &lt;!&ndash;                            <span [innerHTML]="ans.correctAnswer[k]" *ngFor="let ans of item.answer; let k = index" class=""></span>&ndash;&gt;-->
+<!--                                        <div class="col-12 form-group" *ngFor="let ans of item.answer; let k = index">-->
+<!--                                            <div class="input-group mb-3 mt-3 inputMenu" cdkDrag  [cdkDragDisabled]="true">-->
+<!--                                                <div class="input-group-prepend">-->
+<!--                                                    <span class="input-group-text"><img src="assets/images/pdf-icons/equal@2x.png" class="img-fluid" style="width: 25px; height: 25px;"></span>-->
+<!--                                                </div>-->
+<!--                                                <div class="w-75 p-3 border border-dark">{{ans.correctAnswer}}-->
+<!--                                                </div>-->
+<!--                                            </div>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<ng-template #multiChoiceDetail let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h4 *ngIf="this.quesId == '1'" class="modal-title letter">Multi choice Standard</h4>
+        <h4 *ngIf="this.quesId == '2'" class="modal-title letter">Multi Selection</h4>
+    </div>
+    <div class="modal-body">
+        <div class="container-fluid">
+            <div class="col-12 mt-3">
+                <div *ngFor="let list of answerIndex; let i=index" class="mb-2 multiSelectCard d-flex p-2">
+                    <!-- [ngClass]="{'question-page-selected' : list.active == 1}" -->
+                    <span [ngClass]="{'selectColor' : list.active == 1}" class="multichoice-option1 mr-2">{{((i+1) + 9).toString(36).toLowerCase()}}</span>
+                    <span class="ml-3 mt-2 paragraph-space" id="{{'optionId'+i}}"></span>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer d-flex justify-content-right mt-2">
+            <button (click)="close()" class="btn btn-primary" type="button">Ok</button>
+        </div>
+    </div>
+</ng-template>
+<ng-template #matchTableDetail let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h4 *ngIf="this.quesId == '5'" class="modal-title letter">Match Table Standard</h4>
+        <h4 *ngIf="this.quesId == '7'" class="modal-title letter">Match Table Labels</h4>
+    </div>
+    <div class="modal-body">
+        <div class="col-12 table-flexible">
+            <table class="table table-bordered text-center div-disable">
+                <thead>
+                <tr>
+                    <th>Questions</th>
+                    <th *ngFor="let list of fullData.answer; let i=index" class="innerhtml-margin-clear" id="answerId{{i}}"></th>
+                </tr>
+                </thead>
+                <tbody *ngIf="this.quesId == '5'">
+                <tr  *ngFor="let list of fullData.heading_option; let j=index">
+                    <td class="innerhtml-margin-clear" id="{{'optionId'+j}}"></td>
+                    <td *ngFor="let item of fullData.answer; let i=index">
+                        <input [checked]="list.correctActive === i" class="radio_animated" name="choose{{j}}" type="radio">
+                    </td>
+                </tr>
+                </tbody>
+                <tbody *ngIf="this.quesId == '7'">
+                <tr  *ngFor="let list of fullData.options; let j=index">
+                    <td class="innerhtml-margin-clear" id="{{'optionId'+j}}"></td>
+                    <td *ngFor="let item of fullData.answer; let i=index">
+                        <input id="check{{j}}{{i}}" type="checkbox">
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="modal-footer d-flex justify-content-right mt-2">
+            <button (click)="close()" class="btn btn-primary" type="button">Ok</button>
+        </div>
+    </div>
+</ng-template>
+<ng-template #dropDownDetail let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h4 *ngIf="this.quesId == '9'" class="modal-title letter">Text Drop Down</h4>
+        <h4 *ngIf="this.quesId == '10'" class="modal-title letter">Text Entry</h4>
+    </div>
+    <div class="modal-body">
+        <div class="col-12" *ngIf="this.quesId == '9'">
+            <div *ngFor="let item of fullData.answer; let j = index" class="col-md-12 mb-3 d-flex">
+                <div class="col-md-1 question-no-small">
+                    <h6 class="mb-0">{{j+1}}</h6>
+                </div>
+<!--                <select class="form-control ml-3">-->
+<!--                    <option *ngFor="let option of item.options" [innerHTML]="option.listOption | sanitizeHtml" [selected]="option.selected == 'true'" class="div-disable" disabled style="pointer-events: none"></option>-->
+<!--                </select>-->
+                <div class="col-md-11">
+                    <div class="col-md-12 bg-white innerhtml-margin-clear p-2 dropdown-border dropdown-toggle d-flex justify-content-between" data-toggle="dropdown" id="dropdown{{j}}"></div>
+                    <div class="col-md-12 dropdown-menu">
+                        <span class="dropdown-item dropdown-link overflow-auto">Select Answer</span>
+                        <span *ngFor="let option of item.options; let k = index" [innerHTML]="option.listOption | sanitizeHtml" class="dropdown-item overflow-auto dropdown-link innerhtml-margin-clear"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div *ngIf="this.quesId == '10'" class="col-12 px-0">
+            <div *ngFor="let item of fullData.answer; let j = index" class="col-md-12 px-0 mb-3 d-flex justify-content-around">
+                <div class="question-no-small">
+                    <h6 class="mb-0">{{j+1}}</h6>
+                </div>
+                <span [innerHTML]="item.options[0].value | sanitizeHtml" class="col-md-10 overflow-auto form-span"></span>
+            </div>
+        </div>
+        <div class="modal-footer d-flex justify-content-right mt-2">
+            <button (click)="close()" class="btn btn-primary" type="button">Ok</button>
+        </div>
+    </div>
+</ng-template>
+<ng-template #matchOrder let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h4 class="modal-title letter">Match & Order > Sort List</h4>
+    </div>
+    <div class="modal-body">
+        <div class="col-12 mt-2">
+            <h6><b>Question:</b></h6>
+            <span [innerHTML]="fullData.question | sanitizeHtml" ></span>
+        </div>
+        <div class="col-12 form-group mt-2">
+            <h6 *ngIf="fullData.source != ''" class="text-center"><b>{{fullData.source}}</b></h6>
+            <h6 *ngIf="fullData.source == ''" class="text-center"><b>Source</b></h6>
+            <div *ngFor="let list of fullData.options;" [cdkDragDisabled]="true"  cdkDrag  class="input-group mb-3 mt-3 inputMenu">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"><img class="img-fluid" src="assets/images/pdf-icons/equal@2x.png" style="width: 25px; height: 25px;"></span>
+                </div>
+                <div [innerHTML]="list.options | sanitizeHtml" class="w-75 p-3 border border-dark">
+                </div>
+            </div>
+        </div>
+        <div class="col-12 form-group mt-2">
+            <h6 *ngIf="fullData.target != ''" class="text-center"><b>{{fullData.target}}</b></h6>
+            <h6 *ngIf="fullData.target == ''" class="text-center"><b>Target</b></h6>
+            <div *ngFor="let list of fullData.answer;" [cdkDragDisabled]="true"  cdkDrag  class="input-group mb-3 mt-3 inputMenu">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"><img class="img-fluid" src="assets/images/pdf-icons/equal@2x.png" style="width: 25px; height: 25px;"></span>
+                </div>
+                <div [innerHTML]="list.correctAnswer | sanitizeHtml" class="w-75 px-3 pt-4 pb-3 border border-dark"></div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer d-flex justify-content-right mt-2">
+        <button (click)="close()" class="btn btn-primary" type="button">Ok</button>
+    </div>
+</ng-template>
+<ng-template #text let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h4 *ngIf="this.quesId == '20'" class="modal-title letter">Free Text</h4>
+    </div>
+    <div class="modal-body">
+        <div class="col-12">
+            <h6><b>Question:</b></h6>
+            <span [innerHTML]="fullData.question | sanitizeHtml" ></span>
+        </div>
+        <div class="col-12 mt-2">
+            <h6><b>Answer:</b></h6>
+            <span [innerHTML]="fullData.answer[0].correctAnswer | sanitizeHtml" ></span>
+        </div>
+    </div>
+    <div class="modal-footer d-flex justify-content-right mt-2">
+        <button (click)="close()" class="btn btn-primary" type="button">Ok</button>
+    </div>
+</ng-template>
+<ng-template #highlight let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h4 *ngIf="this.quesId == '28'" class="modal-title letter">Highlight > Sentence and Responce</h4>
+    </div>
+    <div class="modal-body">
+        <div class="col-12">
+            <h6><b>Question:</b></h6>
+            <span [innerHTML]="fullData.question | sanitizeHtml"></span>
+        </div>
+        <div class="col-12 mt-2">
+            <h6><b>Highlighted Paragraph:</b></h6>
+            <span [innerHTML]="fullData.answer[0].correctAnswer | sanitizeHtml"></span>
+        </div>
+    </div>
+    <div class="modal-footer d-flex justify-content-right mt-2">
+        <button (click)="close()" class="btn btn-primary" type="button">Ok</button>
+    </div>
+</ng-template>
+<ng-template #graphDetail let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h4 class="modal-title letter">Graph Question</h4>
+    </div>
+    <div class="modal-body">
+        <div class="col-12">
+            <h6><b>Question:</b></h6>
+            <span [innerHTML]="fullData.question | sanitizeHtml"></span>
+        </div>
+        <div class="col-12 mt-2">
+            <h6><b>Graph Answer:</b></h6>
+            <app-graph-component [editMode]="false" [editPatchValue]="graphValue" [graphId]="'preview'" [questionType]="quesId"></app-graph-component>
+        </div>
+        <div *ngIf="answerGraph != ''" class="col-12">
+            <h6><b>Answer:</b></h6>
+            <div class="graphEditorDiv">
+                <span [innerHTML]="answerGraph | sanitizeHtml" class="mb-0"></span>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer d-flex justify-content-right mt-2">
+        <button (click)="close()" class="btn btn-primary" type="button">Ok</button>
+    </div>
+</ng-template>
+<ng-template #passage let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h4 *ngIf="this.quesId == '24'" class="modal-title letter">Passage with Questions</h4>
+    </div>
+    <div class="modal-body">
+        <div *ngFor="let list of fullData.subQuestions; let i = index" class="mb-5">
+            <div class="question-no-small mb-3" style="background-color: #bc46c7">
+                <h6 class="mb-0" style="color: white">{{i+1}}</h6>
+            </div>
+            <span [innerHTML]="list.question | sanitizeHtml" class="mb-3"></span>
+            <div *ngIf="list.question_type_id == 1 || list.question_type_id == 2">
+                <div class="col-12 mt-2">
+                    <div *ngFor="let item of list.options; let j=index" class="mb-2 multiSelectCard question-page d-flex p-2">
+                        <!-- [ngClass]="{'question-page-selected' : list.answer[j].correctActive === 1}" -->
+                        <span [ngClass]="{'selectColor' : list.answer[j].correctActive === 1}" class="multichoice-option1 mr-2">{{((j+1) + 9).toString(36).toLowerCase()}}</span>
+                        <span [innerHTML]="item.options | sanitizeHtml" class="mt-1 ml-2 paragraph-space"></span>
+                    </div>
+                </div>
+            </div>
+            <div *ngIf="list.question_type_id == 5 || list.question_type_id == 7" class="table-flexible">
+                <table class="table table-bordered text-center div-disable">
+                    <thead>
+                    <tr>
+                        <th>Questions</th>
+                        <th *ngFor="let item of list.answer; let j=index" [innerHTML]="item | sanitizeHtml" class="innerhtml-margin-clear"></th>
+                    </tr>
+                    </thead>
+                    <tbody *ngIf="list.question_type_id == 5">
+                    <tr *ngFor="let item of list.heading_option; let j=index">
+                        <td [innerHTML]="list.options[j].options | sanitizeHtml" class="innerhtml-margin-clear"></td>
+                        <td *ngFor="let ans of list.answer; let k=index">
+                            <input [checked]="item.correctActive === k" class="radio_animated" name="{{i}}choose{{j}}" type="radio">
+                        </td>
+                    </tr>
+                    </tbody>
+                    <tbody *ngIf="list.question_type_id == 7">
+                    <tr  *ngFor="let item of list.options; let j=index">
+                        <td [innerHTML]="item.options | sanitizeHtml" class="innerhtml-margin-clear"></td>
+                        <td *ngFor="let ans of list.answer; let k=index">
+                            <input id="checkPassage{{i}}{{j}}{{k}}" type="checkbox">
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div *ngIf="list.question_type_id == 10" class="col-10 justify-content-end">
+                <div *ngFor="let item of list.answer; let j = index" class="mb-3 d-flex">
+                    <div class="question-no-small">
+                        <h6 class="mb-0">{{j+1}}</h6>
+                    </div>
+                    <span [innerHTML]="item.options[0].value | sanitizeHtml" class="form-span ml-3"></span>
+                </div>
+            </div>
+            <div *ngIf="list.question_type_id == 20" class="col-md-12 form-span">
+                <span [innerHTML]="list.answer[0].correctAnswer | sanitizeHtml" class="innerhtml-margin-clear"></span>
+            </div>
+<!--            <div *ngIf="list.question_type_id == 16" class="col-10 justify-content-end">-->
+<!--                <div class="col-12 form-group mt-2">-->
+<!--                    <h6 class="text-center" *ngIf="list.source != ''"><b>{{list.source}}</b></h6>-->
+<!--                    <h6 class="text-center" *ngIf="list.source == ''"><b>Source</b></h6>-->
+<!--                    <div class="input-group mb-3 mt-3 inputMenu" cdkDrag  *ngFor="let list of list.options;"  [cdkDragDisabled]="true">-->
+<!--                        <div class="input-group-prepend">-->
+<!--                            <span class="input-group-text"><img src="assets/images/pdf-icons/equal@2x.png" class="img-fluid" style="width: 25px; height: 25px;"></span>-->
+<!--                        </div>-->
+<!--                        <div class="w-75 p-3 border border-dark">{{list.options}}-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="col-12 form-group mt-2">-->
+<!--                    <h6 class="text-center" *ngIf="list.target != ''"><b>{{list.target}}</b></h6>-->
+<!--                    <h6 class="text-center" *ngIf="list.target == ''"><b>Target</b></h6>-->
+<!--                    <div class="input-group mb-3 mt-3 inputMenu" cdkDrag  *ngFor="let list of list.answer;"  [cdkDragDisabled]="true">-->
+<!--                        <div class="input-group-prepend">-->
+<!--                            <span class="input-group-text"><img src="assets/images/pdf-icons/equal@2x.png" class="img-fluid" style="width: 25px; height: 25px;"></span>-->
+<!--                        </div>-->
+<!--                        <div class="w-75 p-3 border border-dark">{{list.correctAnswer}}-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--&lt;!&ndash;                <div *ngFor="let item of list.answer; let j = index" class="mb-3 d-flex">&ndash;&gt;-->
+<!--&lt;!&ndash;                    <div class="question-no-small">&ndash;&gt;-->
+<!--&lt;!&ndash;                        <h6 class="mb-0">{{j+1}}</h6>&ndash;&gt;-->
+<!--&lt;!&ndash;                    </div>&ndash;&gt;-->
+<!--&lt;!&ndash;                    <span class="form-control ml-3" [innerHTML]="item.value"></span>&ndash;&gt;-->
+<!--&lt;!&ndash;                </div>&ndash;&gt;-->
+<!--            </div>-->
+        </div>
+
+        <div class="modal-footer d-flex justify-content-right mt-2">
+            <button (click)="close()" class="btn btn-primary" type="button">Ok</button>
+        </div>
+    </div>
+</ng-template>
+<ng-template #deleteQuestion let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h4 class="modal-title letter">Delete Question</h4>
+    </div>
+    <div class="modal-body d-flex justify-content-right">
+        <div class="col-12 text-center">
+            <h5>Are you sure want to delete this question ?</h5>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button (click)="questionDelete()" class="btn btn-primary" type="button">Confirm</button>
+        <button class="btn btn-outline-primary" (click)="closeQuestion()">Cancel</button>
+    </div>
+</ng-template>
+
+<ng-template #assignContentToClass let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h5 class="contenttext text-center mb-0">Assign Content</h5>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-md-12">
+                <h5>
+                    <span>Do you want to assign this content to the Class {{contentCreatedForm != 'class' ? 'or Content Folder' : ''}}</span>?</h5>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn cancel" (click)="dontAssign()">No</button>
+        <button class="btn btn-primary" type="submit" (click)="assignContent()"
+        >Yes</button>
+    </div>
+</ng-template>
+
+<ng-template #assignTemplate let-c="close" let-d="dismiss">
+    <app-confirm-content-assign
+            [classData]="classDetails"
+            [contentDetails]="assignData"
+            (closePopUp)="closeAssignPopUp()"
+    >
+    </app-confirm-content-assign>
+</ng-template>

@@ -1,0 +1,172 @@
+<!-- Container-fluid starts-->
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card tab2-card">
+                <div class="card-header">
+                    <h5 class="text-capitalize" *ngIf="type == 'add'">Add School</h5>
+                    <h5 class="text-capitalize" *ngIf="type == 'edit'">Edit School</h5>
+                </div>
+                <div class="card-body tab2-card">
+                    <form [formGroup]="schoolform" class="needs-validation user-add" >
+                        <div class="form-group row">
+                            <label for="validationCustom4" class="col-xl-3 col-md-4"><span>*</span>
+                                Institution Name</label>
+                            <div class="col-xl-8 col-md-7">
+                                <input class="form-control " formControlName="schoolName" id="validationCustom4"
+                                       type="text" placeholder="Institution Name" required="">
+                                <em class="error" *ngIf="!schoolform.get('schoolName').valid && (schoolform.get('schoolName').dirty || schoolform.get('schoolName').touched)">Institution Name is required</em>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="validationCustom5" class="col-xl-3 col-md-4"><span>*</span>
+                                Address 1</label>
+                            <div class="col-xl-8 col-md-7">
+                                <input class="form-control" formControlName="address1" id="validationCustom5"
+                                       type="text" placeholder="Address1" required="">
+                                <em class="error" *ngIf="!schoolform.get('address1').valid && (schoolform.get('address1').dirty || schoolform.get('address1').touched)">Address 1 is required</em>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="validationCustom6" style="position: relative;left: 8px" class="col-xl-3 col-md-4">
+                                Address 2 <small>(optional)</small></label>
+                            <div class="col-xl-8 col-md-7">
+                                <input class="form-control" formControlName="address2" id="validationCustom6"
+                                       placeholder="Address2" type="text" >
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="validationCustom7" class="col-xl-3 col-md-4"><span>*</span>
+                                City</label>
+                            <div class="col-xl-8 col-md-7">
+                                <input class="form-control" formControlName="city" id="validationCustom7"
+                                       type="text" placeholder="City" required="">
+                                <em class="error" *ngIf="!schoolform.get('city').valid && (schoolform.get('city').dirty || schoolform.get('city').touched)">City is required</em>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="validationCustom8" class="col-xl-3 col-md-4"><span>*</span>
+                                State</label>
+                            <div class="col-xl-8 col-md-7">
+                                <input class="form-control" formControlName="state" id="validationCustom8"
+                                       type="text" placeholder="State" required="">
+                                <em class="error" *ngIf="!schoolform.get('state').valid && (schoolform.get('state').dirty || schoolform.get('state').touched)">State is required</em>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="validationCustom9" class="col-xl-3 col-md-4"><span>*</span>
+                                Country</label>
+                            <div class="col-xl-8 col-md-7">
+                                <input class="form-control" formControlName="country" id="validationCustom9"
+                                       placeholder="Country" required="" type="text">
+                                <em class="error" *ngIf="!schoolform.get('country').valid && (schoolform.get('country').dirty || schoolform.get('country').touched)">Country is required</em>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="validationCustom10" class="col-xl-3 col-md-4"><span>*</span>
+                                Zip </label>
+                            <div class="col-xl-8 col-md-7">
+                                <input class="form-control" formControlName="postalCode" id="validationCustom10"
+                                       type="text" placeholder="Enter Zip" required="">
+                                <em class="error" *ngIf="!schoolform.get('postalCode').valid && (schoolform.get('postalCode').dirty || schoolform.get('postalCode').touched)">Postal Code is required</em>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-xl-3 col-md-4">
+                            <label class="form-check-label " style="position: relative;left: 8px">
+                                Is group of schools</label>
+                            </div>
+                            <div class="col-xl-8 col-md-7" style="position: relative; left: 1.5rem">
+                                    <input type="checkbox" class="form-check-input" formControlName="isgroup1" (change)="checkValue($event)" >Yes
+                        </div>
+                        </div>
+                        <div class="form-group row" *ngIf="branchSelect">
+                            <label for="validationCustom12" style="position: relative;left: 8px" class="col-xl-3 col-md-4"><span>*</span>
+                                Corporate Name</label>
+                            <div class="col-xl-8 col-md-7">
+                                <input class="form-control" formControlName="branchName" id="validationCustom12"
+                                       type="text" placeholder="Corporate Name" [required]="schoolform.controls.isgroup1.value == true">
+
+                                <em class="error" *ngIf="!schoolform.get('branchName').valid && (schoolform.get('branchName').dirty || schoolform.get('branchName').touched)">Branch is required</em>
+                            </div>
+                        </div>
+                        <div class="form-group row mb-3">
+                            <label for="validationCustom13" style="position: relative;left: 8px" class="col-xl-3 col-md-4">
+                                Tax ID <small>(optional)</small></label>
+                            <div class="col-xl-8 col-md-7">
+                                <input class="form-control" formControlName="taxId" id="validationCustom13"
+                                       type="text" placeholder="Tax ID">
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-xl-3 col-md-4" style="position: relative;left: 8px"> Profile Photo</label>
+                            <div class="col-xl-6 col-md-4">
+                                <input type="file" class="custom-upload-input" (change)="encodeImageFileAsURL($event)" >
+                            </div>
+
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-xl-3 col-md-4"  style="position: relative;left: 25%">
+                                <div class="files-list" *ngFor="let file of imagepath;let i= index">
+                                <img  *ngIf="imagepath != ''"  [src]="sanitizer.bypassSecurityTrustResourceUrl(webhost + '/' + file)" class="w-100"  alt="">
+                            </div>
+                            </div>
+                        </div>
+
+                            <div class="col-md-12">
+                                <hr>
+                            </div>
+                        <div class="card-header" style="position: relative; right: 22px">
+                            <h5 class="text-capitalize">Admin Details</h5>
+                        </div>
+                            <div class="form-group row">
+                                <label for="validationCustom0" class="col-xl-3 col-md-4"><span>*</span>
+                                    Admin First Name</label>
+                                <div class="col-xl-8 col-md-7">
+                                    <input class="form-control " formControlName="first_name" id="validationCustom0"
+                                           type="text" placeholder="First Name" required="">
+                                    <em class="error" *ngIf="!schoolform.get('first_name').valid && (schoolform.get('first_name').dirty || schoolform.get('first_name').touched)">First name is required</em>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="validationCustom1" class="col-xl-3 col-md-4"><span>*</span>
+                                    Admin Last Name</label>
+                                <div class="col-xl-8 col-md-7">
+                                    <input class="form-control " formControlName="last_name" id="validationCustom1"
+                                           type="text" placeholder="Last Name" required="">
+                                    <em class="error" *ngIf="!schoolform.get('last_name').valid && (schoolform.get('last_name').dirty || schoolform.get('last_name').touched)">Last name is required</em>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="validationCustom2" class="col-xl-3 col-md-4"><span>*</span>
+                                    Admin Email Address</label>
+                                <div class="col-xl-8 col-md-7">
+                                    <input *ngIf="type == 'add'"  class="form-control " formControlName="email_id" id="validationCustom2" pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-z]{2,4}$"
+                                           type="email" placeholder="Email" required="">
+                                    <input *ngIf="type == 'edit'" readonly class="form-control " formControlName="email_id" id="validationCustom22" pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-z]{2,4}$"
+                                           type="email" placeholder="Email" required="">
+                                    <em class="error" *ngIf="schoolform.get('email_id').hasError('required') && (schoolform.get('email_id').dirty || schoolform.get('email_id').touched)">Email is required</em>
+                                    <em class="error" *ngIf="schoolform.get('email_id').hasError('pattern')">Invalid Email-Id</em>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="validationCustom3" class="col-xl-3 col-md-4"><span>*</span>
+                                    Contact Number</label>
+                                <div class="col-xl-8 col-md-7">
+                                    <input class="form-control " formControlName="mobile" id="validationCustom3"
+                                           type="text" placeholder="Contact Number" (keypress)="numberPattern($event)" maxlength="10" minlength="10" required="">
+                                    <em class="error" *ngIf="!schoolform.get('mobile').valid && (schoolform.get('mobile').dirty || schoolform.get('mobile').touched)">Contact Number is required</em>
+                                </div>
+                            </div>
+                    </form>
+                    <div class="pull-right">
+                        <button type="button" *ngIf="type == 'add'" (click)="addschool('add')"  class="btn btn-primary">Save</button>
+                        <button type="button" *ngIf="type == 'edit'" (click)="addschool('edit')"  class="btn btn-primary">Update</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Container-fluid Ends-->

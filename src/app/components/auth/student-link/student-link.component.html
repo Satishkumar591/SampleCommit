@@ -1,0 +1,24 @@
+<div class="container-fluid">
+
+    <div *ngIf="!functionCalled" id="custom-pdf-loader" style="height: 100vh;">
+        <img alt="" src="assets/images/pre-loader/loader-01.svg">
+    </div>
+
+    <div class="col-md-12" *ngIf="functionCalled">
+        <a [title]="pdfPath.link" [href]="pdfPath.link" target="_blank">
+
+            <div class="col-md-12 flex-center flex-wrap link-card" style="height: 90vh">
+                    <div class="col-md-12 d-flex justify-content-center">
+                        <a [title]="pdfPath.link" [href]="pdfPath.link" target="_blank">
+                            <img *ngIf="pdfPath.type == 'document'" class="size-120px" src="assets/images/icons/doc-icon.png" alt="doc">
+                            <img *ngIf="pdfPath.type == 'audio'" class="size-120px" src="assets/images/icons/audio-icon.png" alt="mp3">
+                            <img *ngIf="pdfPath.type == 'video'" class="size-120px" src="assets/images/icons/video-icon.png" alt="mp4">
+                            <img *ngIf="pdfPath.type == 'ppt'" class="size-120px" src="assets/images/icons/ppt-icon.png" alt="ppt">
+                            <img *ngIf="pdfPath.type == 'Others'" class="size-120px" src="assets/images/icons/others-icon.png" alt="others">
+                        </a>
+                    </div>
+                    <a [title]="pdfPath.link" [href]="pdfPath.link" target="_blank">{{pdfPath.name}}</a>
+            </div>
+        </a>
+    </div>
+</div>

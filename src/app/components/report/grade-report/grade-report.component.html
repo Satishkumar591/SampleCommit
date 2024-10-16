@@ -1,0 +1,182 @@
+<section *ngIf="schoolStatus.length != 0" class="container-fluid report">
+    <form [formGroup]="studentReport">
+        <div class="row mb-2 mt-4">
+            <div class="form-group col-4">
+                <label class="col-xl-12 col-md-12">Filter By</label>
+                <select class="custom-select col-md-12" formControlName="className" (change)="selectClass($event)">
+                    <option value="" hidden>--Select--</option>
+                    <option *ngFor="let class of classList" [value]="class.class_code">{{class.class_name}}</option>
+                </select>
+            </div>
+            <div class="form-group col-4">
+                <label class="col-xl-12 col-md-12" ><span style="visibility: hidden">*</span>
+                    From Date</label>
+                <div class="col-xl-12 col-md-12 form-group">
+                    <div class="input-group">
+                        <input class="form-control" name="fromdate" placeholder="mm-dd-yyyy" [options]="myDpOptions"
+                               formControlName="fromDate" angular-mydatepicker #dp="angular-mydatepicker" (dateChanged)="onDateChanged1($event, '1')">
+                        <div class="input-group-append">
+                            <button type="button" class="btn btn-primary" (click)="dp.toggleCalendar()">
+                                <i class="fa fa-calendar-o"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group col-4">
+                <label class="col-xl-12 col-md-12" ><span style="visibility: hidden">*</span>
+                    To Date</label>
+                <div class="col-xl-12 col-md-12 form-group">
+                    <div class="input-group">
+                        <input class="form-control" name="todate" placeholder="mm-dd-yyyy"
+                               formControlName="toDate" angular-mydatepicker #dp1="angular-mydatepicker" [options]="myDpOptions1" (dateChanged)="onDateChanged1($event, '2')"/>
+                        <div class="input-group-append">
+                            <button type="button" class="btn btn-primary" (click)="dp1.toggleCalendar()">
+                                <i class="fa fa-calendar-o"></i>
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <div class="row d-flex justify-content-center list-card mt-5" *ngIf="reportList ==''">
+        <div class="col-4">
+            <button class="nodataList">No Data Available!</button>
+        </div>
+    </div>
+    <div *ngIf="listData != ''">
+    <ngb-accordion [closeOthers]="true" *ngFor="let list of reportList; let gradeIndex = index" activeIds="0" class="grade">
+        <ngb-panel id="{{gradeIndex}}">
+            <ng-template ngbPanelHeader let-opened="opened">
+                <div>
+                    <button class="btn btn-link d-flex align-items-center justify-content-between p-2 w-100"
+                            ngbPanelToggle>
+                        <h4 class="m-0">{{list.class_name}} </h4>
+                        <div class="d-flex align-items-center justify-content-between">
+                            <h4 class="mb-0 mr-5">Avg% = {{list.class_percentage}}</h4>
+                            <i class="fa fa-caret-down" aria-hidden="true" *ngIf="opened; else uparrow"></i>
+                        </div>
+                        <ng-template #uparrow><i class="fa fa-caret-up" aria-hidden="true"></i></ng-template>
+                    </button>
+                </div>
+            </ng-template>
+            <ng-template ngbPanelContent>
+
+                    <ngb-accordion [closeOthers]="true" *ngFor="let item of list.student_list; let subjectIndex = index"
+                                   activeIds="0" class="subject">
+                        <ngb-panel id="{{subjectIndex}}">
+                            <ng-template ngbPanelHeader let-opened="opened">
+                                <div>
+                                    <button class="btn btn-link d-flex align-items-center justify-content-between p-2 w-100"
+                                            ngbPanelToggle>
+                                        <h4 class="m-0">{{item.student_name}}</h4>
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <!--                                        <h4 class="mb-0 mr-5">Avg% = {{item.percentage}}</h4>-->
+                                            <i class="fa fa-caret-down" aria-hidden="true" *ngIf="opened; else uparrow"></i>
+                                        </div>
+                                        <ng-template #uparrow><i class="fa fa-caret-up" aria-hidden="true"></i>
+                                        </ng-template>
+                                    </button>
+                                </div>
+                            </ng-template>
+                            <ng-template ngbPanelContent>
+                                <ngb-accordion [closeOthers]="true" class="assessment">
+                                    <ngb-panel>
+                                        <ng-template ngbPanelHeader let-opened="opened">
+                                            <div>
+                                                <button class="btn btn-link d-flex align-items-center justify-content-between p-2 w-100"
+                                                        ngbPanelToggle>
+                                                    <h4 class="m-0">Assessment</h4>
+                                                    <div class="d-flex align-items-center justify-content-between">
+                                                        <h4 class="mb-0 mr-5">Avg% = {{item.assessment_percentage}}</h4>
+                                                        <i class="fa fa-caret-down" aria-hidden="true"
+                                                           *ngIf="opened; else uparrow"></i>
+                                                    </div>
+                                                    <ng-template #uparrow><i class="fa fa-caret-up" aria-hidden="true"></i>
+                                                    </ng-template>
+                                                </button>
+                                            </div>
+                                        </ng-template>
+                                        <ng-template ngbPanelContent>
+                                            <ng2-smart-table [settings]="assessment"  [source]="item.assessment" (userRowSelect)="studentCorrectionDetail($event)"></ng2-smart-table>
+                                        </ng-template>
+                                    </ngb-panel>
+                                </ngb-accordion>
+
+                                <ngb-accordion [closeOthers]="true" class="assignment">
+                                    <ngb-panel>
+                                        <ng-template ngbPanelHeader let-opened="opened">
+                                            <div>
+                                                <button class="btn btn-link d-flex align-items-center justify-content-between p-2 w-100"
+                                                        ngbPanelToggle>
+                                                    <h4 class="m-0">Assignment</h4>
+                                                    <div class="d-flex align-items-center justify-content-between">
+                                                        <h4 class="mb-0 mr-5">Avg% = {{item.assignment_percentage}}</h4>
+                                                        <i class="fa fa-caret-down" aria-hidden="true"
+                                                           *ngIf="opened; else uparrow"></i>
+                                                    </div>
+                                                    <ng-template #uparrow><i class="fa fa-caret-up" aria-hidden="true"></i>
+                                                    </ng-template>
+                                                </button>
+                                            </div>
+                                        </ng-template>
+                                        <ng-template ngbPanelContent>
+                                            <ng2-smart-table [settings]="assignment"  [source]="item.assignment" (userRowSelect)="studentCorrectionDetail($event)"></ng2-smart-table>
+                                        </ng-template>
+                                    </ngb-panel>
+                                </ngb-accordion>
+                            </ng-template>
+                        </ngb-panel>
+                    </ngb-accordion>
+                </ng-template>
+            </ngb-panel>
+
+        </ngb-accordion>
+    </div>
+</section>
+
+<div *ngIf="schoolStatus.length == 0">
+    <app-emptyschool>
+    </app-emptyschool>
+</div>
+
+<ng-template #content let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h4 class="modal-title col-12 text-center" *ngIf="type == 1"><b>Assessment List</b></h4>
+        <h4 class="modal-title col-12 text-center" *ngIf="type == 2"><b>Assignment List</b></h4>
+    </div>
+    <div class="modal-body">
+        <!-- Container-fluid starts-->
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-12" *ngIf="viewData != ''">
+                    <div class="d-flex text-center mt-3" *ngFor="let class of viewData; let i = index">
+                        <label class="ml-3">{{i + 1}}.</label>
+                        <label class="ml-3">ContentName : {{class.content_name}}</label>
+                        <label class="ml-3">Percentage : {{class.percentage}}</label>
+                    </div>
+                </div>
+                <div class="col-sm-12" *ngIf="viewData == ''">
+                    <button class="nodataList w-50 ml-5">No List Available!</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-primary" (click)="close()">Ok</button>
+    </div>
+</ng-template>
+
+<ng-template #viewStudentDetails let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h4 class="modal-title">Correction Details</h4>
+        <i class="fa fa-close cursor" (click)="onSave()" ></i>
+    </div>
+    <div class="modal-body">
+        <!-- Container-fluid Ends-->
+        <app-answer-sheet [answerShow]="true" [contentId]="contentId" [contentFormat]="contentFormat"
+                          [classId]="classId" [studentReportId]="studentId" [backStatus]="false" [studentContentId]="studentContentId" ></app-answer-sheet>
+    </div>
+</ng-template>

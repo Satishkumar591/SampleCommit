@@ -1,0 +1,37 @@
+<div>
+    <!--=================================
+  preloader -->
+    <div id="pre-loader" *ngIf="commondata.loader.value">
+        <img src="assets/images/pre-loader/loader-01.svg" alt="">
+    </div>
+    <div class="page-wrapper">
+        <app-header2 *ngIf="showMobView"></app-header2>
+
+        <app-header *ngIf="!showMobView" (rightSidebarEvent)="rightSidebar($event)"></app-header>
+        <div class="page-body-wrapper">
+            <div class="page-sidebar" *ngIf="!showMobView" [class.open]="navServices.collapseSidebar">
+                <app-sidebar></app-sidebar>
+                <div class="right-sidebar" [class.show]="right_side_bar" id="right_side_bar">
+                    <app-right-sidebar></app-right-sidebar>
+                </div>
+            </div>
+            <div class="page-sidebar2" *ngIf="showMobView">
+                <app-right-sidebar-mob></app-right-sidebar-mob>
+                <div class="right-sidebar" id="right_side_bar2">
+                </div>
+            </div>
+            <div class="page-body">
+                <app-breadcrumb *ngIf="!showMobView" ></app-breadcrumb>
+                <main [@animateRoute]="getRouterOutletState(o)">
+                    <router-outlet #o="outlet"></router-outlet>
+                </main>
+                <!-- <router-outlet></router-outlet> -->
+            </div>
+            <footer class="footer">
+                <app-footer></app-footer>
+            </footer>
+        </div>
+    </div>
+
+    <!--<div class="btn-light custom-theme" [class.rtl]="layoutClass" (click)="clickRtl(layoutType)">{{layoutType}}</div>-->
+</div>

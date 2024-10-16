@@ -1,0 +1,2313 @@
+<div [ngClass]="sideNavStatus == true ? 'container' : 'container-fluid'">
+    <div class="card resource-link-card p-4">
+        <!--    //////multichoice standard and multi section designs open -->
+    <div *ngIf="questionId == '1' || questionId == '2'">
+        <div class="row">
+            <div class="col-12">
+                <h3 class="letter">Multiple Choice > {{questionId == '1' ? 'Multiple Choice-Standard' : 'Multi Selection'}} </h3>
+                <hr class="letter">
+            </div>
+            <div class="col-12" [hidden]="selectOptionHeader != 'edit'">
+                <form [formGroup]="multipleChoice">
+                    <div class="card p-4">
+                        <div class="row">
+                            <div class="col-12 mt-2">
+                                <h5>Question<span class="text-danger">&nbsp;*</span></h5>
+                                <app-tiny-mice [height]="150"
+                                               [readonly]="selectOptionHeader != 'edit'"
+                                               [showDropBtn]="false"
+                                               [showInputBtn]="false"
+                                               [id]="'multiQues'"
+                                               [editorPatchValue]= "type == 'add' ? false : questionEditData.question"
+                                               (emitEditorValue)="getEditorMultipleChoice($event)"></app-tiny-mice>
+                                <textarea  *ngIf="editorType == false" class="form-control" cols="30" formControlName="question" rows="5"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card p-4 mt-4">
+                        <div class="row">
+                            <div class="col-12 my-2">
+                                <h5>Settings</h5>
+                            </div>
+                            <div class="col-12 pointsSec my-2">
+                                <div class="checkbox checkbox-primary d-flex align-items-center">
+                                    <input class="cursor" (change)="multipleResponse('multipleChoiceCheck', $event)"  data-original-title="" formControlName="multiResponse" id="checkbox-primary-1" title="" type="checkbox">
+                                    <label for="checkbox-primary-1" class="ml-1">Multiple Responses</label>
+                                    <input class="cursor ml-3" formControlName="autograde" type="checkbox" id="checkbox-primary-2" >
+                                    <label class="ml-1" for="checkbox-primary-2">Auto Grade</label>
+                                </div>
+                            </div>
+                            <div class="col-12 my-2">
+                                <div class="row">
+                                    <div class="col-4">
+                                        <label><b>Level</b></label>
+                                        <select class="form-control" formControlName="level">
+                                            <option value="1">Easy</option>
+                                            <option value="2">Medium</option>
+                                            <option value="3">Difficult</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-4">
+                                        <label class="labelName">
+                                            <b>Points</b>
+                                        </label>
+                                        <input (keypress)="numberValidate($event)" class="form-control pointInput" formControlName="points" type="text">
+                                    </div>
+                                    <div class="col-4">
+                                        <label><b>Editor</b></label>
+                                        <select [(ngModel)]="inputType" [value]="type == 'add' ? 'text' : questionEditData.editor_type == 1 ? 'text' : 'math'" class="form-control" formControlName="type">
+                                            <option value="text">Text</option>
+                                            <option value="math">Math</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card p-4 mt-3">
+                        <div class="row">
+                            <div class="col-12 mt-3">
+                                <div class="row">
+                                    <div class="col-md-12 my-2">
+                                        <h5>Multiple Choice Options<span class="text-danger">&nbsp;*</span></h5>
+                                    </div>
+                                    <div class="col-12 form-group" formArrayName="addMultipleChoice" *ngFor="let list of multipleChoice.get('addMultipleChoice')['controls']; let i=index">
+                                        <div class="input-group inputMenu flex-row" [formGroupName]="i" style="flex-wrap: nowrap">
+                                            <!-- <div class="d-flex align-items-center"> -->
+                                                <span class="m-auto pr-2" *ngIf="!multipleChoice.controls.multiResponse.value">
+                                                    <input class="cursor" type="radio" name="optradio {{i}}" id="optradio {{i}}" (change)="getAddChoiceAnswer($event, i, 'multipleChoiceChoose')"
+                                                    [checked]="multipleChoice['controls'].addMultipleChoice['controls'][i]['controls']['active'].value">
+                                                </span>
+                                                <span class="m-auto pr-2 cursor" *ngIf="multipleChoice.controls.multiResponse.value">
+                                                    <input class="cursor" type="checkbox" name="optradio1 {{i}}" id="optradio1 {{i}}" (change)="getAddChoiceAnswer($event, i, 'multipleChoiceChoose')"
+                                                    [checked]="multipleChoice['controls'].addMultipleChoice['controls'][i]['controls']['active'].value">
+                                                </span>
+                                                <span class="m-auto pr-2 pb-1 cursor" for="optradio1 {{i}}"  >{{((i+1) + 9).toString(36).toUpperCase()}}.</span>
+                                            <!-- </div> -->
+                                            <app-tiny-mice (emitEditorValue)="getOptionValue($event, questionId, 'option', i)"
+                                                           *ngIf="inputType == 'math'"
+                                                           [editorPatchValue]="type == 'add' ? false : questionEditData.options[i]?.options"
+                                                           [height]="150"
+                                                           [id]="'multiOption'+i"
+                                                           class="flex-fill"></app-tiny-mice>
+                                            <input *ngIf="inputType == 'text'"  aria-label="Amount (to the nearest dollar)" class="form-control" formControlName="option" placeholder="Option {{i+1}} *" type="text">
+                                            <div class="input-group-append cursor" (click)="deleted('deleteMultiple', i)">
+                                                <span class="input-group-text">
+                                                    <img src="assets/images/pdf-icons/Icon material-delete.png" class="img-fluid">
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <button (click)="addChoice('addMultipleChoice')" class="btn-sm btn-outline-primary"><i aria-hidden="true" class="fa fa-plus-circle mr-1"></i> Add New Choice</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                        
+    <!--                    <div *ngIf="inputType == 'math'" class="col-12">-->
+    <!--                        <div class="mb-4 multiSelectCard question-page" (click)="getAddChoiceAnswer($event, i, 'multipleChoiceChoose')" *ngFor="let list of multipleChoice.get('addMultipleChoice')['controls']; let i=index"-->
+    <!--                             [ngClass]="{'question-page-selected' : multipleChoice['controls'].addMultipleChoice['controls'][i]['controls']['active'].value === i}">-->
+    <!--                            <div class="d-flex flex-row">-->
+    <!--                            <span [ngClass]="{'selectColor' : multipleChoice['controls'].addMultipleChoice['controls'][i]['controls']['active'].value === i}" class="multichoice-option1 mr-2">{{((i+1) + 9).toString(36).toLowerCase()}}</span>-->
+    <!--                            <span *ngIf="optionArray.length != 0" class="mt-2" id="{{'myId'+i}}"></span>-->
+    <!--                            </div>-->
+    <!--                        </div>-->
+    <!--                    </div>-->
+
+                        <!-- <div class="col-12">
+                            <div (click)="getAddChoiceAnswer($event, i, 'multipleChoiceChoose')" *ngFor="let list of multipleChoice.get('addMultipleChoice')['controls']; let i=index" [ngClass]="{'question-page-selected' : multipleChoice['controls'].addMultipleChoice['controls'][i]['controls']['active'].value !== ''}" class="mb-4 multiSelectCard question-page d-flex">
+                                <span [ngClass]="{'selectColor' : multipleChoice['controls'].addMultipleChoice['controls'][i]['controls']['active'].value !== ''}" class="multichoice-option1 mr-2">{{((i+1) + 9).toString(36).toLowerCase()}}</span>
+                                <span [innerHTML]="multipleChoice.get('addMultipleChoice')['controls'][i]['controls']['option'].value | sanitizeHtml" class="mt-1 ml-2 paragraph-space"></span>
+                            </div>
+                        </div> -->
+                </form>
+            </div>
+            <div class="col-12 mt-3" [hidden]="selectOptionHeader != 'preview'">
+                <div class="card p-4 mt-3">
+                    <div class="row">
+                        <div [innerHTML]="questionValue | sanitizeHtml" class="col-12 pl-4 question-align"></div>
+                        <div class="col-12 mt-2" *ngIf="inputType == 'text'">
+                            <div class="mb-2 multiSelectCard d-flex p-2" *ngFor="let list of multipleChoice.get('addMultipleChoice')['controls']; let i=index">
+                                <span class="multichoice-option1 mr-2" [ngClass]="{'selectColor' : multipleChoice['controls'].addMultipleChoice['controls'][i]['controls']['active'].value == 1}">{{((i+1) + 9).toString(36).toLowerCase()}}</span>
+                                <span class="mt-1 ml-2 paragraph-space">{{multipleChoice.get('addMultipleChoice')['controls'][i]['controls']['option'].value}}</span>
+                            </div>
+                        </div>
+                        <div class="col-12" *ngIf="inputType == 'math'">
+                            <div class="mb-2 multiSelectCard p-2" *ngFor="let list of multipleChoice.get('addMultipleChoice')['controls']; let i=index">
+                                <div class="d-flex flex-row">
+                                    <span [ngClass]="{'selectColor' : multipleChoice['controls'].addMultipleChoice['controls'][i]['controls']['active'].value == 1}" class="multichoice-option1 mr-2">{{((i+1) + 9).toString(36).toLowerCase()}}</span>
+                                    <span *ngIf="optionArray.length != 0" [innerHTML]="multipleChoice.get('addMultipleChoice')['controls'][i]['controls']['option'].value | sanitizeHtml" class="mt-1 ml-2 paragraph-space"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--    //////multichoice standard and multi section designs closed -->
+    <!--    //////multichoice match table-Standard and table-Lables designs open -->
+
+    <div *ngIf="questionId == '5' || questionId == '7'" class="row">
+        <div class="col-12">
+            <h3 class="letter">Multiple Choice > Match Table-{{questionId == '5' ? 'Standard' : 'Labels'}}</h3>
+            <hr class="letter">
+        </div>
+        <div class="col-12" [hidden]="selectOptionHeader != 'edit'">
+            <form [formGroup]="matchTable">
+                <div class="card p-4">
+                    <div class="row">
+                        <div class="col-12 mt-2">
+                            <h5>Question<span class="text-danger">*</span></h5>
+                            <app-tiny-mice [height]="150"
+                                           [readonly]="selectOptionHeader != 'edit'"
+                                           [showDropBtn]="false"
+                                           [showInputBtn]="false"
+                                           [id]="'questionChoose'"
+                                           [editorPatchValue]= "type == 'add' ? false : questionEditData.question"
+                                           (emitEditorValue)="getEditorMultipleChoice($event)"></app-tiny-mice>
+                        </div>
+                    </div>
+                </div>
+                <div class="card p-4 mt-3">
+                    <div class="row">
+                        <div class="col-12 my-2">
+                            <h5>Settings</h5>
+                        </div>
+                        <div class="col-12 my-2 d-flex justify-content-between pointsSec">
+                            <div class="d-flex align-items-center">
+                                <input class="cursor" formControlName="autograde" type="checkbox">
+                                <label class="ml-2 mb-0" for="checkbox-primary-1">Auto Grade</label>
+                            </div>
+                            <div class="checkbox checkbox-primary p-3" hidden>
+                                <input (change)="multipleResponse('matchTableCheck', $event)" [ngClass]="{'div-disable' : selectOptionHeader != 'edit'}" data-original-title="" formControlName="multiResponse" id="checkbox-primary-2" title="" type="checkbox">
+                                <label for="checkbox-primary-2" class="ml-2">Multiple Responses</label>
+                            </div>
+                        </div>
+                        <div class="col-12 my-2">
+                            <div class="row">
+                                <div class="col-4">
+                                    <label><b>Level</b></label>
+                                    <select class="form-control" formControlName="level">
+                                        <option value="1">Easy</option>
+                                        <option value="2">Medium</option>
+                                        <option value="3">Difficult</option>
+                                    </select>
+                                </div>
+                                <div class="col-4">
+                                    <label class="labelName mr-3">
+                                        <b>Points</b>
+                                    </label>
+                                    <input (keypress)="numberValidate($event)" [readonly]="selectOptionHeader != 'edit'" class="form-control pointInput" formControlName="points" type="text">
+                                </div>
+                                <div class="col-4">
+                                    <label><b>Editor</b></label>
+                                    <select [(ngModel)]="inputType" [value]="type == 'add' ? 'text' : questionEditData.editor_type == 1 ? 'text' : 'math'" class="form-control" formControlName="type">
+                                        <option value="text">Text</option>
+                                        <option value="math">Math</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card p-4 mt-3">
+                    <div class="row">
+                        <div class="col-12 mb-3">
+                            <div class="row">
+                                <div class="col-md-12 my-2">
+                                    <h5>Multiple Choice Options<span class="text-danger">*</span></h5>
+                                </div>
+                                <div class="col-12 form-group" formArrayName="addMultipleChoice" *ngFor="let list of matchTable.get('addMultipleChoice')['controls']; let i=index">
+                                    <div class="input-group inputMenu" [formGroupName]="i" style="flex-wrap: nowrap">
+                                        <input *ngIf="inputType == 'text'" [readonly]="selectOptionHeader != 'edit'" aria-label="Amount (to the nearest dollar)" class="form-control" formControlName="option" placeholder="Option {{i+1}} *" type="text">
+                                        <app-tiny-mice (emitEditorValue)="getOptionValue($event, questionId, 'option', i)"
+                                                       *ngIf="inputType == 'math'"
+                                                       [editorPatchValue]="type == 'add' ? false : questionEditData.options[i]?.options"
+                                                       [height]="150"
+                                                       [id]="'optionChoose'+i"
+                                                       [readonly]="selectOptionHeader != 'edit'"
+                                                       class="flex-fill"></app-tiny-mice>
+                                        <div (click)="deleted('deleteMatchTable', i)" [ngClass]="{'div-disable' : selectOptionHeader != 'edit'}" class="input-group-append cursor">
+                                            <span class="input-group-text">
+                                                <img src="assets/images/pdf-icons/Icon material-delete.png" class="img-fluid">
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <button (click)="addChoice('addMatchTable')" class="btn-sm btn-outline-primary"><i aria-hidden="true" class="fa fa-plus-circle mr-1"></i> Add New Choice</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 my-2">
+                            <h5>Stems<span class="text-danger">*</span></h5>
+                        </div>
+                        <div class="col-12 mt-2">
+                            <div class="row">
+                                <div class="col-12 form-group" formArrayName="addMatchTableChoose" *ngFor="let list of matchTable.get('addMatchTableChoose')['controls']; let i=index">
+                                    <div class="input-group inputMenu" [formGroupName]="i" style="flex-wrap: nowrap">
+                                        <input *ngIf="inputType == 'text'" [readonly]="selectOptionHeader != 'edit'" aria-label="Amount (to the nearest dollar)" class="form-control" formControlName="option" placeholder="Stems {{i+1}}" type="text">
+                                        <app-tiny-mice (emitEditorValue)="getOptionValue($event, questionId, 'chooseType', i)"
+                                                       *ngIf="inputType == 'math'"
+                                                       [editorPatchValue]="type == 'add' ? false : questionEditData?.answer[i]"
+                                                       [height]="150"
+                                                       [id]="'typeChoose'+i" [readonly]="selectOptionHeader != 'edit'" class="flex-fill"></app-tiny-mice>
+                                        <div (click)="deleted('deleteMatchTableChoose', i)" [ngClass]="{'div-disable' : selectOptionHeader != 'edit'}" class="input-group-append cursor">
+                                            <span class="input-group-text">
+                                                <img src="assets/images/pdf-icons/Icon material-delete.png" class="img-fluid">
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <button (click)="addChoice('matchTableChoose')" [hidden]="selectOptionHeader != 'edit'" class="btn-sm btn-outline-primary"><i aria-hidden="true" class="mr-1 fa fa-plus-circle"></i> Add New Choice</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card p-3 mt-3">
+                    <div class="row">
+                        <div class="col-12 my-2">
+                            <h5>Set Correct Answer(s)</h5>
+                        </div>
+                        <div class="col-12 my-2 table-flexible">
+                            <table [ngClass]="{'div-disable' : selectOptionHeader != 'edit'}" class="table table-bordered text-center">
+                                <thead>
+                                <tr *ngIf="inputType == 'math'">
+                                    <th></th>
+                                    <th *ngFor="let list of matchTable.get('addMatchTableChoose')['controls']; let i=index" class="innerhtml-margin-clear" id="{{'columnId' + i}}"></th>
+                                </tr>
+                                <tr *ngIf="inputType == 'text'">
+                                    <th></th>
+                                    <th *ngFor="let list of matchTable.get('addMatchTableChoose')['controls']; let i=index">{{matchTable.get('addMatchTableChoose')['controls'][i]['controls']['option'].value}}</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr *ngFor="let list of matchTable.get('addMultipleChoice')['controls']; let j=index">
+                                    <td *ngIf="inputType == 'math'" class="innerhtml-margin-clear" id="{{'myId' + j}}"></td>
+                                    <td *ngIf="inputType == 'text'">{{matchTable.get('addMultipleChoice')['controls'][j]['controls']['option'].value}}</td>
+                                    <td *ngFor="let list of matchTable.get('addMatchTableChoose')['controls']; let i=index">
+                                        <input (change)="getAddChoiceAnswer(i, j, 'matchTableChooseSingle')" *ngIf="questionId == '5'" class="radio_animated cursor" name="choose{{j}}" type="radio" id="{{j}}chooseSingle{{i}}">
+                                        <input (change)="getAddChoiceAnswer(i, j, 'matchTableChooseMultiple')" *ngIf="questionId == '7'" type="checkbox" class="cursor" id="{{j}}chooseMulti{{i}}">
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="col-12 mt-2" [hidden]="selectOptionHeader != 'preview'">
+            <div class="card p-4 mt-3">
+                <div class="row">
+                    <div [innerHTML]="questionValue | sanitizeHtml" class="col-12 pl-4 question-align">
+                    </div>
+                    <div class="col-12 table-flexible">
+                        <table class="table table-bordered text-center">
+                            <thead>
+                            <tr *ngIf="inputType == 'math'">
+                                <th>Questions</th>
+                                <th *ngFor="let list of chooseArray; let i=index" id="{{'columnIdd'+i}}"></th>
+                            </tr>
+                            <tr *ngIf="inputType == 'text'">
+                                <th>Questions</th>
+                                <th *ngFor="let list of matchTable.get('addMatchTableChoose')['controls']; let i=index">{{matchTable.get('addMatchTableChoose')['controls'][i]['controls']['option'].value}}</th>
+                            </tr>
+                            </thead>
+                            <tbody >
+                            <tr *ngFor="let list of matchTable.get('addMultipleChoice')['controls']; let j=index">
+                                <td *ngIf="inputType == 'math'" id="{{'myIdd'+j}}"></td>
+                                <td *ngIf="inputType == 'text'">{{matchTable.get('addMultipleChoice')['controls'][j]['controls']['option'].value}}</td>
+                                <td *ngFor="let table of matchTable.get('addMatchTableChoose')['controls']; let i=index">
+                                    <input *ngIf="questionId == '5'" class="radio_animated" name="choose{{j}}" type="radio"
+                                        >
+                                    <input *ngIf="questionId == '7'" type="checkbox">
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+    
+                    </div>
+            </div>
+<!--                <div class="col-12" *ngIf="inputType == 'text'">-->
+<!--                    <table class="table table-bordered text-center">-->
+<!--                        <thead>-->
+<!--                        <tr>-->
+<!--                            <th>Questions</th>-->
+<!--                            <th *ngFor="let list of matchTable.get('addMatchTableChoose')['controls']; let i=index">{{matchTable.get('addMatchTableChoose')['controls'][i]['controls']['option'].value}}</th>-->
+<!--                        </tr>-->
+<!--                        </thead>-->
+<!--                        <tbody >-->
+<!--                        <tr *ngFor="let list of matchTable.get('addMultipleChoice')['controls']; let j=index">-->
+<!--                            <td *ngIf="inputType == 'text'">{{matchTable.get('addMultipleChoice')['controls'][j]['controls']['option'].value}}</td>-->
+<!--                            <td *ngFor="let list of matchTable.get('addMatchTableChoose')['controls']; let i=index">-->
+<!--                                <input  *ngIf="questionId == '5'" class="radio_animated" name="choose{{j}}" type="radio">-->
+<!--                                <input  *ngIf="questionId == '7'" type="checkbox">-->
+<!--                            </td>-->
+<!--                        </tr>-->
+<!--                        </tbody>-->
+<!--                    </table>-->
+
+<!--                </div>-->
+<!--                <div class="col-12" *ngIf="inputType == 'math'">-->
+<!--                    <table class="table table-bordered text-center">-->
+<!--                        <thead>-->
+<!--                        <tr>-->
+<!--                            <th>Questions</th>-->
+<!--                            <th *ngFor="let list of matchTable.get('addMatchTableChoose')['controls']; let i=index" id="columnId{{i}}"></th>-->
+<!--                        </tr>-->
+<!--                        </thead>-->
+<!--                        <tbody >-->
+<!--                        <tr *ngFor="let list of matchTable.get('addMultipleChoice')['controls']; let j=index">-->
+<!--                            <td *ngIf="inputType == 'math'" id="{{'myId' + j}}"></td>-->
+<!--                            <td *ngFor="let list of matchTable.get('addMatchTableChoose')['controls']; let i=index">-->
+<!--                                <input  *ngIf="questionId == '5'" class="radio_animated" name="choose{{j}}" type="radio">-->
+<!--                                <input  *ngIf="questionId == '7'" type="checkbox">-->
+<!--                            </td>-->
+<!--                        </tr>-->
+<!--                        </tbody>-->
+<!--                    </table>-->
+
+<!--                </div>-->
+            </div>
+        </div>
+    </div>
+
+    <!--    //////multichoice match table-Standard and table-Lables designs closed -->
+    <!--    //////Fill in the Blanks > Text Drop Down designs open -->
+
+    <div *ngIf="questionId == '9'" class="row">
+        <div class="col-12">
+            <h3 class="letter">Multiple Choice > Text Drop Down</h3>
+            <hr class="letter">
+        </div>
+        <div class="col-12">
+            <form [formGroup]="fillDropDown">
+                <div class="card p-4 mt-3" [hidden]="selectOptionHeader != 'edit'">
+                    <div class="row">
+                        <div class="col-12 mt-2">
+                            <h5>Question<span class="text-danger">*</span></h5>
+                            <app-tiny-mice [height]="150"
+                                    [showDropBtn]="true"
+                                    [showInputBtn]="false"
+                                    [id]="'myEditor-q1'"
+                                    [editorPatchValue]= "type == 'add' ? false : questionEditData.question"
+                                    (emitEditorValue)="getEditorContextValue($event, questionId, 'question')"></app-tiny-mice>
+                            <textarea  *ngIf="editorType == false" class="form-control" cols="30" formControlName="question" rows="5"></textarea>
+                            <!--                        <textarea formControlName="question" class="w-100" rows="5"></textarea>-->
+                        </div>
+                    </div>
+                </div>
+                <div class="row" [hidden]="selectOptionHeader != 'edit'">
+                    <div class="col-12 pl-3 pr-3" *ngIf="showForm">
+                        <div class="card p-4 mt-3">
+                            <div class="row">
+                                <div class="col-12 my-2">
+                                    <h5>Settings</h5>
+                                </div>
+                                <div class="col-12 my-2 pointsSec">
+                                    <input class="cursor" formControlName="autograde" type="checkbox">
+                                    <label class="ml-2 mb-0" for="checkbox-primary-1">Auto Grade</label>
+                                </div>
+                                <div class="col-12 my-2">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label><b>Level</b></label>
+                                            <select class="form-control" formControlName="level">
+                                                <option value="1">Easy</option>
+                                                <option value="2">Medium</option>
+                                                <option value="3">Difficult</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-4">
+                                            <label class="labelName mr-3">
+                                                <b>Points</b>
+                                            </label>
+                                            <input (keypress)="numberValidate($event)" [readonly]="selectOptionHeader != 'edit'" class="form-control pointInput" formControlName="points" type="text">
+                                        </div>
+        
+                                        <div class="col-4">
+                                            <label><b>Editor</b></label>
+                                            <select (change)="changeEditor($event)"
+                                                    [disabled]="selectOptionHeader != 'edit'"
+                                                    [value]="type == 'add' ? 'eng' : questionEditData.editor_type == 1 ? 'eng' : 'math'"
+                                                    class="form-control">
+                                                <option value="eng">Text</option>
+                                                <option value="math">Math</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card p-4 mt-3">
+                            <!--                        <div class="row p-3" *ngFor="let data of dropDownArray;let i=index">-->
+                            <div class="row" formArrayName="addDropDownOption" *ngFor="let list of fillDropDown.get('addDropDownOption')['controls']; let i=index">
+                                <div *ngIf="list.get('options')['controls']" [formGroupName]="i" class="col-12">
+                                    <div class="row">
+                                        <div class="col-12 mt-3">
+                                            <h5 class="font-weight-bold">Drop Down {{i+1}}<span class="text-danger">*</span></h5>
+                                        </div>
+                                        <div  *ngFor="let list1 of list.get('options')['controls']; let j=index"   class="col-12" formArrayName="options">
+                                           <div class="row mt-2" [formGroupName]="j">
+                                               <div class="col-2 placeSelf">
+                                                   <span>Option - {{j+1}}</span>
+                                               </div>
+                                               <div class="col-5 d-flex justify-content-between">
+                                                    <input formControlName="listOption" *ngIf="showTextEditor == 'eng'"  class="mt-0 ml-2 form-control w-100" placeholder="Enter drop down value *">
+                                                    <app-tiny-mice
+                                                            [showDropBtn]="false"
+                                                            [showInputBtn]="false"
+                                                            (emitEditorValue)="patchEditor(list.controls.options ,j ,i ,$event)"
+                                                            *ngIf="showTextEditor != 'eng'"
+                                                            [height]="150"
+                                                            [id]="j + 'dropy' + i"
+                                                            [editorPatchValue]="type == 'add' ? false : questionEditData.options[i]?.options[j]?.listOption"></app-tiny-mice>
+                                               </div>
+                                               <div class="col-4 d-flex flex-row">
+                                                   <div *ngIf="fillDropDown['controls'].addDropDownOption['controls'][i]['controls'].options" class="placeSelf cursor">
+                                                       <i class="fa fa-check pl mr-2"
+                                                          (click)="submitInput(list.controls.options ,j ,i)"
+                                                          [ngClass]="{'correct-answer-selected' : fillDropDown['controls'].addDropDownOption['controls'][i]['controls'].options['controls'][j]['controls'].selected.value == 'true' ,
+                                                          'correct-answer' : fillDropDown['controls'].addDropDownOption['controls'][i]['controls'].options['controls'][j]['controls'].selected.value == 'false' }" aria-hidden="true"></i>
+                                                   </div>
+         <!--                                          <div class="placeSelf cursor">-->
+         <!--                                              <i aria-hidden="true" class="fa fa-times wrong-answer ml-2"></i>-->
+         <!--                                          </div>-->
+                                                   <div class="placeSelf cursor" *ngIf="j != 0 && selectOptionHeader == 'edit'">
+                                                       <i (click)="deleteDropDownFormArr(list.controls.options, j)" aria-hidden="true"  class="fa fa-trash wrong-answer ml-2"></i>
+                                                   </div>
+                                                   <div class="placeSelf cursor" *ngIf="j == 0 && selectOptionHeader == 'edit'">
+                                                       <i (click)="addDropDownFormArr(list.controls.options)" aria-hidden="true" class="fa fa-plus correct-answer ml-2"></i>
+                                                   </div>
+                                               </div>
+                                           </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card p-4 mt-3" [hidden]="selectOptionHeader == 'edit'">
+                    <div class="row">
+                        <div class="col-12 p-4">
+                            <h4 [innerHTML]="dropValue | sanitizeHtml"></h4>
+                        </div>
+                        <div class="col-12" (keypress)="$event.preventDefault()">
+                            <div>
+                                <div *ngFor="let item of fillDropDown['controls'].addDropDownOption.value; let i = index" class="d-flex flex-row p-3">
+                                    <div class="placeSelf">
+                                        <span >{{i+1}} </span>
+                                    </div>
+                                    <div class="col-md-11">
+                                        <div class="col-md-12 innerhtml-margin-clear p-2 dropdown-border dropdown-toggle d-flex justify-content-between" data-toggle="dropdown" id="dropdownPre{{i}}"></div>
+                                        <div class="col-md-11 dropdown-menu">
+                                            <span class="dropdown-item dropdown-link">Select Answer</span>
+                                            <span *ngFor="let option of item.options; let k = index" [innerHTML]="option.listOption | sanitizeHtml" class="dropdown-item dropdown-link innerhtml-margin-clear"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!--    //////Fill in the Blanks > Text Drop Down designs closed -->
+    <!--    //////Fill in the Blanks > Text Entry designs open -->
+
+    <div *ngIf="questionId == '10'" class="row">
+        <div class="col-12">
+            <h3 class="letter">Multiple Choice > Text Entry</h3>
+            <hr class="letter">
+        </div>
+        <div class="col-12">
+            <form [formGroup]="textEntry">
+                <div class="row" [hidden]="selectOptionHeader != 'edit'">
+                    <div class="col-12">
+                        <div class="card p-4 mt-3">
+                            <div class="row">
+                                <div class="col-12">
+                                    <h5>Question<span class="text-danger">*</span></h5>
+                                    <div class="row">
+                                        <div class="col-12 mb-1" *ngIf="textbutton == true">
+                                            <button class="pull-right btn btn-primary" type="button" (click)="saveQuestions('textEntry', '')">Text Input</button>
+                                        </div>
+                                        <div class="col-12">
+                                            <app-tiny-mice (emitEditorValue)="getEditorValue($event)" [editorPatchValue]="type == 'add' ? false : questionEditData.question" [height]="150" [id]="'myEditor'"
+                                                           [showDropBtn]="false"
+                                                           [showInputBtn]="true"></app-tiny-mice>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    
+<!--                    ///// input text entry designs starts here-->
+                    <div class="col-12" *ngIf="inputCount != 0">
+                        <div class="card p-4 mt-3">
+                            <div class="row">
+                                <div class="col-12 my-2">
+                                    <h5>Settings</h5>
+                                </div>
+                                <div class="col-12 my-2">
+                                    <input class="cursor" formControlName="autograde" type="checkbox">
+                                    <label class="ml-2 mb-0" for="checkbox-primary-1">Auto Grade</label>
+                                </div>
+                                <div class="col-12 my-2">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label><b>Level</b></label>
+                                            <select class="form-control" formControlName="level">
+                                                <option value="1">Easy</option>
+                                                <option value="2">Medium</option>
+                                                <option value="3">Difficult</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-4">
+                                            <label class="labelName mr-3">
+                                                <b>Points</b>
+                                            </label>
+                                            <input (keypress)="numberValidate($event)" [readonly]="selectOptionHeader != 'edit'" class="form-control pointInput" formControlName="points" type="text">
+                                        </div>
+        
+                                        <div class="col-4">
+                                            <label><b>Editor</b></label>
+                                            <select (change)="changeEditor($event)"
+                                                    [disabled]="selectOptionHeader != 'edit'"
+                                                    [value]="type == 'add' ? 'eng' : questionEditData.editor_type == 1 ? 'eng' : 'math'"
+                                                    class="form-control">
+                                                <option value="eng">Text</option>
+                                                <option value="math">Math</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-12" *ngIf="inputCount != 0">
+                        <div class="card p-4 mt-3">
+                            <div class="row">
+                                <div class="col-12">
+                                    <h5>Input Field<span class="text-danger">*</span></h5>
+                                </div>
+                                <div class="col-12">
+                                    <div *ngFor="let data of inputArray; let i=index" class="d-flex flex-row mt-2">
+                                        <div class="placeSelf" >
+                                            <span class="mr-2" >{{i+1}} </span>
+                                        </div>
+                                        <div class="w-100">
+                                            <input *ngIf="showTextEditor == 'eng'" [(ngModel)]="data.options[0].value" [ngModelOptions]="{standalone: true}" class="mt-0 ml-2 form-control w-50" placeholder="Enter the answer *">
+                                            <app-tiny-mice (emitEditorValue)="getEditorValue1($event , data)"
+                                                           *ngIf="showTextEditor != 'eng'"
+                                                           [editorPatchValue]="type == 'add' ? false : data.options[0].value"
+                                                           [height]="150"
+                                                           [id]="i + 'inputEnter'"
+                                                           [showDropBtn]="false"
+                                                           [showInputBtn]="false"></app-tiny-mice>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+<!--                    // closed -->
+                </div>
+                <div class="card p-4 mt-3" [hidden]="selectOptionHeader == 'edit'">
+                    <div class="row">
+                        <div class="col-12 p-4">
+                            <h4 [innerHTML]="textValue | sanitizeHtml"></h4>
+                        </div>
+                        <div class="col-12 div-disable" (keypress)="$event.preventDefault()">
+                            <div class="card">
+                            <div class="d-flex flex-row p-3" *ngFor="let data of inputArray;let i=index">
+                                <div class="placeSelf">
+                                    <span >{{i+1}} </span>
+                                </div>
+                                <div class="w-100">
+                                    <h4 class="mt-0 ml-2 form-control w-50" [innerHTML]="transform(data.options[0].value)" [id]="'text-input' + i"></h4>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!--    //////Fill in the Blanks > Text Drop Down designs closed -->
+    <!--    //////Classify,Match and Order > Sort List designs open -->
+
+    <div *ngIf="questionId == '16'" class="row">
+        <div class="col-12">
+            <h3 class="letter">Match & Order > Sort List</h3>
+            <hr class="letter">
+        </div>
+        <div class="col-12 mt-2">
+            <form [formGroup]="matchSort">
+                <div class="row" [hidden]="selectOptionHeader != 'edit'">
+                    <div class="col-12">
+                        <div class="card p-4 mt-3">
+                            <div class="row">
+                                <div class="col-12">
+                                    <h5>Question<span class="text-danger">*</span></h5>
+                                    <app-tiny-mice (emitEditorValue)="getEditorMatchSort($event)"
+                                                   [editorPatchValue]="type == 'add' ? false : questionEditData.question"
+                                                   [height]="150"
+                                                   [id]="'matchShortQuestionId'"
+                                                   [readonly]="selectOptionHeader != 'edit'"></app-tiny-mice>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="card p-4 mt-3">
+                            <div class="row">
+                                <div class="col-12 my-2">
+                                    <h5>Settings</h5>
+                                </div>
+                                <div class="col-12 checkbox checkbox-primary">
+                                    <input class="cursor" formControlName="autograde" type="checkbox">
+                                    <label class="ml-1" for="checkbox-primary-1">Auto Grade</label>
+                                </div>
+                                <div class="col-4">
+                                    <label><b>Level</b></label>
+                                    <select class="form-control" formControlName="level">
+                                        <option value="1">Easy</option>
+                                        <option value="2">Medium</option>
+                                        <option value="3">Difficult</option>
+                                    </select>
+                                </div>
+                                <div class="col-4">
+                                    <label class="labelName">
+                                        <b>Points</b>
+                                    </label>
+                                    <input (keypress)="numberValidate($event)" class="form-control pointInput" formControlName="points" type="text">
+                                </div>
+                                <div class="col-4">
+                                    <label><b>Editor</b></label>
+                                    <select [(ngModel)]="inputType"
+                                        [ngClass]="{'div-disable' : selectOptionHeader != 'edit'}"
+                                        class="form-control"
+                                        formControlName="type">
+                                        <option value="text">Text</option>
+                                        <option value="math">Math</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="card p-4 mt-3">
+                            <div class="row">
+                                <div class="col-12 my-2">
+                                    <h5>Labels<span class="text-danger">*</span></h5>
+                                </div>
+                                <div class="col-6">
+                                    <input placeholder="Source" [readonly]="selectOptionHeader != 'edit'" formControlName="source" class="form-control w=100">
+                                </div>
+                                <div class="col-6">
+                                    <input placeholder="Target" [readonly]="selectOptionHeader != 'edit'" formControlName="target" class="form-control w=100">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="card p-4 mt-3">
+                            <div class="row">
+                                <div class="col-md-12 my-2">
+                                    <h5>List<span class="text-danger">*</span></h5>
+                                </div>
+                                <div class="col-12 col-lg-6 my-2" cdkDropList (cdkDropListDropped)="dropped($event)">
+                                    <div class="row">
+                                        <div class="col-12 form-group"  formArrayName="addMultipleChoice" *ngFor="let list of matchSort.get('addMultipleChoice')['controls']; let i=index">
+                                            <div class="input-group mb-1 inputMenu" cdkDrag [formGroupName]="i" style="flex-wrap: nowrap">
+                                                <div class="input-group-prepend">
+                                            <span class="input-group-text">
+                                                <img src="assets/images/pdf-icons/equal@2x.png" class="img-fluid">
+                                            </span>
+                                                </div>
+                                                <app-tiny-mice (emitEditorValue)="getMatchSortValue($event, i, 'math')" *ngIf="inputType == 'math'"
+                                                               [editorPatchValue]="type == 'add' ? false : questionEditData.options[i].options"
+                                                               [height]="150"
+                                                               [id]="'matchSortDrop'+i"
+                                                               [readonly]="selectOptionHeader != 'edit'"
+                                                               class="flex-fill"></app-tiny-mice>
+                                                <input *ngIf="inputType == 'text'" (keyup)="getMatchSortValue($event, i, 'text')" [readonly]="selectOptionHeader != 'edit'" class="form-control" formControlName="option" placeholder="Item {{i + 1}}*" type="text">
+                                                <div class="input-group-append cursor">
+                                            <span class="input-group-text">
+                                                <img src="assets/images/pdf-icons/Icon material-delete.png" (click)="deleted('deleteSort', i)" class="img-fluid">
+                                            </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-12">
+                                            <button (click)="addChoice('addMultipleSort')"  [hidden]="selectOptionHeader != 'edit'" class="btn-sm btn-outline-primary"><i aria-hidden="true" class="fa fa-plus-circle mr-1"></i> Add New Choice</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-lg-6 my-2" cdkDropList (cdkDropListDropped)="droppedCorrect($event)">
+                                    <div class="row">
+                                        <div class="col-12 form-group" formArrayName="addMultipleChoose" *ngFor="let list of matchSort.get('addMultipleChoose')['controls']; let i=index">
+                                            <div class="input-group inputMenu mb-1" cdkDrag [formGroupName]="i">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text">
+                                                        <img src="assets/images/pdf-icons/equal@2x.png" class="img-fluid">
+                                                    </span>
+                                                </div>
+                                                <div *ngIf="inputType != 'text'" [innerHTML]="list['controls']['selectOption'].value | sanitizeHtml" class="p-3" style="border: 1px solid #ced4da; width: 90%;overflow: auto;max-height: 32vh" >
+                                                </div>
+                                                <h4 *ngIf="inputType == 'text'" [innerHTML]="list['controls']['selectOption'].value | sanitizeHtml" aria-placeholder="item" class="form-control mb-0 overflow-scroll"></h4>
+                <!--                            <input type="text" *ngIf="inputType == 'text'" readonly [innerHTML]="this.matchSort['controls'].addMultipleChoose['controls'][i]['controls']['selectOption'].value" placeholder="item" class="form-control" aria-label="Amount (to the nearest dollar)">-->
+                <!--                                <app-tiny-mice [height]="150" class="flex-fill" [editorPatchValue]="this.matchSort['controls'].addMultipleChoose['controls'][i]['controls']['selectOption'].value" [id]="i+'matchSort'" *ngIf="inputType == 'math'" readonly></app-tiny-mice>-->
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card p-4 mt-3" [hidden]="selectOptionHeader != 'sortpreview'">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="row mt-2">
+                                <div [innerHTML]="questionValue | sanitizeHtml" class="col-12 pl-4 question-align">
+                                </div>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col-6" cdkDropList>
+                                    <h4>{{matchSort.controls.source.value}}</h4>
+                                    <div class="row">
+                                        <div class="col-12 form-group" *ngFor="let list of sourceArr; let i=index">
+                                            <div class="input-group my-2 inputMenu" cdkDrag  [cdkDragDisabled]="true">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text">
+                                                        <img src="assets/images/pdf-icons/equal@2x.png" class="img-fluid">
+                                                    </span>
+                                                </div>
+                                                <div *ngIf="inputType != 'text'" [innerHTML]="list.value | sanitizeHtml" class="p-3" style="border: 1px solid #ced4da; width: 90%;overflow: auto;max-height: 32vh" >
+                                                </div>
+                                                <h4 *ngIf="inputType == 'text'" [innerHTML]="list.value | sanitizeHtml" aria-placeholder="item" class="form-control mb-0 overflow-scroll"></h4>
+    <!--                                                <input type="text" readonly [value]="list.value" placeholder="item" class="form-contol w-75" aria-label="Amount (to the nearest dollar)">-->
+<!--                                                <span [innerHTML]="list.value | sanitizeHtml" aria-placeholder="item" class="form-control flex-fill"></span>-->
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-6" cdkDropList>
+                                    <h4>{{matchSort.controls.target.value}}</h4>
+                                    <div class="row">
+                                        <div class="col-12 form-group"  *ngFor="let list of matchSort.get('addMultipleChoose')['controls']; let i=index">
+                                            <div class="input-group my-2 inputMenu" cdkDrag>
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text">
+                                                        <img src="assets/images/pdf-icons/equal@2x.png" class="img-fluid">
+                                                    </span>
+                                                </div>
+
+                                                <div *ngIf="inputType != 'text'" [innerHTML]="list['controls']['selectOption'].value | sanitizeHtml" class="p-3" style="border: 1px solid #ced4da; width: 90%;overflow: auto;max-height: 32vh" >
+                                                </div>
+                                                <h4 *ngIf="inputType == 'text'" [innerHTML]="list['controls']['selectOption'].value | sanitizeHtml" aria-placeholder="item" class="form-control mb-0 overflow-scroll"></h4>
+<!--                                                <span [innerHTML]="list['controls']['selectOption'].value | sanitizeHtml" aria-placeholder="item" class="form-control flex-fill"></span>-->
+    <!--                                            <input type="text" [ngStyle]="{'border': list.valid == '1' ? '2px solid green':  list.valid == '2' ? '2px solid red' : ''}" readonly [value]="list.value" placeholder="item" class="form-contol w-75" aria-label="Amount (to the nearest dollar)">-->
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!--    //////Classify,Match and Order > Sort List designs closed -->
+    <!--    //////Writing > Essay With Rich Text designs open -->
+
+    <div *ngIf="questionId == '20'" class="row">
+        <div class="col-12">
+            <h3 class="letter">Free Text / Math</h3>
+            <hr class="letter">
+        </div>
+        <div class="col-12">
+            <form [formGroup]="richText">
+                <div class="row">
+                    <div class="col-12" [hidden]="selectOptionHeader !='edit'">
+                        <div class="card p-4 mt-3">
+                            <div class="row">
+                                <div class="col-12">
+                                    <h5>Question<span class="text-danger">*</span></h5>
+                                    <app-tiny-mice (emitEditorValue)="getEditorContextValue($event, questionId, 'editorContext')"
+                                                   [editorPatchValue]="type == 'add' ? false : questionEditData.question"
+                                                   [height]="150"></app-tiny-mice>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12" *ngIf="selectOptionHeader =='edit'">
+                        <div class="card p-4 mt-3">
+                            <div class="row pointsSec">
+                                <div class="col-12 my-2">
+                                    <h5>Settings</h5>
+                                </div>
+                                <div class="col-4">
+                                    <label><b>Level</b></label>
+                                    <select class="form-control" formControlName="level">
+                                        <option value="1">Easy</option>
+                                        <option value="2">Medium</option>
+                                        <option value="3">Difficult</option>
+                                    </select>
+                                </div>
+                                <div class="col-4">
+                                    <label class="labelName">
+                                        <b>Points</b>
+                                    </label>
+                                    <input (keypress)="numberValidate($event)" class="form-control pointInput" formControlName="points" type="text">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="card p-4 mt-3">
+                            <div class="row">
+                                <div class="col-12 my-2" *ngIf="selectOptionHeader == 'edit'" >
+                                    <h5>Correct Answer<span class="text-danger">*</span></h5>
+                                </div>
+                                <div class="col-12 my-2" *ngIf="selectOptionHeader != 'edit'">
+                                    <h4 [innerHTML]="richPreviewValue | sanitizeHtml"></h4>
+                                </div>
+                                <div class="col-12 {{selectOptionHeader =='edit' ? '' : 'div-disable'}}">
+                                    <app-tiny-mice (emitEditorValue)="getEditorContextValue($event, questionId, 'answer')"
+                                       [editorPatchValue]="type == 'add' ? false : questionEditData.answer[0].correctAnswer"
+                                       [height]="150"></app-tiny-mice>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!--    //////Writing > Essay With Rich Text designs closed -->
+    <!--    //////Writing > Essay With Plain Text designs open -->
+
+    <div *ngIf="questionId == '21'" class="row">
+        <div class="col-12">
+            <h3 class="letter">Writing > Essay with Plain Text</h3>
+            <hr class="letter">
+        </div>
+        <div class="col-12">
+            <form [formGroup]="plainText">
+                <div class="row" [hidden]="selectOptionHeader !='edit'">
+                    <div class="col-12">
+                        <div class="card p-4 mt-3">
+                            <div class="row">
+                                <div class="col-12">
+                                    <h5>Question<span class="text-danger">*</span></h5>
+                                    <app-tiny-mice [height]="150" (emitEditorValue)="getEditorContextValue($event, questionId, 'editorContext')" [editorPatchValue]="false"></app-tiny-mice>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="card p-4 mt-3">
+                            <div class="row pointsSec">
+                                <div class="col-12 py-2">
+                                    <h5>Settings</h5>
+                                </div>
+                                <div class="col-4">
+                                    <label><b>Level</b></label>
+                                    <select class="form-control" formControlName="level">
+                                        <option value="1">Easy</option>
+                                        <option value="2">Medium</option>
+                                        <option value="3">Difficult</option>
+                                    </select>
+                                </div>
+                                <div class="col-4">
+                                    <label class="labelName">
+                                        <b>Points</b>
+                                    </label>
+                                    <input (keypress)="numberValidate($event)" class="form-control pointInput" formControlName="points" type="text">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="card p-4 mt-3">
+                            <div class="row">
+                                <div class="col-12">
+                                    <h5>Correct Answer<span class="text-danger">*</span></h5>
+                                    <app-tiny-mice [height]="150" (emitEditorValue)="getEditorContextValue($event, questionId, 'answer')" [editorPatchValue]="false"></app-tiny-mice>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card p-4 mt-3" [hidden]="selectOptionHeader =='edit'">
+                    <div class="row">
+                        <div class="col-12">
+                            <h4 [innerHTML]="plainPreviewValue | sanitizeHtml"></h4>
+                        </div>
+                        <div class="col-12 mt-3">
+                            <app-tiny-mice [height]="150"></app-tiny-mice>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!--    //////Writing > Essay With Plain Text designs closed -->
+    <!--    //////Writing > Essay With Short Text designs open -->
+
+    <div *ngIf="questionId == '22'" class="row">
+        <div class="col-12">
+            <h3 class="letter">Writing > Essay with Short Text</h3>
+            <hr class="letter">
+<!--                <button class="btn btn-outline-primary w-25" [ngClass]="{'selectColor' : selectOptionHeader == 'edit'}" (click)="selectHeader('edit')"><i class="fa fa-pencil" aria-hidden="true"></i> Edit Mode</button>-->
+<!--                <button class="btn btn-outline-primary w-25" [ngClass]="{'selectColor' : selectOptionHeader == 'shortpreview'}" (click)="selectHeader('shortpreview')"><i class="fa fa-eye" aria-hidden="true"></i> Preview Mode</button>-->
+<!--                <button class="btn btn-outline-primary w-25" (click)="saveQuestions('shortText')"><i class="fa fa-save" aria-hidden="true"></i> Save</button>-->
+<!--                <button class="btn btn-outline-primary w-25" (click)="cancelAction()"><i class="fa fa-times" aria-hidden="true"></i> Cancel</button>-->
+        </div>
+        <div class="col-12">
+            <form [formGroup]="shortText">
+                <div class="row" [hidden]="selectOptionHeader !='edit'">
+                    <div class="col-12">
+                        <div class="card p-4 mt-3">
+                            <div class="row">
+                                <div class="col-12">
+                                    <h5>Question<span class="text-danger">*</span></h5>
+                                    <app-tiny-mice [height]="150" (emitEditorValue)="getEditorContextValue($event, questionId, 'editorContext')" [editorPatchValue]="false"></app-tiny-mice>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="card p-4 mt-3">
+                            <div class="row">
+                                <div class="col-12 my-2">
+                                    <h5>Settings</h5>
+                                </div>
+                                <div class="col-4">
+                                    <label><b>Level</b></label>
+                                    <select class="form-control" formControlName="level">
+                                        <option value="1">Easy</option>
+                                        <option value="2">Medium</option>
+                                        <option value="3">Difficult</option>
+                                    </select>
+                                </div>
+                                <div class="col-4">
+                                    <label class="labelName">
+                                        <b>Points</b>
+                                    </label>
+                                    <input (keypress)="numberValidate($event)" class="form-control pointInput" formControlName="points" type="text">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="card p-4 mt-3">
+                            <div class="row">
+                                <div class="col-12">
+                                    <h5>Correct Answer<span class="text-danger">*</span></h5>
+                                    <app-tiny-mice [height]="150" (emitEditorValue)="getEditorContextValue($event, questionId, 'answer')" [editorPatchValue]="false"></app-tiny-mice>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="card p-4 mt-3">
+                            <div class="row">
+                                <div class="col-12 mt-4 d-flex flex-column">
+                                    <div>
+                                        <p>Explanation</p>
+                                    </div>
+                                    <div>
+                                        <input placeholder="Enter Sample Answer" formControlName="explanation"  class="form-control inputHeight w=100">
+                                    </div>
+                                </div>
+            
+                                <div class="col-12 mt-4 d-flex flex-column">
+                                    <div>
+                                        <p>Hints</p>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-12 form-group" formArrayName="addHints" *ngFor="let list of shortText.get('addHints')['controls']; let i=index">
+                                            <div class="input-group mb-3 inputMenu" [formGroupName]="i">
+                                                <input placeholder="Enter a hint for the problem" formControlName="hint" class="form-control inputHeight w=100">
+                                                <div class="input-group-append cursor" *ngIf="i != '0'" (click)="deleted('deletePlainHint', i)">
+                                            <span class="input-group-text">
+                                                <img src="assets/images/pdf-icons/Icon material-delete.png" class="img-fluid">
+                                            </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card p-4 mt-3" [hidden]="selectOptionHeader == 'edit'">
+                    <div class="row">
+                        <div class="col-12 p-4">
+                            <h4 [innerHTML]="shortPreviewValue | sanitizeHtml"></h4>
+                        </div>
+                        <div class="col-12 mt-3">
+                            <app-tiny-mice [height]="300"></app-tiny-mice>
+                        </div>
+                    </div>
+                </div>            
+            </form>
+        </div>
+    </div>
+
+    <!--    //////Writing > Essay With Plain Text designs closed -->
+
+    <!--    passage open-->
+
+    <div *ngIf="questionId == '24'" class="row">
+        <div class="col-12">
+            <h3 class="letter">Passage > passage with Questions</h3>
+            <hr class="letter">
+        </div>
+        <div class="col-12">
+            <form [formGroup]="passage">
+                <div class="card p-4 mt-3">
+                    <div class="row">
+                        <div class="col-12 my-2" *ngIf="selectOptionHeader == 'edit'">
+                            <div class="row d-flex justify-content-between">
+                                <div class="col-5">
+                                    <h5>Select Passage<span class="text-danger">*</span></h5>
+                                    <select class="form-control cursor" formControlName="passage_id" (change)="passageSelect($event)" >
+                                        <option value="" disabled>Select Passage</option>
+                                        <option value="{{data?.passage_id}}" *ngFor="let data of listPassageDetails">{{data?.title}}</option>
+                                    </select>
+                                </div>
+                                <div class="col-3 align-self-end">
+                                    <button class="btn btn-primary w-100" (click)="addOrEditPassage('add')">Add Passage</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 my-2">
+                            <div class="row">
+                                <div class="mx-0 mb-2 col-12 d-inline-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h5>Editor Context</h5>
+                                    </div>
+                                    <div *ngIf="passage.controls.editorContext.value != '' && selectOptionHeader == 'edit'">
+                                        <img alt="" *ngIf="!editPassageContent" class="view-detail-icon1 pull-right mr-2 cursor" (click)="editPassageContent = !editPassageContent;addOrEditPassage('edit')"  src="assets/images/pdf-icons/Icon awesome-pencil-alt@2x.png" title="Edit-Passage">
+                                        <img alt="" *ngIf="editPassageContent" class="view-detail-icon1 pull-right mr-2 cursor" src="assets/images/pdf-icons/floppy-disk (2).png" (click)="passageCREDService('edit');editPassageContent = !editPassageContent"  title="Save-Passage">
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <app-tiny-mice (emitEditorValue)="getPassageContent($event)"
+                                    [editorPatchValue]="passage.controls.editorContext.value != '' ? passage.controls.editorContext.value : false"
+                                    [height]="250" [inlineEditor]="true"
+                                    [id]="'passage'" [readonly]="!editPassageContent"></app-tiny-mice>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div *ngFor="let list of passage.get('addQuestionType')['controls']; let i=index" class="row mt-4" formArrayName="addQuestionType">
+                    <div  [formGroupName]="i" class="col-md-12">
+                        <div class="card p-4 mt-3">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="row d-flex justify-content-between">
+                                        <div class="col-7">
+                                            <h5>Question Types</h5>
+                                        </div>
+                                        <div class="col-md-5 d-flex">
+                                            <select class="form-control cursor" formControlName="selectType" [ngClass]="{'div-disable' : selectOptionHeader != 'edit'}">
+                                                <option disabled value="select">Select type</option>
+                                                <option value="MultiChoice">Multi choice</option>
+                                                <option value="TrueOrFalse">True or False</option>
+                                                <option value="textEntry">Text Entry</option>
+                                                <option value="essay">Essay</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+<!--                        ////multi choice opens/////-->
+                        <div *ngIf="passage['controls'].addQuestionType['controls'][i]['controls'].selectType.value == 'MultiChoice'">
+                            <div [hidden]="selectOptionHeader != 'edit'">
+                                <div class="card p-4 mt-3">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <h5>Question<span class="text-danger">*</span></h5>
+                                            <!-- <app-tiny-mice (emitEditorValue)="getPassageOptionValue($event, questionId, 'question', 1, i, list)"
+                                                           [editorPatchValue]="type == 'add' ? false : questionEditData?.subQuestions[i]?.question"
+                                                           [height]="150" [inlineEditor]="true"
+                                                           [id]="'ques'+ i + 'passage'" [readonly]="selectOptionHeader != 'edit'"></app-tiny-mice> -->
+                                                <app-tiny-mice (emitEditorValue)="getPassageOptionValue($event, questionId, 'question', 0, i, list)"
+                                                        [editorPatchValue]="type == 'add' ? false : questionEditData?.subQuestions[i]?.question"
+                                                       [height]="150" [readonly]="selectOptionHeader != 'edit'"></app-tiny-mice>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card p-4 mt-3">
+                                    <div class="row">
+                                        <div class="col-12 my-2">
+                                            <h5>Settings</h5>
+                                        </div>
+                                        <div class="col-12 my-2">
+                                            <div class="checkbox checkbox-primary d-flex align-items-center">
+                                                <input class="cursor" (change)="multipleResponse('passageMultipleChoice', $event)"  data-original-title="" formControlName="multiResponse" id="checkbox-primary-1" title="" type="checkbox">
+                                                <label for="checkbox-primary-1" class="ml-1">Multiple Responses</label>
+                                                <input class="cursor ml-3" formControlName="autograde" type="checkbox" id="checkbox-primary-2" >
+                                                <label class="ml-1" for="checkbox-primary-2">Auto Grade</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-12 pointsSec my-2">
+                                            <div class="row">
+                                                <div class="col-4">
+                                                    <label><b>Level</b></label>
+                                                    <select class="form-control" formControlName="level">
+                                                        <option value="1">Easy</option>
+                                                        <option value="2">Medium</option>
+                                                        <option value="3">Difficult</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-4">
+                                                    <label class="labelName">
+                                                        <b>Points</b>
+                                                    </label>
+                                                    <input (keypress)="numberValidate($event)" class="form-control pointInput" formControlName="points" type="text">
+                                                </div>
+                                                <div class="col-4">
+                                                    <label><b>Editor</b></label>
+                                                    <select [ngClass]="{'div-disable' : selectOptionHeader != 'edit'}" [value]="type == 'add' ? 'text' : questionEditData?.subQuestions[i]?.editor_type == 3 ? 'math' : 'text'" class="form-control" formControlName="chooseType">
+                                                        <option disabled selected value="select">Select Question Type</option>
+                                                        <option value="text">Text</option>
+                                                        <option value="math">Math</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card p-4 mt-3">
+                                    <div class="row">
+                                        <div class="col-12 my-2">
+                                            <div class="row">
+                                                <div class="col-md-12 my-2">
+                                                    <h5 class="mb-0">Multiple Choice Options<span class="text-danger">&nbsp;*</span></h5>
+                                                </div>
+                                                <div *ngFor="let item of list.get('addMultipleChoice')['controls']; let j=index" class="form-group col-12 my-2"  formArrayName="addMultipleChoice">
+                                                    <div [formGroupName]="j" class="input-group inputMenu" style="flex-wrap: nowrap">
+                                                        <span class="m-auto pr-2" *ngIf="!passage['controls'].addQuestionType['controls'][i]['controls'].multiResponse.value">
+                                                            <input class="cursor" type="radio" name="optradio {{i}}" id="optradio {{i}}" (change)="getChoiceAnswerPassage($event, i, j, 'multipleChoiceChoose')"
+                                                                [checked]="item['controls']['active'].value == 1">
+                                                        </span>
+                                                        <span class="m-auto cursor pr-2" *ngIf="passage['controls'].addQuestionType['controls'][i]['controls'].multiResponse.value">
+                                                            <input class="cursor" type="checkbox" name="optradio1 {{i}}" id="optradio1 {{i}}" (change)="getChoiceAnswerPassage($event, i, j, 'multipleChoiceChoose')"
+                                                                [checked]="item['controls']['active'].value == 1">
+                                                        </span>
+                                                        <span class="m-auto pr-2 cursor pb-1" for="optradio1 {{j}}">{{((j+1) + 9).toString(36).toUpperCase()}}.</span>
+                                                        <app-tiny-mice [height]="150" (emitEditorValue)="getPassageOptionValue($event, questionId, 'multiOption', j, i , list.controls.addMultipleChoice)"
+                                                                       *ngIf="passage['controls'].addQuestionType['controls'][i]['controls'].chooseType.value == 'math'"
+                                                                       [editorPatchValue]="type == 'add' ? false : questionEditData?.subQuestions[i]?.options[j]?.options" class="flex-fill"
+                                                                       [id]="i+'s'+j+'editor'+random"></app-tiny-mice>
+                                                        <input *ngIf="passage['controls'].addQuestionType['controls'][i]['controls'].chooseType.value == 'text'"
+                                                               aria-label="Amount (to the nearest dollar)"  [readonly]="selectOptionHeader != 'edit'"
+                                                               class="form-control" formControlName="option" placeholder="Option {{j+1}} *" type="text">
+                                                        <div (click)="deleteChoicePassage('deletePassageChoice', i, j)" class="input-group-append cursor">
+                                                            <span class="input-group-text" [ngClass]="{'div-disable' : selectOptionHeader != 'edit'}">
+                                                                <img class="img-fluid" src="assets/images/pdf-icons/Icon material-delete.png">
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-12">
+                                                    <button (click)="addChoicePassage('passageAddChoice', i)" class="btn-sm btn-outline-primary" [hidden]="selectOptionHeader != 'edit'"><i aria-hidden="true" class="fa fa-plus-circle mr-1"></i> Add New Choice</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card p-4 mt-3">
+                                    <div class="row">
+                                        <div class="col-12 d-flex flex-column" [hidden]="selectOptionHeader != 'edit'">
+                                                <h5>Explanation</h5>
+                                                <app-tiny-mice [height]="150"
+                                                               [readonly]="selectOptionHeader != 'edit'"
+                                                               [showDropBtn]="false"
+                                                               [showInputBtn]="false"
+                                                               [id]="'passageexplaination' + i"
+                                                               [editorPatchValue]= "type != 'edit' || questionEditData?.subQuestions[i]?.explanation ?
+                                                                    questionEditData?.subQuestions[i]?.explanation : false"
+                                                               (emitEditorValue)="getPassageExplanationEditor($event, i)"></app-tiny-mice>
+                                        </div>
+
+                                        <div class="col-12 d-flex flex-column mt-3" [hidden]="selectOptionHeader != 'edit'">
+                                            <div class="row">
+                                                <h5 class="ml-3">Hint</h5>
+                                                <div *ngFor="let item of list.get('addHints')['controls']; let j=index" [hidden]="selectOptionHeader != 'edit'" class="col-12 form-group" formArrayName="addHints">
+                                                    <div [formGroupName]="j" class="input-group mb-3 inputMenu">
+                                                        <app-tiny-mice [editorPatchValue]="type != 'edit' || questionEditData?.subQuestions[i]?.hint[j]?.hint ?
+                                                            questionEditData?.subQuestions[i]?.hint[j]?.hint : false"
+                                                                       (emitEditorValue)="getPassageHintEditor($event, i, j)"
+                                                                       [height]="150"
+                                                                       [id]="'multiHintChoice'+i + j"
+                                                                       [readonly]="selectOptionHeader != 'edit'"
+                                                                       class="flex-fill"></app-tiny-mice>
+                                                    <div (click)="deleteChoicePassage('deletePassageHints', i, j)" *ngIf="j != '0'" class="input-group-append cursor">
+                                                        <span class="input-group-text">
+                                                            <img class="img-fluid" src="assets/images/pdf-icons/Icon material-delete.png">
+                                                        </span>
+                                                    </div>
+                                                  </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div [hidden]="selectOptionHeader == 'edit'" class="card p-4 mt-3">
+                                <div class="col-md-12 px-0 mt-2">
+                                    <h4 [innerHTML]="questionArray[i] | sanitizeHtml" class="innerhtml-margin-clear"></h4>
+                                </div>
+                                <div *ngIf="passage['controls'].addQuestionType['controls'][i]['controls'].chooseType.value == 'text'" class="col-12 px-0 mt-3">
+                                    <div *ngFor="let item of list.get('addMultipleChoice')['controls']; let j=index"
+                                         [ngClass]="{'question-page-selected' : item['controls']['active'].value == 1}"
+                                         class="mb-4 multiSelectCard question-page d-flex">
+                                        <span [ngClass]="{'selectColor' : item['controls']['active'].value == 1}" class="multichoice-option1 mr-2">{{((j+1) + 9).toString(36).toLowerCase()}}</span>
+                                        <span class="mt-2">{{item['controls']['option'].value}}</span>
+                                    </div>
+                                </div>
+                                <div *ngIf="passage['controls'].addQuestionType['controls'][i]['controls'].chooseType.value == 'math'" class="col-12 px-0 mt-3">
+                                    <div *ngFor="let item of list.get('addMultipleChoice')['controls']; let j=index"
+                                         class="mb-4 multiSelectCard question-page d-flex">
+                                        <span [ngClass]="{'selectColor' : item['controls']['active'].value == 1}" class="multichoice-option1 mr-2">{{((j+1) + 9).toString(36).toLowerCase()}}</span>
+                                        <span [innerHTML]="item['controls']['option'].value | sanitizeHtml" class="mt-2 ml-3"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+<!--                        ////multi choice closes/////-->
+<!--                        ////true or false opens/////-->
+                        <div *ngIf="passage['controls'].addQuestionType['controls'][i]['controls'].selectType.value == 'TrueOrFalse'">
+                            <div [hidden]="selectOptionHeader != 'edit'">
+                                <div class="row">
+                                    <div class="col-12 mt-2">
+                                        <h5>Question<span class="text-danger">*</span></h5>
+                                        <app-tiny-mice (emitEditorValue)="getPassageOptionValue($event, questionId, 'question', 0, i, list)"
+                                                       [editorPatchValue]="type == 'add' ? false : questionEditData?.subQuestions[i]?.question"
+                                                       [height]="150" [readonly]="selectOptionHeader != 'edit'"></app-tiny-mice>
+                                    </div>
+                                    <div class="col-md-12 my-2">
+                                        <div class="row">
+                                            <div class="col-5">
+                                                <h5>Multiple Choice Options<span class="text-danger">*</span></h5>
+                                            </div>
+                                            <div class="col-3">
+                                                <button (click)="addChoicePassage('passageAddChoice', i)" class="btn-sm btn-primary w-100" [hidden]="selectOptionHeader != 'edit'"><i aria-hidden="true" class="fa fa-plus-circle mr-1"></i> Add New Choice</button>
+                                            </div>
+                                            <div class="col-4">
+                                                <label><b>Editor</b></label>
+                                                <select [ngClass]="{'div-disable': selectOptionHeader != 'edit'}" [value]="type == 'add' ? 'text' : questionEditData?.subQuestions[i]?.editor_type == 3 ? 'math' : 'text'" class="form-control cursor" formControlName="chooseType">
+                                                    <option disabled selected value="select">Select Question Type</option>
+                                                    <option value="text">Text</option>
+                                                    <option value="math">Math</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 my-2">
+                                        <div class="row">
+                                            <div *ngFor="let item of list.get('addMultipleChoice')['controls']; let j=index" class="col-12 form-group" formArrayName="addMultipleChoice">
+                                                <div [formGroupName]="j" class="input-group mb-3 inputMenu" style="flex-wrap: nowrap">
+                                                    <app-tiny-mice (emitEditorValue)="getPassageOptionValue($event, questionId, 'chooseRow', j, i, list.controls.addMultipleChoice)"
+                                                                   [editorPatchValue]="type == 'add' ? false : questionEditData?.subQuestions[i]?.options[j]?.options"
+                                                                   [height]="150"
+                                                                   class="flex-fill"
+                                                                   *ngIf="passage['controls'].addQuestionType['controls'][i]['controls'].chooseType.value == 'math'"></app-tiny-mice>
+                                                    <input *ngIf="passage['controls'].addQuestionType['controls'][i]['controls'].chooseType.value == 'text'"
+                                                           aria-label="Amount (to the nearest dollar)" class="form-control" formControlName="option" placeholder="Option {{j+1}} * " type="text">
+                                                    <div (click)="deleteChoicePassage('deletePassageChoice', i, j)" class="input-group-append cursor">
+                                            <span class="input-group-text" [ngClass]="{'div-disable': selectOptionHeader != 'edit'}">
+                                                <img class="img-fluid" src="assets/images/pdf-icons/Icon material-delete.png">
+                                            </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12 my-2">
+                                        <div class="row">
+                                            <div class="col-9">
+                                                <h5>Stems<span class="text-danger">*</span></h5>
+                                            </div>
+                                            <div class="col-3">
+                                                <button (click)="addChoicePassage('passageAddTableChoose', i)" class="btn-sm btn-primary w-100" [hidden]="selectOptionHeader != 'edit'"><i aria-hidden="true" class="fa fa-plus-circle mr-1"></i> Add New Choice</button>
+                                            </div>
+                                        </div>
+                                    </div>
+    
+                                    <div class="col-12 my-2">
+                                        <div class="row">
+                                            <div *ngFor="let item of list.get('addMatchTableChoose')['controls']; let j=index" class="col-12 form-group" formArrayName="addMatchTableChoose">
+                                                <div [formGroupName]="j" class="input-group mb-3 inputMenu" style="flex-wrap: nowrap">
+                                                    <app-tiny-mice (emitEditorValue)="getPassageOptionValue($event, questionId, 'chooseColumn', j, i, list.controls.addMatchTableChoose)"
+                                                                   [editorPatchValue]="type == 'add' ? false : questionEditData?.subQuestions[i]?.answer[j]"
+                                                                   [height]="150"
+                                                                   class="flex-fill"
+                                                                   *ngIf="passage['controls'].addQuestionType['controls'][i]['controls'].chooseType.value == 'math'"
+                                                                   [readonly]="selectOptionHeader != 'edit'"></app-tiny-mice>
+                                                    <input *ngIf="passage['controls'].addQuestionType['controls'][i]['controls'].chooseType.value == 'text'"
+                                                           aria-label="Amount (to the nearest dollar)" [readonly]="selectOptionHeader != 'edit'"
+                                                           class="form-control" formControlName="option" placeholder="Option *" type="text">
+                                                    <div (click)="deleteChoicePassage('deletePassageMatch', i, j)" class="input-group-append cursor">
+                                                    <span class="input-group-text" [ngClass]="{'div-disable': selectOptionHeader != 'edit'}">
+                                                          <img class="img-fluid" src="assets/images/pdf-icons/Icon material-delete.png">
+                                                    </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12 pointsSec my-2">
+                                        <div class="checkbox checkbox-primary d-flex align-items-center">
+                                            <input (change)="multipleResponsePassage('matchTableCheck', $event, i)" [ngClass]="{'div-disable' : selectOptionHeader != 'edit'}" data-original-title="" formControlName="multiResponse" id="checkbox-primary-92" title="" type="checkbox">
+                                            <label class="ml-1" for="checkbox-primary-92">Multiple Responses</label>
+                                            <input class="ml-3 cursor" formControlName="autograde" type="checkbox">
+                                            <label class="ml-1" for="checkbox-primary-1">Auto Grade</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 my-2">
+                                        <div class="row">
+                                            <div class="col-4">
+                                                <label><b>Level</b></label>
+                                                <select class="form-control cursor" formControlName="level">
+                                                    <option value="1">Easy</option>
+                                                    <option value="2">Medium</option>
+                                                    <option value="3">Difficult</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-4">
+                                                <label class="labelName mr-3">
+                                                    <b>Points</b>
+                                                </label>
+                                                <input [readonly]="selectOptionHeader != 'edit'" (keypress)="numberValidate($event)" class="form-control pointInput" formControlName="points" type="text">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12 my-2 table-flexible">
+                                        <table class="table table-bordered text-center">
+                                            <thead>
+                                            <tr>
+                                                <th></th>
+                                                <th *ngFor="let item of list.get('addMatchTableChoose')['controls']; let j=index"
+                                                    [innerHTML]="passage['controls'].addQuestionType['controls'][i]['controls'].addMatchTableChoose['controls'][j]['controls']['option'].value | sanitizeHtml"
+                                                    class="{{passage['controls'].addQuestionType['controls'][i]['controls'].chooseType.value == 'math' ? 'innerhtml-margin-clear' : ''}}"></th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr *ngFor="let item of list.get('addMultipleChoice')['controls']; let j=index">
+                                                <td [innerHTML]="passage['controls'].addQuestionType['controls'][i]['controls'].addMultipleChoice['controls'][j]['controls']['option'].value | sanitizeHtml"
+                                                    class="{{passage['controls'].addQuestionType['controls'][i]['controls'].chooseType.value == 'math' ? 'innerhtml-margin-clear' : ''}}"></td>
+                                                <td *ngFor="let item of list.get('addMatchTableChoose')['controls']; let k=index">
+                                                    <input (change)="getChoiceAnswerPassage(j, i, k, 'matchTableChooseSingle')"
+                                                           *ngIf="passage['controls'].addQuestionType['controls'][i]['controls'].multiResponse.value == false"
+                                                           class="radio_animated"
+                                                           id="{{i}}passage{{j}}chooseSingle{{k}}"
+                                                           name="{{i}}choose{{j}}pass" type="radio">
+                                                    <input class="cursor" (change)="getChoiceAnswerPassage(j, i, k, 'matchTableChooseMulti')"
+                                                     id="{{i}}passage{{j}}chooseMulti{{k}}"
+                                                     *ngIf="passage['controls'].addQuestionType['controls'][i]['controls'].multiResponse.value == true"
+                                                      type="checkbox">
+                                                </td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="col-12 my-2 d-flex flex-column" [hidden]="selectOptionHeader != 'edit'">
+                                        <h5>Explanation</h5>
+                                        <app-tiny-mice [height]="150"
+                                                       [readonly]="selectOptionHeader != 'edit'"
+                                                       [showDropBtn]="false"
+                                                       [showInputBtn]="false"
+                                                       [id]="'passageexplaination' + i"
+                                                       [editorPatchValue]= "type != 'edit' || questionEditData.subQuestions[i]?.explanation ? questionEditData?.subQuestions[i]?.explanation : false"
+                                                       (emitEditorValue)="getPassageExplanationEditor($event, i)"></app-tiny-mice>
+                                    </div>
+
+                                    <!-- <div class="col-12 mt-3" *ngIf="selectOptionHeader == 'edit'">
+                                        <div class="row px-3 d-flex justify-content-between">
+                                            <h5>Hints</h5>
+                                            <button (click)="addChoicePassage('passageAddHint', i)" class="btn-sm btn-primary"><i aria-hidden="true" class="fa fa-plus-circle mr-1"></i> Add New Hint</button>
+                                        </div>
+                                    </div> -->
+                                    <div class="col-12 d-flex flex-column my-2" [hidden]="selectOptionHeader != 'edit'">
+                                        <div class="row">
+                                            <h5 class="ml-3">Hint</h5>
+                                            <div *ngFor="let item of list.get('addHints')['controls']; let j=index" [hidden]="selectOptionHeader != 'edit'" class="col-12 form-group" formArrayName="addHints">
+                                                <div [formGroupName]="j" class="input-group mb-3 inputMenu">
+                                                    <app-tiny-mice [editorPatchValue]="type != 'edit' || questionEditData?.subQuestions[i]?.hint[j]?.hint ?
+                                                                        questionEditData?.subQuestions[i]?.hint[j]?.hint : false"
+                                                                   (emitEditorValue)="getPassageHintEditor($event, i, j)"
+                                                                   [height]="150"
+                                                                   [id]="'multiHintChoice'+i + j"
+                                                                   [readonly]="selectOptionHeader != 'edit'"
+                                                                   class="flex-fill"></app-tiny-mice>
+                                                    <div (click)="deleteChoicePassage('deletePassageHints', i, j)" *ngIf="j != '0'" class="input-group-append cursor">
+                                                    <span class="input-group-text">
+                                                        <img class="img-fluid" src="assets/images/pdf-icons/Icon material-delete.png">
+                                                    </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div *ngIf="selectOptionHeader != 'edit'">
+                                <div class="row">
+                                    <div class="col-md-12 px-0 mt-2">
+                                        <h4 [innerHTML]="questionArray[i] | sanitizeHtml" class="innerhtml-margin-clear"></h4>
+                                    </div>
+                                </div>
+                                <div class="table-flexible">
+                                    <table class="table table-bordered text-center mt-4">
+                                        <thead>
+                                        <tr *ngIf="passage['controls'].addQuestionType['controls'][i]['controls'].chooseType.value == 'text'">
+                                            <th>Questions</th>
+                                            <th *ngFor="let item of list.get('addMatchTableChoose')['controls']; let j=index">
+                                                {{passage['controls'].addQuestionType['controls'][i]['controls'].addMatchTableChoose['controls'][j]['controls']['option'].value}}</th>
+                                        </tr>
+                                        <tr *ngIf="passage['controls'].addQuestionType['controls'][i]['controls'].chooseType.value == 'math'">
+                                            <th>Questions</th>
+                                            <th *ngFor="let item of list.get('addMatchTableChoose')['controls']; let j=index"
+                                                [innerHTML]="passage['controls'].addQuestionType['controls'][i]['controls'].addMatchTableChoose['controls'][j]['controls']['option'].value | sanitizeHtml"></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr *ngFor="let item of list.get('addMultipleChoice')['controls']; let j=index">
+                                                <td *ngIf="passage['controls'].addQuestionType['controls'][i]['controls'].chooseType.value == 'text'">{{passage['controls'].addQuestionType['controls'][i]['controls'].addMultipleChoice['controls'][j]['controls']['option'].value}}</td>
+                                                <td *ngIf="passage['controls'].addQuestionType['controls'][i]['controls'].chooseType.value == 'math'"
+                                                    [innerHTML]="passage['controls'].addQuestionType['controls'][i]['controls'].addMultipleChoice['controls'][j]['controls']['option'].value | sanitizeHtml"></td>
+                                                <td *ngFor="let item of list.get('addMatchTableChoose')['controls']; let k=index">
+                                                    <input *ngIf="passage['controls'].addQuestionType['controls'][i]['controls'].multiResponse.value == false" class="radio_animated" name="choose{{j}}" type="radio">
+                                                    <input *ngIf="passage['controls'].addQuestionType['controls'][i]['controls'].multiResponse.value == true" type="checkbox">
+                                                </td>
+                                            </tr>                                            
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+<!--                        ////true or false closes/////-->
+
+<!--                        ///// text entry passage code starts here-->
+                        <div *ngIf="passage['controls'].addQuestionType['controls'][i]['controls'].selectType.value == 'textEntry'">
+                            <div class="col-12 mt-2" [hidden]="selectOptionHeader != 'edit'">
+                                <div class="row">
+                                    <div class="col-12 mt-2">
+                                        <h5>Question<span class="text-danger">*</span></h5>
+                                        <div class="row p-3">
+                                            <div class="col-12 px-0">
+                                                <app-tiny-mice [height]="150"
+                                                               (emitEditorValue)="getPassageInputEditorValue($event, i)"
+                                                               [editorPatchValue]="type == 'add' ? false : questionEditData?.subQuestions[i]?.question"
+                                                               [id]="'myEditor-passage'+i"
+                                                               [showDropBtn]="false" [showInputBtn]="true"></app-tiny-mice>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!--                    ///// input text entry designs starts here-->
+
+                                    <div *ngIf="inputCountPassage != 0" class="col-12">
+                                        <div class="row">
+                                            <div class="col-12 d-flex my-2 px-0 justify-content-between pointsSec">
+                                                <div class="d-flex align-items-center">
+                                                    <input class="ml-3 cursor" formControlName="autograde" type="checkbox">
+                                                    <label class="ml-2 mb-0" for="checkbox-primary-1">Auto Grade</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-4">
+                                                <label><b>Level</b></label>
+                                                <select class="form-control" formControlName="level">
+                                                    <option value="1">Easy</option>
+                                                    <option value="2">Medium</option>
+                                                    <option value="3">Difficult</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-4">
+                                                <label class="labelName mr-3">
+                                                    <b>Points</b>
+                                                </label>
+                                                <input (keypress)="numberValidate($event)" [readonly]="selectOptionHeader != 'edit'" class="form-control pointInput" formControlName="points" type="text">
+                                            </div>
+
+                                            <div class="col-4">
+                                                <label><b>Editor</b></label>
+                                                <select (change)="changeEditor($event)" formControlName="chooseType"
+                                                        [value]="type == 'add' ? 'eng' : questionEditData.editor_type == 1 ? 'eng' : 'math'"
+                                                        [ngClass]="{'div-disable': selectOptionHeader != 'edit'}" class="form-control">
+                                                    <option value="eng">Text</option>
+                                                    <option value="math">Math</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div *ngFor="let data of inputArray[i]?.datas; let k=index" class="d-flex flex-row w-100 mt-2">
+                                            <div class="placeSelf">
+                                                <span >{{k+1}} </span>
+                                            </div>
+                                            <div class="w-100">
+                                                <input [readonly]="selectOptionHeader != 'edit'"
+                                                        *ngIf="passage['controls'].addQuestionType['controls'][i]['controls'].chooseType.value == 'text'"
+                                                        [(ngModel)]="data.options[0].value" [ngModelOptions]="{standalone: true}"
+                                                        class="mt-0 mb-2 ml-2 form-control w-50" placeholder="Enter the answer *">
+                                                <app-tiny-mice [height]="150" [showDropBtn]="false"
+                                                               [showInputBtn]="false"
+                                                               [id]="i+'input'+k+'er'+random"
+                                                               *ngIf="passage['controls'].addQuestionType['controls'][i]['controls'].chooseType.value == 'math'"
+                                                               [readonly]="selectOptionHeader != 'edit'"
+                                                               [editorPatchValue]="type == 'add' ? false : data.options[0].value"
+                                                               (emitEditorValue)="getEditorValue1($event , data)"></app-tiny-mice>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!--                    // closed -->
+<!--                                    <div class="col-12 d-flex justify-content-between pointsSec px-0">-->
+<!--                                        <div class="checkbox checkbox-primary p-3">-->
+<!--                                            <input class="checkbox3" data-original-title="" formControlName="multiResponse" id="checkbox-primary-4" title="" type="checkbox">-->
+<!--                                            <label class="ml-1 pb-2" for="checkbox-primary-4">Multiple Responses</label>-->
+<!--                                        </div>-->
+<!--                                        -->
+<!--                                    </div>-->
+<!--                                    <div class="col-12">-->
+<!--                                        <div class="form-group row" [ngClass]="{'div-disable': selectOptionHeader != 'edit'}">-->
+<!--                                            -->
+<!--                                            <div class="checkbox checkbox-primary p-3">-->
+<!--                                                <input class="checkbox3" data-original-title="" formControlName="ignoreCase" id="checkbox-primary-6" title="" type="checkbox">-->
+<!--                                                <label class="ml-1" for="checkbox-primary-6">Ignore Case</label>-->
+<!--                                            </div>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+
+
+                                    <div class="col-12 mt-4 d-flex flex-column" [hidden]="selectOptionHeader != 'edit'">
+                                        <h5>Explanation</h5>
+                                        <app-tiny-mice [height]="150"
+                                                       [readonly]="selectOptionHeader != 'edit'"
+                                                       [showDropBtn]="false"
+                                                       [showInputBtn]="false"
+                                                       [id]="'passageexplaination' + i"
+                                                       [editorPatchValue]= "type != 'edit' || questionEditData?.subQuestions[i]?.explanation ? questionEditData?.subQuestions[i]?.explanation : false"
+                                                       (emitEditorValue)="getPassageExplanationEditor($event, i)"></app-tiny-mice>
+                                    </div>
+
+                                    <!-- <div class="col-12 mt-3" *ngIf="selectOptionHeader == 'edit'">
+                                        <div class="row px-3 d-flex justify-content-between">
+                                            <h5>Hints</h5>
+                                            <button (click)="addChoicePassage('passageAddHint', i)" class="btn-sm btn-primary"><i aria-hidden="true" class="fa fa-plus-circle mr-1"></i> Add New Hint</button>
+                                        </div>
+                                    </div> -->
+                                    <div class="col-12 d-flex flex-column mt-3" [hidden]="selectOptionHeader != 'edit'">
+                                        <div class="row">
+                                            <h5 class="ml-3">Hint</h5>
+                                            <div *ngFor="let item of list.get('addHints')['controls']; let j=index" [hidden]="selectOptionHeader != 'edit'" class="col-12 form-group" formArrayName="addHints">
+                                                <div [formGroupName]="j" class="input-group mb-3 inputMenu">
+                                                    <app-tiny-mice [editorPatchValue]="type != 'edit' || questionEditData?.subQuestions[i]?.hint[j]?.hint ?
+                                                                    questionEditData?.subQuestions[i]?.hint[j]?.hint : false"
+                                                                   (emitEditorValue)="getPassageHintEditor($event, i, j)"
+                                                                   [height]="150"
+                                                                   [id]="'multiHintChoice'+i + j"
+                                                                   [readonly]="selectOptionHeader != 'edit'"
+                                                                   class="flex-fill"></app-tiny-mice>
+                                                    <div (click)="deleteChoicePassage('deletePassageHints', i, j)" *ngIf="j != '0'" class="input-group-append cursor">
+                                                <span class="input-group-text">
+                                                    <img class="img-fluid" src="assets/images/pdf-icons/Icon material-delete.png">
+                                                </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div [hidden]="selectOptionHeader == 'edit'">
+                                <div class="p-4">
+                                    <h4 [innerHTML]="questionArray1 | sanitizeHtml"></h4>
+                                </div>
+                                <div *ngFor="let data of inputArray[i]?.datas; let j=index" class="d-flex flex-row p-3 div-disable">
+                                    <div class="placeSelf">
+                                        <span>{{j+1}}.&nbsp;</span>
+                                    </div>
+                                    <div class="w-100" *ngIf="passage['controls'].addQuestionType['controls'][i]['controls'].chooseType.value == 'text'">
+                                        <input class="mt-0 ml-2 form-control w-50" placeholder="Enter the answer" [value]="data.options[0]?.value">
+                                    </div>
+
+                                    <div class="w-100" *ngIf="passage['controls'].addQuestionType['controls'][i]['controls'].chooseType.value == 'math'">
+                                        <span [innerHTML]="data.options[0]?.value | sanitizeHtml" class="innerhtml-margin-clear" ></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+<!--                                                ///// text entry passage code closed here-->
+                        <div *ngIf="passage['controls'].addQuestionType['controls'][i]['controls'].selectType.value == 'essay'">
+                            <div [hidden]="selectOptionHeader !='edit'" class="row">
+                                <div class="col-md-12 mt-2">
+                                    <h5>Question<span class="text-danger">*</span></h5>
+                                    <app-tiny-mice (emitEditorValue)="getPassageOptionValue($event, questionId, 'question', 0, i, list)"
+                                                   [editorPatchValue]="type == 'add' ? false : questionEditData?.subQuestions[i]?.question"
+                                                   [height]="150"></app-tiny-mice>
+                                </div>
+                                <div class="col-md-12 mt-2">
+                                    <h5>Correct Answer<span class="text-danger">*</span></h5>
+                                    <app-tiny-mice (emitEditorValue)="getPassageEssayValue($event, i)"
+                                                   [editorPatchValue]="type == 'add' ? false : questionEditData?.subQuestions[i]?.answer[0]?.correctAnswer"
+                                                   [height]="150"></app-tiny-mice>
+                                </div>
+
+                                <div class="col-12 my-2 pointsSec">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label><b>Level</b></label>
+                                            <select class="form-control" formControlName="level">
+                                                <option value="1">Easy</option>
+                                                <option value="2">Medium</option>
+                                                <option value="3">Difficult</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-4">
+                                            <label class="labelName mr-3">
+                                                <b>Points</b>
+                                            </label>
+                                            <input (keypress)="numberValidate($event)" [readonly]="selectOptionHeader != 'edit'" class="form-control pointInput" formControlName="points" type="text">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-12 mt-4 d-flex flex-column" [hidden]="selectOptionHeader != 'edit'">
+                                    <h5>Explanation</h5>
+                                    <app-tiny-mice [height]="150"
+                                                   [readonly]="selectOptionHeader != 'edit'"
+                                                   [showDropBtn]="false"
+                                                   [showInputBtn]="false"
+                                                   [id]="'passageexplaination' + i"
+                                                   [editorPatchValue]= "type != 'edit' || questionEditData?.subQuestions[i]?.explanation ? questionEditData?.subQuestions[i]?.explanation : false"
+                                                   (emitEditorValue)="getPassageExplanationEditor($event, i)"></app-tiny-mice>
+                                </div>
+
+                                <!-- <div class="col-12 mt-3" *ngIf="selectOptionHeader == 'edit'">
+                                    <div class="row px-3 d-flex justify-content-between">
+                                        <h5>Hints</h5>
+                                        <button (click)="addChoicePassage('passageAddHint', i)" class="btn-sm btn-primary"><i aria-hidden="true" class="fa fa-plus-circle mr-1"></i> Add New Hint</button>
+                                    </div>
+                                </div> -->
+                                <div class="col-12 d-flex flex-column mt-3" [hidden]="selectOptionHeader != 'edit'">
+                                    <div class="row">
+                                        <h5 class="ml-3">Hint</h5>
+                                        <div *ngFor="let item of list.get('addHints')['controls']; let j=index" [hidden]="selectOptionHeader != 'edit'" class="col-12 form-group" formArrayName="addHints">
+                                            <div [formGroupName]="j" class="input-group mb-3 inputMenu">
+                                                <app-tiny-mice [editorPatchValue]="type != 'edit' || questionEditData?.subQuestions[i]?.hint[j]?.hint ?
+                                                                questionEditData?.subQuestions[i]?.hint[j]?.hint : false"
+                                                               (emitEditorValue)="getPassageHintEditor($event, i, j)"
+                                                               [height]="150"
+                                                               [id]="'multiHintChoice'+i + j"
+                                                               [readonly]="selectOptionHeader != 'edit'"
+                                                               class="flex-fill"></app-tiny-mice>
+                                                <div (click)="deleteChoicePassage('deletePassageHints', i, j)" *ngIf="j != '0'" class="input-group-append cursor">
+                                            <span class="input-group-text">
+                                                <img class="img-fluid" src="assets/images/pdf-icons/Icon material-delete.png">
+                                            </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div *ngIf="selectOptionHeader !='edit'" class="row">
+                                <div class="col-md-12 mt-2">
+                                    <h4 [innerHTML]="questionArray[i] | sanitizeHtml" class="innerhtml-margin-clear"></h4>
+                                </div>
+                                <div class="col-md-12 mt-3">
+                                    <app-tiny-mice [height]="150"></app-tiny-mice>
+                                </div>
+                            </div>
+                        </div>
+<!--                        ///// sort list code starts-->
+<!--                        <div *ngIf="this.passage['controls'].addQuestionType['controls'][i]['controls'].selectType.value == 'sortList'">-->
+<!--                            <div class="col-12 mt-2" [hidden]="selectOptionHeader != 'edit'">-->
+<!--                                <div class="row">-->
+<!--                                    <div class="col-12 mt-2">-->
+<!--                                        <h5>Question</h5>-->
+<!--                                        <app-tiny-mice [height]="300" (emitEditorValue)="getPassageOptionValue($event, questionId, 'question', 0, i, list)"></app-tiny-mice>-->
+<!--                                        &lt;!&ndash;                        <textarea class="w-100" formControlName="question" rows="5"></textarea>&ndash;&gt;-->
+<!--                                    </div>-->
+<!--                                    <div class="col-12">-->
+<!--                                        <h5>Labels</h5>-->
+<!--                                    </div>-->
+<!--                                    <div class="col-6">-->
+<!--                                        <input placeholder="Source" formControlName="source" class="form-control inputHeight w=100">-->
+<!--                                    </div>-->
+<!--                                    <div class="col-6">-->
+<!--                                        <input placeholder="Target" formControlName="target" class="form-control inputHeight w=100">-->
+<!--                                    </div>-->
+<!--                                    <div class="col-4 mt-4 mb-3">-->
+<!--                                        <h5>List</h5>-->
+<!--                                    </div>-->
+<!--                                    <div class="col-8 mt-4 mb-3 d-flex justify-content-end">-->
+<!--                                        <button class="btn btn-primary pull-right mr-2" [disabled]="selectOptionHeader != 'edit'" (click)="addChoicePassage('passageSort', i)"><i class="fa fa-plus-circle" aria-hidden="true"></i> Add New Choice</button>-->
+<!--                                        <select class="form-control pull-right w-25" formControlName="chooseType" [ngClass]="{'div-disable': selectOptionHeader != 'edit'}">-->
+<!--                                            <option disabled selected value="select">Select Question Type</option>-->
+<!--                                            <option value="text">Text</option>-->
+<!--                                            <option value="math">Math</option>-->
+<!--                                        </select>-->
+<!--                                    </div>-->
+<!--                                    <div class="col-12" cdkDropList (cdkDropListDropped)="droppedPassage($event, i)">-->
+<!--                                        <div class="row">-->
+<!--                                            <div class="col-12 form-group"  formArrayName="addMultipleChoice" *ngFor="let item of list.get('addMultipleChoice')['controls']; let j=index">-->
+<!--                                                <div class="input-group mb-1 inputMenu" style="flex-wrap: nowrap" cdkDrag [formGroupName]="j">-->
+<!--                                                    <div class="input-group-prepend">-->
+<!--                                                        <span class="input-group-text">-->
+<!--                                                            <img src="assets/images/pdf-icons/equal@2x.png" class="img-fluid">-->
+<!--                                                        </span>-->
+<!--                                                    </div>-->
+<!--                                                    <input *ngIf="this.passage['controls'].addQuestionType['controls'][i]['controls'].chooseType.value == 'text'"-->
+<!--                                                           (keyup)="getPassageSortValue($event,i, j, 'text')"-->
+<!--                                                           [readonly]="selectOptionHeader != 'edit'"-->
+<!--                                                           class="form-control" formControlName="option" placeholder="item" type="text">-->
+<!--                                                    <app-tiny-mice [height]="150" class="flex-fill" (emitEditorValue)="getPassageSortValue($event,i, j, 'math')"-->
+<!--                                                                   [readonly]="selectOptionHeader != 'edit'"-->
+<!--                                                                   *ngIf="this.passage['controls'].addQuestionType['controls'][i]['controls'].chooseType.value == 'math'" [id]="i+'sort'+j"></app-tiny-mice>-->
+<!--                                                    <div class="input-group-append cursor">-->
+<!--                                                        <span class="input-group-text" [ngClass]="{'div-disable': selectOptionHeader != 'edit'}">-->
+<!--                                                            <img src="assets/images/pdf-icons/Icon material-delete.png" (click)="deleteChoicePassage('deletePassageSort', i, j)" class="img-fluid">-->
+<!--                                                        </span>-->
+<!--                                                    </div>-->
+<!--                                                </div>-->
+<!--                                            </div>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+
+<!--                                    <div class="col-12 d-flex justify-content-between pointsSec">-->
+<!--                                        <div class="">-->
+<!--                                            <h5>Set Correct Answers</h5>-->
+<!--                                        </div>-->
+<!--                                        <div class="d-flex flex-row align-items-center">-->
+<!--                                            <label class="labelName mr-3">-->
+<!--                                                <b>Points</b>-->
+<!--                                            </label>-->
+<!--                                            <input  type="text" formControlName="points" [readonly]="selectOptionHeader != 'edit'" (keypress)="numberValidate($event)"  class="form-control pointInput">-->
+
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                    <div class="col-12">-->
+<!--                                        <div class="col-12" cdkDropList (cdkDropListDropped)="droppedCorrectPassage($event, i)">-->
+<!--                                            <div class="input-group mb-3 mt-3 inputMenu" formArrayName="addMultipleChoose" *ngFor="let item of list.get('addMultipleChoose')['controls']; let j=index">-->
+<!--                                                <div class="input-group mb-1 inputMenu" cdkDrag [formGroupName]="j">-->
+<!--                                                    <div class="input-group-prepend">-->
+<!--                                                        <span class="input-group-text">-->
+<!--                                                            <img src="assets/images/pdf-icons/equal@2x.png" class="img-fluid">-->
+<!--                                                        </span>-->
+<!--                                                    </div>-->
+<!--                                                    <input type="text" readonly formControlName="selectOption" placeholder="item" class="form-control" aria-label="Amount (to the nearest dollar)">-->
+<!--                                                </div>-->
+<!--                                            </div>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                    <div class="col-12 mt-2 d-flex flex-column">-->
+<!--                                        <div>-->
+<!--                                            <p>Explanation</p>-->
+<!--                                        </div>-->
+<!--                                        <div>-->
+<!--                                            <input placeholder="Enter Sample Answer" [readonly]="selectOptionHeader != 'edit'" formControlName="explanation" class="form-control inputHeight w=100">-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                    <div class="col-12 mt-2 d-flex justify-content-between pointsSec">-->
+<!--                                        <div class="">-->
+<!--                                            <p>Hints</p>-->
+<!--                                        </div>-->
+<!--                                        <div class="d-flex flex-row align-items-center">-->
+<!--                                            <button class="btn btn-primary pull-right" [hidden]="selectOptionHeader != 'edit'" (click)="addChoicePassage('passageAddHint', i)"><i class="fa fa-plus-circle" aria-hidden="true"></i> Add New Hint</button>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                    <div class="col-12 mt-2 d-flex flex-column">-->
+<!--                                        <div class="row">-->
+<!--                                            <div class="col-12 form-group" formArrayName="addHints" *ngFor="let item of list.get('addHints')['controls']; let j=index">-->
+<!--                                                <div class="input-group mb-3 inputMenu" [formGroupName]="j">-->
+<!--                                                    <input placeholder="Enter a hint for the problem" [readonly]="selectOptionHeader != 'edit'" formControlName="hint" class="form-control inputHeight w=100">-->
+<!--                                                    <div class="input-group-append cursor" *ngIf="i != '0'" (click)="deleteChoicePassage('deletePassageHints', i, j)">-->
+<!--                                <span class="input-group-text">-->
+<!--                                    <img src="assets/images/pdf-icons/Icon material-delete.png" class="img-fluid">-->
+<!--                                </span>-->
+<!--                                                    </div>-->
+<!--                                                </div>-->
+<!--                                            </div>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                            <div *ngFor="let list of  sourcePassageArr; let j=index" [hidden]="selectOptionHeader == 'edit'">-->
+<!--                                <div class="row mt-2">-->
+
+<!--                                    <div class="col-12 text-right">-->
+<!--                                        <button *ngIf="passageShowAnswer == false"  class="btn btn-primary mr-2" (click)="passageShowAnswer = true">Show Answer</button>-->
+<!--                                        <button *ngIf="passageShowAnswer == true"  class="btn btn-primary mr-2" (click)="passageShowAnswer = false">Hide Answer</button>-->
+<!--                                        <button class="btn btn-primary" (click)="checkPassageAnswer()">Check Answer</button>-->
+<!--                                    </div>-->
+<!--                                    <div class="col-12 pl-4 question-align" [innerHTML]="questionValue">-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                                <div class="row mt-2">-->
+<!--                                    <div class="col-6" cdkDropList>-->
+<!--                                        <h4>{{passage['controls'].addQuestionType['controls'][i]['controls'].source.value}}</h4>-->
+<!--                                        <div class="row">-->
+<!--                                            &lt;!&ndash;                                    <div class="col-12 form-group" formArrayName="matchSortSource" *ngFor="let list of matchSort.get('matchSortSource')['controls']; let i=index">&ndash;&gt;-->
+<!--                                            &lt;!&ndash;                                        <div class="input-group mb-3 mt-3 inputMenu" cdkDrag [formGroupName]="i" [cdkDragDisabled]="true">&ndash;&gt;-->
+<!--                                            &lt;!&ndash;                                            <div class="input-group-prepend">&ndash;&gt;-->
+<!--                                            &lt;!&ndash;                                                <span class="input-group-text">&ndash;&gt;-->
+<!--                                            &lt;!&ndash;                                                    <img src="assets/images/pdf-icons/equal@2x.png" class="img-fluid">&ndash;&gt;-->
+<!--                                            &lt;!&ndash;                                                </span>&ndash;&gt;-->
+<!--                                            &lt;!&ndash;                                            </div>&ndash;&gt;-->
+<!--                                            &lt;!&ndash;                                                <input type="text" readonly formControlName="option" placeholder="item" class="form-contol w-75" aria-label="Amount (to the nearest dollar)">&ndash;&gt;-->
+<!--                                            &lt;!&ndash;                                        </div>&ndash;&gt;-->
+<!--                                            &lt;!&ndash;                                    </div>&ndash;&gt;-->
+<!--                                            <div class="col-12 form-group" *ngFor="let list of  sourcePassageArr; let i=index">-->
+<!--                                                <div class="input-group mb-3 mt-3 inputMenu" cdkDrag  [cdkDragDisabled]="true">-->
+<!--                                                    <div class="input-group-prepend">-->
+<!--                                                <span class="input-group-text">-->
+<!--                                                    <img src="assets/images/pdf-icons/equal@2x.png" class="img-fluid">-->
+<!--                                                </span>-->
+<!--                                                    </div>-->
+<!--                                                    <input type="text" readonly [value]="list.value" placeholder="item" class="form-contol w-75" aria-label="Amount (to the nearest dollar)">-->
+<!--                                                </div>-->
+<!--                                            </div>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                    <div class="col-6" cdkDropList (cdkDropListDropped)="droppedTarget($event)">-->
+<!--                                        <h4>{{passage['controls'].addQuestionType['controls'][i]['controls'].target.value}}</h4>-->
+<!--                                        <div class="row">-->
+<!--                                            &lt;!&ndash;                                    <div class="col-12 form-group" formArrayName="matchSortTarget" *ngFor="let list of matchSort.get('matchSortTarget')['controls']; let i=index">&ndash;&gt;-->
+<!--                                            &lt;!&ndash;                                        <div class="input-group mb-3 mt-3 inputMenu" cdkDrag [formGroupName]="i">&ndash;&gt;-->
+<!--                                            &lt;!&ndash;                                            <div class="input-group-prepend">&ndash;&gt;-->
+<!--                                            &lt;!&ndash;                                                <span class="input-group-text">&ndash;&gt;-->
+<!--                                            &lt;!&ndash;                                                    <img src="assets/images/pdf-icons/equal@2x.png" class="img-fluid">&ndash;&gt;-->
+<!--                                            &lt;!&ndash;                                                </span>&ndash;&gt;-->
+<!--                                            &lt;!&ndash;                                            </div>&ndash;&gt;-->
+<!--                                            &lt;!&ndash;                                            <input type="text" readonly formControlName="selectOption" placeholder="item" class="form-contol w-75" aria-label="Amount (to the nearest dollar)">&ndash;&gt;-->
+<!--                                            &lt;!&ndash;                                        </div>&ndash;&gt;-->
+<!--                                            &lt;!&ndash;                                    </div>&ndash;&gt;-->
+<!--                                            <div class="col-12 form-group"  *ngFor="let list of targetPassageArr; let i=index">-->
+<!--                                                <div class="input-group mb-3 mt-3 inputMenu" cdkDrag>-->
+<!--                                                    <div class="input-group-prepend">-->
+<!--                                                <span class="input-group-text">-->
+<!--                                                    <img src="assets/images/pdf-icons/equal@2x.png" class="img-fluid">-->
+<!--                                                </span>-->
+<!--                                                    </div>-->
+<!--                                                    <input type="text" [ngStyle]="{'border': list.valid == '1' ? '2px solid green':  list.valid == '2' ? '2px solid red' : ''}" readonly [value]="list.value" placeholder="item" class="form-contol w-75" aria-label="Amount (to the nearest dollar)">-->
+<!--                                                </div>-->
+<!--                                            </div>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                    <div class="col-12 mt-2" *ngIf="passageShowAnswer == true">-->
+<!--                                        <div class="row">-->
+<!--                                            <div class="col-12">-->
+<!--                                                <h6><b>Correct Answer</b></h6>-->
+<!--                                            </div>-->
+<!--                                            <div class="col-3 mt-2" *ngFor="let list of targetPassageArr1; let i=index">-->
+<!--                                                <p class="p-1"><span class="multichoice-option2 mr-2">{{((i+1) + 9).toString(36).toLowerCase()}}</span><span>{{list.value}}</span></p>-->
+<!--                                            </div>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+<!--    //////graphingg open-->
+
+<!--    <div *ngIf="questionId == '40' || questionId == '41'" class="row">-->
+    <div *ngIf="questionId == '40' || questionId == '41'" class="row">
+        <div class="col-12">
+            <h3 class="letter">Writing >Graphing</h3>
+            <hr class="letter">
+        </div>
+        <div class="col-12 mt-2">
+            <form>
+                <div class="card p-4 mt-3" [hidden]="selectOptionHeader != 'edit'">
+                    <div class="row">
+                        <div class="col-12 mt-2">
+                            <h5>Question<span class="text-danger">*</span></h5>
+                            <app-tiny-mice (emitEditorValue)="getGraphQuestionValue($event, questionId)"  [editorPatchValue]="type == 'add' ? false : questionEditData.question" [height]="150" [id]="'highlightEditot'"
+                                           [showDropBtn]="false"
+                                           [showInputBtn]="false"></app-tiny-mice>
+                        </div>
+                    </div>
+                </div>
+                <div class="card p-4 mt-3" *ngIf="selectOptionHeader == 'edit'">
+                    <div class="row">
+                        <div class="col-12 my-2">
+                            <h5>Settings</h5>
+                        </div>
+                        <div class="col-4">
+                            <label><b>Level</b></label>
+                            <select class="form-control" [(ngModel)]="graphLevel" [ngModelOptions]="{standalone: true}">
+                                <option value="1">Easy</option>
+                                <option value="2">Medium</option>
+                                <option value="3">Difficult</option>
+                            </select>
+                        </div>
+                        <div class="col-4">
+                            <label class="labelName mr-3"><b>Points</b></label>
+                            <input (keypress)="numberValidate($event)" [(ngModel)]="graphPoints" [ngModelOptions]="{standalone: true}" [value]="graphPoints" class="form-control pointInput" maxlength="3" type="text">
+                        </div>
+                    </div>
+                </div>
+                <div class="card p-4 mt-3">
+                    <div class="row">
+                        <div class="col-12 my-2" *ngIf="selectOptionHeader == 'edit'">
+                            <h5>Graphing Area {{markType}}</h5>
+                        </div>
+                        <div class="col-12 p-4" *ngIf="graphQuestionEditor && selectOptionHeader != 'edit'">
+                            <h4 [innerHTML]="graphQuestionEditor.content | sanitizeHtml"></h4>
+                        </div>
+                        <div class="col-12 my-2 d-flex justify-content-center {{selectOptionHeader != 'edit' ? 'div-disable' : ''}}"  *ngIf="type != 'edit'">
+                            <app-graph-component (emitItem)="getEmitedValue($event)"
+                                                 (valueChange)="getGraphValue($event)"
+                                                 [editMode]="true"
+                                                 [editPatchValue]="false"
+                                                 [graphId]="'graph1'"
+                                                 [saveAndDuplicate]="saveAndDuplicate"
+                                                 [questionType]="questionId"></app-graph-component>
+                        </div>
+                        <div class="col-12 my-2 d-flex justify-content-center {{selectOptionHeader != 'edit' ? 'div-disable' : ''}}"  *ngIf="type == 'edit' && graphBoardValue">
+                            <app-graph-component (emitItem)="getEmitedValue($event)"
+                                                 (valueChange)="getGraphValue($event)"
+                                                 [editMode]="true"
+                                                 [saveAndDuplicate]="saveAndDuplicate"
+                                                 [editPatchValue]="parseVal(questionEditData.answer[0].correctAnswer)"
+                                                 [graphId]="'graph2'"
+                                                 [questionType]="questionId"></app-graph-component>
+                        </div>
+                        <div class="col-12 my-2 {{selectOptionHeader != 'edit' ? 'div-disable' : ''}}">
+                            <app-tiny-mice (emitEditorValue)="getGraphEditorAnswerValue($event)"
+                                           [editorPatchValue]="type == 'add' ? false : questionEditData.editor_answer"
+                                           [height]="150" [id]="'editorGraphPatch'"
+                                           [showDropBtn]="false" [showInputBtn]="false"></app-tiny-mice>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+<!--        <div class="card p-4 mt-3" *ngIf="selectOptionHeader !='edit'">-->
+<!--            <div class="row">-->
+<!--                <div class="col-12 p-4" *ngIf="graphQuestionEditor">-->
+<!--                    <h4 [innerHTML]="graphQuestionEditor.content | sanitizeHtml"></h4>-->
+<!--                </div>-->
+<!--                    <div  *ngIf="graphBoardValue" class="col-12 mt-0 d-flex justify-content-center mb-3">-->
+<!--    &lt;!&ndash;                    <app-graph-component [graphId]="'grpjprive'"  [editMode]="false" [editPatchValue]="graphBoardValue" [questionType]="questionId" (emitItem)="getEmitedPrevValue($event)" (valueChange)="getGraphPrevewValue($event)"></app-graph-component>&ndash;&gt;-->
+<!--                        <app-graph-component [graphId]="'grpjprive'"  [editMode]="true" [editPatchValue]="false" [questionType]="questionId" (emitItem)="getEmitedPrevValue($event)" (valueChange)="getGraphPrevewValue($event)"></app-graph-component>-->
+<!--                    </div>-->
+<!--                <div class="col-md-12 mt-3 mb-3">-->
+<!--                    <app-tiny-mice [editorPatchValue]="false"-->
+<!--                                   [height]="150" [id]="'editorGraphPatchPre'"-->
+<!--                                   [showDropBtn]="false" [showInputBtn]="false"></app-tiny-mice>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+    </div>
+
+<!--    <div *ngIf="questionId == '40' || questionId == '41'" class="row">-->
+<!--        <div class="col-12">-->
+<!--            <h3 class="letter" >Writing >Graphing in 1st Quadrant</h3>-->
+<!--            &lt;!&ndash;            <h3 class="letter" *ngIf="questionId == '41'">Writing >Line Graphing</h3>&ndash;&gt;-->
+<!--            <hr class="letter">-->
+<!--            <button class="btn btn-outline-primary w-25" [ngClass]="{'selectColor' : selectOptionHeader == 'edit'}" (click)="selectHeader('edit')"><i class="fa fa-pencil" aria-hidden="true"></i> Edit Mode</button>-->
+<!--            <button class="btn btn-outline-primary w-25" [disabled]="!graphBoardValue" [ngClass]="{'selectColor' : selectOptionHeader == 'graphpreview'}" (click)="selectHeader('highligthPreview')"><i class="fa fa-eye" aria-hidden="true"></i> Preview Mode</button>-->
+<!--            <button class="btn btn-outline-primary w-25" [disabled]="!graphBoardValue" (click)="saveQuestions('graphing')" ><i class="fa fa-save" aria-hidden="true"></i> Save</button>-->
+<!--            <button class="btn btn-outline-primary w-25" (click)="cancelAction()"><i class="fa fa-times" aria-hidden="true"></i> Cancel</button>-->
+<!--        </div>-->
+
+<!--        <div class="col-12 mt-2" [hidden]="selectOptionHeader != 'edit'">-->
+<!--            <form>-->
+<!--                <div class="row d-flex justify-content-center">-->
+<!--                    <div class="col-12 mt-2">-->
+<!--                        <h5>Question</h5>-->
+<!--                        <app-tiny-mice [height]="300"  [id]="'highlightEditot'" [showInputBtn]="false" [showDropBtn]="false" (emitEditorValue)="getGraphQuestionValue($event , questionId)" [editorPatchValue]="false"></app-tiny-mice>-->
+<!--                    </div>-->
+<!--                    <div class="col-12 mt-2">-->
+<!--                        <h5>Graphing Area {{markType}}</h5>-->
+<!--                    </div>-->
+
+<!--                    <div class="row">-->
+<!--                            <div class="col-12 mt-0 d-flex justify-content-center" *ngIf="type != 'edit'">-->
+<!--                                <app-graph-component  [editMode]="false" [editPatchValue]="editGraphMode" [questionType]="questionId" (emitItem)="getEmitedValue($event)" (valueChange)="getGraphValue($event)"></app-graph-component>-->
+<!--                            </div>-->
+<!--                        <div class="col-12 mt-0 d-flex justify-content-center" *ngIf="type == 'edit'">-->
+<!--                                <app-graph-component  [editMode]="true" [editPatchValue]="editGraphMode" [questionType]="questionId" (emitItem)="getEmitedValue($event)" (valueChange)="getGraphValue($event)"></app-graph-component>-->
+<!--                            </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </form>-->
+<!--        </div>-->
+<!--        <div class="row" *ngIf="selectOptionHeader !='edit'">-->
+<!--            <div class="col-12 p-4" *ngIf="graphQuestionEditor">-->
+<!--                <h4 [innerHTML]="graphQuestionEditor.content | sanitizeHtml"></h4>-->
+<!--            </div>-->
+<!--&lt;!&ndash;            style="pointer-events: none;"&ndash;&gt;-->
+<!--                <div class="col-12 mt-0 d-flex justify-content-center"  *ngIf="graphBoardValue">-->
+<!--                    <app-graph-component  [editMode]="false" [editPatchValue]="graphBoardValue" [questionType]="questionId" (emitItem)="getEmitedValue($event)" (valueChange)="getGraphValue($event)"></app-graph-component>-->
+<!--                </div>-->
+<!--        </div>-->
+<!--    </div>-->
+
+
+
+
+<!--    ///-->
+<!--    // graphing closed-->
+
+
+<!--    //// highlight page code -->
+    <div *ngIf="questionId == '28'" class="row">
+        <div class="col-12">
+            <h3 class="letter"> Highlight > Sentence and Response </h3>
+        </div>
+        <div class="col-12 mt-2">
+            <form [formGroup]="highlight">
+                <div class="row" [hidden]="selectOptionHeader !='edit'">
+                    <div class="col-12">
+                        <div class="card p-4 mt-3">
+                            <div class="row">
+                                <div class="col-12 mt-2">
+                                    <h5>Question<span class="text-danger">*</span></h5>
+                                    <app-tiny-mice (emitEditorValue)="getEditorContextValue($event, questionId, 'editorContext')"  [editorPatchValue]="type == 'add' ? false : questionEditData.question"
+                                                   [height]="150" [id]="'highlightEditot'"
+                                                   [showDropBtn]="false"
+                                                   [showInputBtn]="false"></app-tiny-mice>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="card p-4 mt-3">
+                            <div class="row">
+                                <div class="col-12 mt-2">
+                                    <h5>Correct Answer<span class="text-danger">*</span></h5>
+                                    <app-tiny-mice (emitEditorValue)="getEditorContextValue1($event, questionId, 'answer')" [editorPatchValue]="type == 'add' ? false : questionEditData.options[0].options"
+                                                   [height]="150"  [hideBackcolr]="true" [id]="'highlightEditor2'"
+                                                   [showDropBtn]="false"
+                                                   [showInputBtn]="false"></app-tiny-mice>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="card p-4 mt-3">
+                            <div class="row">
+                                <div class="col-12 mt-2">
+                                    <h5>Correct Answer With Highlight Option</h5>
+                                    <app-tiny-mice (emitEditorValue)="getEditorContextValue2($event, questionId, 'highlight')" [editorPatchValue]="type == 'add' ? false : questionEditData.answer[0].correctAnswer"
+                                                   [height]="150" [id]="'highlightEditor3'"
+                                                   [showDropBtn]="false"
+                                                   [showInputBtn]="false"></app-tiny-mice>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="card p-4 mt-3">
+                            <div class="row">
+                                <div class="col-12 mt-2 mb-3 px-0 d-flex justify-content-end">
+                                    <div class="mt-2 ml-2 col-2 d-flex align-content-center">
+                                        <label class="labelName mb-0 mt-2"><b>Points</b></label>
+                                        <input (keypress)="numberValidate($event)" [readonly]="selectOptionHeader !='edit'" class="form-control ml-2 pointInput" formControlName="points" maxlength="3" type="text">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card p-4 mt-3" [hidden]="selectOptionHeader =='edit'">
+                    <div class="row">
+                        <div class="col-12 p-4">
+                            <h4 [innerHTML]="answertValue | sanitizeHtml"></h4>
+                        </div>
+                            <div class="col-12 p-4">
+                                <h4 [innerHTML]="answerKeyValue | sanitizeHtml"></h4>
+                            </div>
+                    </div>
+                </div> 
+            </form>
+        </div>
+    </div>
+
+    <div class="card p-4 mt-3">
+        <div class="row">
+            <div class="col-12" *ngIf="questionId != '24'" [hidden]="selectOptionHeader != 'edit'">
+                <h5>Explanation</h5>
+                <app-tiny-mice [height]="150"
+                               [readonly]="selectOptionHeader != 'edit'"
+                               [showDropBtn]="false"
+                               [showInputBtn]="false"
+                               [id]="'explaination'"
+                               [editorPatchValue]= "type == 'add' ? false : questionEditData.explanation"
+                               (emitEditorValue)="getExplanationEditor($event)"></app-tiny-mice>
+            </div>
+    
+            <div class="col-12 mt-3" *ngIf="selectOptionHeader == 'edit' && questionId != '24'">
+                <div class="row">
+                    <div class="col-6">
+                        <h5>Hints</h5>
+                    </div>
+                    <!-- <div class="col-6">
+                        <button class="btn-sm btn-primary pull-right" (click)="addHintsArray()"><i aria-hidden="true" class="fa fa-plus-circle mr-1"></i> Add New Hint</button>
+                    </div> -->
+                </div>
+            </div>
+            <div class="col-12 d-flex flex-column" *ngIf="questionId != '24'" [hidden]="selectOptionHeader != 'edit'">
+                    <div class="row">
+                        <div class="col-12 form-group" [hidden]="selectOptionHeader != 'edit'"
+                            *ngFor="let list of hintArray; let i=index">
+                            <div class="input-group mb-3 inputMenu">
+                                <app-tiny-mice [editorPatchValue]="list.value == '' || type == 'add' ? false : list.value"
+                                               (emitEditorValue)="getHintEditor($event, i)"
+                                               [height]="150"
+                                               [id]="'multiHint'+i"
+                                               [readonly]="selectOptionHeader != 'edit'"
+                                               class="flex-fill"></app-tiny-mice>
+                                <div class="input-group-append cursor" *ngIf="i != '0'">
+                                    <span class="input-group-text" (click)="removeHintArray(i)">
+                                        <img src="assets/images/pdf-icons/Icon material-delete.png" class="img-fluid">
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+    
+            <div class="col-12 text-right mt-3">
+                <button *ngIf="!showPreview" class="btn btn-outline-info mr-2" (click)="selectHeader('edit'); showPreview = !showPreview"><i class="fa fa-long-arrow-left fa-1x" aria-hidden="true"></i> Back</button>
+                <button *ngIf="showPreview" class="btn btn-outline-primary mr-2" (click)="selectHeader(commonPreview); showPreview = !showPreview"><i aria-hidden="true" class="fa fa-eye"></i> Preview</button>
+                <div class="btn-group dropup mr-2" *ngIf="type == 'add' && showPreview">
+                    <button class="btn btn-outline-success dropdown-toggle" data-toggle="dropdown"><i class="fa fa-save"
+                                                                                                      aria-hidden="true"></i>
+                        Save
+                    </button>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item dropdown-link" (click)="saveQuestions(commonNameForQuestionId, 'list')">Save
+                            &
+                            New</a>
+                        <a class="dropdown-item dropdown-link" (click)="saveQuestions(commonNameForQuestionId, 'same')">Save
+                            &
+                            Duplicate</a>
+                        <a class="dropdown-item dropdown-link" (click)="saveQuestions(commonNameForQuestionId, 'close')">Save
+                            &
+                            Close</a>
+                    </div>
+                </div>
+                <button *ngIf="type == 'edit' && showPreview" class="btn btn-outline-success mr-2" (click)="saveQuestions(commonNameForQuestionId, 'close')">
+                    <i class="fa fa-save mr-2" aria-hidden="true"></i>Update
+                </button>
+                <button *ngIf="showPreview" class="btn btn-outline-danger mr-2" (click)="cancelAction()" ><i class="fa fa-times" aria-hidden="true"></i> Cancel</button>
+            </div>
+        </div>
+    </div>
+    
+
+
+    <!--    //// highlight page code end-->
+    </div>
+</div>
+
+<ng-template #deletePassageQuestion let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h4 class="modal-title letter">Delete Question</h4>
+    </div>
+    <div class="modal-body d-flex justify-content-right">
+        <div class="col-12 text-center">
+            <h5>Are you sure want to delete this question ?</h5>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button (click)="deletePassage(passageDeleteData, passageDeleteid)" class="btn btn-primary" type="button">Confirm</button>
+        <button class="btn btn-outline-primary" (click)="closeQuestion()">Cancel</button>
+    </div>
+</ng-template>
+
+<ng-template #passageAdd let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h4 class="modal-title w-100 letter" id="modal-basic-title202"><b class="text-capitalize">{{type}} Passage</b>
+        </h4>
+        <i class="fa fa-close fa-lg mt-1 cursor color-primary" aria-hidden="true"
+            title="Close" style="float: right;" (click)="close()"  ></i>
+    </div>
+
+    <div class="modal-body">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-12 mt-5">
+                    <form [formGroup]="passageForm">
+                        <div class="form-group row">
+                            <label for="validationCustom0" class="col-xl-2 col-md-3 ml-4 mt-2"
+                                   style="font-size:15px"><span style="color:red;">*</span>
+                                Passage Title</label>
+                            <div class="col-xl-9 col-md-10">
+                                <input class="form-control" formControlName="title" id="validationCustom0" type="text"
+                                       placeholder="Title" required="">
+                                <em class="error"
+                                    *ngIf="!passageForm.get('title').valid && (passageForm.get('title').dirty || passageForm.get('title').touched)">Title
+                                    is required</em>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="validationCustom1" class="col-xl-2 col-md-3 ml-4 mt-2"
+                                   style="font-size:15px"><span style="color:red;">*</span>
+                                Passage</label>
+                            <div class="col-xl-9 col-md-10">
+                                <app-tiny-mice (emitEditorValue)="getPassageAddEditorValue($event)"
+                                               [height]="300" [readonly]="false"
+                                               [id]="'passageId'" [showDropBtn]="false" [showInputBtn]="false">
+                                </app-tiny-mice>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <div class="col-12 d-flex justify-content-end">
+            <button class="btn cancel" (click)="formPassageValue()" type="button">Reset</button>
+            <button class="btn btn-primary ml-2" (click)="passageCREDService(type)" type="button">{{type == 'add' ? 'Submit' : 'Update'}}</button>
+        </div>
+    </div>
+</ng-template>
+
+

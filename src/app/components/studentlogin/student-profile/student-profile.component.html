@@ -1,0 +1,357 @@
+<!-- Container-fluid starts-->
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-4 col-xl-4 col-sm-4 {{env.deviceType() ? 'pl-2 pr-0' : ''}}">
+            <div class="card">
+                <div class="card-body">
+                    <div class="profile-details text-center">
+                        <div class="avatar-upload">
+                            <div class="avatar-edit">
+                                <input type='file' id="imageUpload" (change)="encodeImageFileAsURL($event)" accept=".png, .jpg, .jpeg" />
+                                <label for="imageUpload"></label>
+                            </div>
+                            <div class="avatar-preview">
+                                <div class="blur-up lazyloaded" *ngIf="profile == ''" id="imagePreview" style="background-image: url(assets/images/dashboard/default.png)"></div>
+                                <img class="blur-up lazyloaded" *ngIf="listCheck && profile != ''" id="imagePreview2" [src]="profile" width="100%">
+                                <div class="blur-up lazyloaded" *ngIf="!listCheck && profile != ''"  width="100%" id="imagePreview1" [style.background-image]="'url('+imgUrl+ '/' + profile +')'"></div>
+                            </div>
+                        </div>
+
+                        <h5 class="f-w-600 mb-0">{{firstname}} {{lastname}}</h5>
+                        <span>{{email}}</span>
+
+                        <div class="row mt-3">
+                            <div class="col-md-3" *ngFor="let imgIdx of imageObject; let i = index" style="cursor: pointer">
+                                <img [src]="imgIdx.thumbImage" (click)="getImage(i, imgIdx)"   width="50">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-8 col-sm-8 col-md-8 {{env.deviceType() ? 'px-2' : ''}}">
+            <div class="card tab2-card">
+                <div class="card-body">
+                    <h4 class="position-relative border-bottom pb-2 letter">
+                        <app-feather-icons [icon]="'user'"></app-feather-icons>Personal Details
+                        <app-feather-icons (click)="editPage()" *ngIf="type == 'view' && !editView" [icon]="'edit'" class="cursor" style="float: right; position: absolute; left: 40rem"></app-feather-icons>
+                    </h4>
+                                <div class="tab-pane fade show active" id="top-profile" role="tabpanel"
+                                     aria-labelledby="top-profile-tab">
+                                    <div *ngIf="type == 'view' && !editView" class="table-responsive profile-table">
+                                        <table class="table table-responsive">
+                                            <tbody>
+                                            <tr>
+                                                <td>First Name:</td>
+                                                <td>{{firstname | titlecase}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Last Name:</td>
+                                                <td>{{lastname | titlecase}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Email:</td>
+                                                <td>{{email}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Gender:</td>
+                                                <td class="capital">{{gender | titlecase}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Mobile Number:</td>
+                                                <td>{{mobile}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>DOB:</td>
+                                                <td>{{birthday | date: 'MM-dd-yyyy'}}</td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                        <h4 class="position-relative border-bottom pb-2 letter" *ngIf="type == 'view' && !editView && userVerification !='admin'" >
+                                            <app-feather-icons [icon]="'user'"></app-feather-icons>Parent 1 Details
+                                        </h4>
+                                        <table class="table table-responsive">
+                                            <tbody>
+                                            <tr>
+                                                <td>Parent 1 Name:</td>
+                                                <td>{{p1name != '' && p1name ? (p1name | titlecase) : '-'}}</td>
+                                            </tr>
+                                            <tr>
+                                                 <td>Parent 1 Address1:</td>
+                                                 <td>{{p1address1 != '' && p1address1 ? (p1address1 | titlecase) : '-' }}</td>
+                                            </tr>
+                                            <tr>
+                                                  <td>Parent 1 Address2:</td>
+                                                  <td>{{p1address2 != '' && p1address2 ? (p1address2 | titlecase) : '-'}}</td>
+                                            </tr>
+                                            <tr >
+                                                <td>City:</td>
+                                                <td>{{p1city != '' && p1city ? (p1city | titlecase) : '-'}}</td>
+                                            </tr>
+                                            <tr *ngIf="p1state != 'null' && p1country != 'null' && p1state != '0' && p1country != '0'">
+                                                <td>State:</td>
+                                                <td><span>{{p1statename != '' && p1statename ? (p1statename | titlecase) : '-'}}</span></td>
+                                            </tr>
+                                            <tr  *ngIf="p1state != 'null' && p1country != 'null' && p1state != '0' && p1country != '0'">
+                                                <td>Country:</td>
+                                                <td><span *ngIf="p1statename != 'null' && p1countryname != 'null'">{{p1countryname | titlecase}}</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Zip:</td>
+                                                <td><span>{{p1postalCode && p1postalCode != '' ? p1postalCode : '-'}}</span></td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                        <h4 class="position-relative border-bottom pb-2 letter" *ngIf="type == 'view' && !editView" >
+                                            <app-feather-icons [icon]="'user'"></app-feather-icons>Parent 2 Details
+                                        </h4>
+                                        <table class="table table-responsive">
+                                            <tbody>
+                                            <tr>
+                                                <td>Parent 2 Name:</td>
+                                                <td>{{p2name != '' && p2name ? (p2name | titlecase) : '-'}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Parent 2 Address1:</td>
+                                                <td>{{p2address1 != '' && p2address1 ? (p2address1 |titlecase) : '-'}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Parent 2 Address2:</td>
+                                                <td>{{p2address2 != '' && p2address2 ? (p2address2 | titlecase) : '-'}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>City:</td>
+                                                <td>{{p2city != '' && p2city ? (p2city | titlecase) : '-'}}</td>
+                                            </tr>
+                                            <tr  *ngIf="p2state != 'null' && p2country != 'null' && p2state != '0' && p2country != '0'">
+                                                <td>State:</td>
+                                                <td><span>{{p2statename != '' && p2statename ? (p2statename | titlecase) : '-'}}</span></td>
+                                            </tr>
+                                            <tr  *ngIf="p2state != 'null' && p2country != 'null' && p2state != '0' && p2country != '0'">
+                                                <td >Country:</td>
+                                                <td><span *ngIf="p2statename != 'null' && p2countryname != 'null'">{{p2countryname | titlecase}}</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Zip:</td>
+                                                <td><span>{{p2postalCode != '' && p2postalCode ? p2postalCode : '-'}}</span></td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    <form  *ngIf="type == 'edit' || editView" [formGroup]="accountForm" class="needs-validation user-add" novalida>
+                                        <div class="form-group row">
+                                            <label for="validationCustom0" class="col-xl-3 col-md-4"><span>*</span>
+                                                First Name</label>
+                                            <div class="col-xl-8 col-md-7">
+                                                <input class="form-control " formControlName="fname" id="validationCustom0"
+                                                       type="text" required="">
+                                                <em class="error" *ngIf="!accountForm.get('fname').valid && (accountForm.get('fname').dirty || accountForm.get('fname').touched)">First name is required</em>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label for="validationCustom1" class="col-xl-3 col-md-4"><span>*</span> Last
+                                                Name</label>
+                                            <div class="col-xl-8 col-md-7">
+                                                <input class="form-control" formControlName="lname" id="validationCustom1"
+                                                       type="text" required="">
+                                                <em class="error" *ngIf="!accountForm.get('lname').valid && (accountForm.get('lname').dirty || accountForm.get('lname').touched)">Last name is required</em>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label for="validationCustom2" class="col-xl-3 col-md-4"><span>*</span>
+                                                Email</label>
+                                            <div class="col-xl-8 col-md-7">
+                                                <input class="form-control" formControlName="email" id="validationCustom2"
+                                                       type="text" required="" readonly>
+                                                <em class="error" *ngIf="!accountForm.get('email').valid && (accountForm.get('email').dirty || accountForm.get('email').touched)">Email is required</em>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label for="validationCustom6" class="col-xl-3 col-md-4"><span style="visibility: hidden">*</span>
+                                                Gender</label>
+                                            <div class="col-xl-8 col-md-7">
+                                                <select class="form-control" formControlName="gender" id="validationCustom6">
+                                                    <option value="">--Select Gender--</option>
+                                                    <option value="male">Male</option>
+                                                    <option value="female">Female</option>
+                                                    <option value="n/a">Do not want to disclose</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label for="validationCustom1" class="col-xl-3 col-md-4"><span style="visibility: hidden">*</span>
+                                                Mobile</label>
+                                            <div class="col-xl-8 col-md-7">
+                                                <input class="form-control" formControlName="mobile" id="validationCustom3" (keypress)="numberPattern($event)" maxlength="15" minlength="10"
+                                                       type="text" placeholder="Enter the mobile number">
+                                                <em class="error" *ngIf="!accountForm.get('mobile').valid && (accountForm.get('mobile').dirty || accountForm.get('mobile').touched)">Mobile is required</em>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-xl-3 col-md-4"><span style="visibility: hidden">*</span>
+                                                Date Of Birth</label>
+                                            <div class="col-xl-8 col-md-7 form-group">
+                                                <div class="d-flex align-items-baseline">
+                                                    <input class="form-control" placeholder="mm-dd-yyyy"
+                                                           name="dp"  formControlName="dob" angular-mydatepicker #dp="angular-mydatepicker"
+                                                           [options]="myDpOptions" (dateChanged)="onDateChanged($event)" />
+                                                    <div class="input-group-append">
+                                                        <button type="button" class="btn btn-primary" (click)="dp.toggleCalendar()">
+                                                            <i class="fa fa-calendar-o"></i></button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card-header">
+                                            <h5>Parent 1 Details</h5><hr>
+                                        </div>
+                                        <div class="form-group row">
+                                        <label for="validationCustom00" class="col-xl-3 col-md-4"><span style="visibility: hidden">*</span>
+                                            Parent 1 Name</label>
+                                        <div class="col-xl-8 col-md-7">
+                                            <input class="form-control " formControlName="p1fname" id="validationCustom00"
+                                                   type="text" placeholder="Enter the parent 1 name">
+                                            <em class="error" *ngIf="!accountForm.get('p1fname').valid && (accountForm.get('p1fname').dirty || accountForm.get('p1fname').touched)">First name is required</em>
+                                        </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label for="validationCustom7" class="col-xl-3 col-md-4"><span style="visibility: hidden">*</span>
+                                                Address 1</label>
+                                            <div class="col-xl-8 col-md-7">
+                                                <input class="form-control" formControlName="p1address1" id="validationCustom7"
+                                                       type="text" placeholder="Enter address 1">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label for="validationCustom8" class="col-xl-3 col-md-4"><span style="visibility: hidden">*</span>
+                                                Address 2</label>
+                                            <div class="col-xl-8 col-md-7">
+                                                <input class="form-control" formControlName="p1address2" id="validationCustom8"
+                                                       type="text" placeholder="Enter address 2">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label for="validationCustom9" class="col-xl-3 col-md-4"><span style="visibility: hidden">*</span>
+                                                City</label>
+                                            <div class="col-xl-8 col-md-7">
+                                                <input class="form-control" formControlName="p1city" id="validationCustom9"
+                                                       type="text" placeholder="Enter the city">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-xl-3 col-md-4"><span style="visibility: hidden">*</span>
+                                                State</label>
+                                            <div class="col-xl-8 col-md-7">
+                                                <ng-select [items]="stateListData"
+                                                bindLabel="name"
+                                                bindValue="state_id"
+                                                formControlName="p1state"
+                                                placeholder="Please Select">
+                                                </ng-select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-xl-3 col-md-4"><span style="visibility: hidden">*</span>
+                                                Country</label>
+                                            <div class="col-xl-8 col-md-7">
+                                                <ng-select [items]="countryListData"
+                                                           bindLabel="name"
+                                                           bindValue="country_id"
+                                                           formControlName="p1country"
+                                                           placeholder="Please Select"
+                                                           (change)="stateList($event.country_id)"
+                                                >
+                                                </ng-select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label for="validationCustom13" class="col-xl-3 col-md-4"><span style="visibility: hidden">*</span>
+                                                Zip </label>
+                                            <div class="col-xl-8 col-md-7">
+                                                <input class="form-control" formControlName="postalCode1" id="validationCustom13"
+                                                       type="text" placeholder="Enter Zip" (keypress)="numberPattern($event)" minlength="3" maxlength="9">
+                                            </div>
+                                        </div>
+                                        <div class="card-header">
+                                            <h5>Parent 2 Details</h5><hr>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label for="validationCustom000" class="col-xl-3 col-md-4"><span style="visibility: hidden">*</span>
+                                                Parent 2 Name</label>
+                                            <div class="col-xl-8 col-md-7">
+                                                <input class="form-control " formControlName="p2fname" id="validationCustom000"
+                                                       type="text" placeholder="Enter the parent 2 name">
+                                                <em class="error" *ngIf="!accountForm.get('p2fname').valid && (accountForm.get('p2fname').dirty || accountForm.get('p2fname').touched)">First name is required</em>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label for="validationCustom17" class="col-xl-3 col-md-4"><span style="visibility: hidden">*</span>
+                                                Address 1</label>
+                                            <div class="col-xl-8 col-md-7">
+                                                <input class="form-control" formControlName="p2address1" id="validationCustom17"
+                                                       type="text" placeholder="Enter the address 1">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label for="validationCustom18" class="col-xl-3 col-md-4"><span style="visibility: hidden">*</span>
+                                                Address 2</label>
+                                            <div class="col-xl-8 col-md-7">
+                                                <input class="form-control" formControlName="p2address2" id="validationCustom18"
+                                                       type="text" placeholder="Enter the address 2">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label for="validationCustom19" class="col-xl-3 col-md-4"><span style="visibility: hidden">*</span>
+                                                City</label>
+                                            <div class="col-xl-8 col-md-7">
+                                                <input class="form-control" formControlName="p2city" id="validationCustom19"
+                                                       type="text" placeholder="Enter the city">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-xl-3 col-md-4"><span style="visibility: hidden">*</span>
+                                                State</label>
+                                            <div class="col-xl-8 col-md-7">
+                                                <ng-select [items]="stateListData1"
+                                                           bindLabel="name"
+                                                           bindValue="state_id"
+                                                           formControlName="p2state"
+                                                           placeholder="Please Select">
+                                                </ng-select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-xl-3 col-md-4"><span style="visibility: hidden">*</span>
+                                                Country</label>
+                                            <div class="col-xl-8 col-md-7">
+                                                <ng-select [items]="countryListData"
+                                                           bindLabel="name"
+                                                           bindValue="country_id"
+                                                           formControlName="p2country"
+                                                           placeholder="Please Select"
+                                                           (change)="stateList1($event.country_id)"
+                                                >
+                                                </ng-select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label for="validationCustom12" class="col-xl-3 col-md-4"><span style="visibility: hidden">*</span>
+                                                Zip </label>
+                                            <div class="col-xl-8 col-md-7">
+                                                <input class="form-control" formControlName="postalCode2" id="validationCustom12"
+                                                       type="text" placeholder="Enter Zip" (keypress)="numberPattern($event)" minlength="3" maxlength="9">
+                                            </div>
+                                        </div>
+                                    </form>
+                                    <div class="pull-right mt-3" *ngIf="type == 'edit' || editView">
+                                        <button type="button" *ngIf="userVerification != 'admin'" class="btn btn-primary {{env.deviceType() ? 'py-0 border-radius-2' : ''}}" (click)="saveProfile()">Save</button>
+                                    </div>
+                                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
